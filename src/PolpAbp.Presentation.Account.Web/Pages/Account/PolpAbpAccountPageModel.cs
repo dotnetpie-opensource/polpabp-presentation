@@ -11,7 +11,7 @@ using IdentityUser = Volo.Abp.Identity.IdentityUser;
 
 namespace PolpAbp.Presentation.Account.Web.Pages.Account;
 
-public abstract class AccountPageModel : AbpPageModel
+public abstract class PolpAbpAccountPageModel : AbpPageModel
 {
     public IAccountAppService AccountAppService { get; set; }
     public SignInManager<IdentityUser> SignInManager { get; set; }
@@ -20,7 +20,7 @@ public abstract class AccountPageModel : AbpPageModel
     public IOptions<IdentityOptions> IdentityOptions { get; set; }
     public IExceptionToErrorInfoConverter ExceptionToErrorInfoConverter { get; set; }
 
-    protected AccountPageModel()
+    protected PolpAbpAccountPageModel()
     {
         LocalizationResourceType = typeof(AccountResource);
         ObjectMapperContext = typeof(PresentationAccountWebModule);
