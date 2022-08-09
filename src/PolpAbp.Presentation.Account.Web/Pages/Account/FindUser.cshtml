@@ -12,13 +12,19 @@
 
 <div class="card mt-3 shadow-sm rounded">
     <div class="card-body p-5">
-        <h4>
+        <h4 class="mb-4 fw-semibold">
             Locating your information
         </h4>
+
         @if (Model.TenantList != null && Model.TenantList.Count > 0)
         {
-            <h5 class="mb-4">Please select one organization below</h5>
-            <form method="post" class="mt-4">
+            <div class="alert alert-info d-flex align-items-center" role="alert">
+                <div>
+                    Please select one organization below
+                </div>
+            </div>
+
+            <form method="post">
 
                 <div class="mb-3">
                     <abp-select asp-for="Selection.Id" label="@M["Tenant"].Value" />
@@ -38,8 +44,13 @@
         }
         else
         {
-            <h5 class="mb-4">Please type your email address or your organization name</h5>
-            <form method="post" class="mt-4">
+            <div class="alert alert-info d-flex align-items-center" role="alert">
+                <div>
+                    Please type your email address or your organization name
+                </div>
+            </div>
+
+            <form method="post">
                 <div class="mb-3">
                     <abp-input asp-for="Input.TenantOrEmailAddress" auto-focus="true" />
                 </div>

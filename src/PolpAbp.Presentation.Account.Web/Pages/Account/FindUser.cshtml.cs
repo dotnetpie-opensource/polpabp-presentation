@@ -83,6 +83,12 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                 // Return all tenants
                 await AttemptBuildTenantsAync(Input.TenantOrEmailAddress);
 
+                if (TenantList.Count == 0)
+                {
+                    // TODO: localization
+                    Alerts.Danger("Invalid organization or email address.");
+                }
+
                 /*
                 if (TenantList.Count == 1)
                 {
