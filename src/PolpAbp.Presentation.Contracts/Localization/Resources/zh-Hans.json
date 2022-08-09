@@ -1,0 +1,12 @@
+{
+  "culture": "zh-Hans",
+  "texts": {
+    "DisplayName:TenantOrEmailAddress": "Your email address or your organization name",
+    "DisplayName:Presentation.Account.Web.IsHostRecaptchaEnabled": "Is Recaptcha enabled",
+    "Description:Presentation.Account.Web.IsHostRecaptchaEnabled": "Indicates if the server will enable Recaptcha to protect the system from attackers.",
+    "DisplayName:Presentation.Account.Web.IsTenantRecaptchaEnabled": "Is Recaptcha enabled",
+    "Description:Presentation.Account.Web.IsTenantRecaptchaEnabled": "Indicates if the server will enable Recaptcha to protect the system from attackers.",
+    "DisplayName:Presentation.Account.Web.IsUsernameEnabled": "Is Username enabled",
+    "Description:Presentation.Account.Web.IsUsernameEnabled": "Indicates if the user name is used for login"
+  }
+}

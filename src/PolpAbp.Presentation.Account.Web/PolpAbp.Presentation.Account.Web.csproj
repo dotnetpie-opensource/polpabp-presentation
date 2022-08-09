@@ -15,12 +15,20 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="AspNetCore.ReCaptcha" Version="1.5.3" />
 		<PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="6.0.5" />
 		<PackageReference Include="Volo.Abp.Core" Version="5.3.2" />
 		<PackageReference Include="Volo.Abp.Account.Application.Contracts" Version="5.3.2" />
 		<PackageReference Include="Volo.Abp.Identity.AspNetCore" Version="5.3.2" />
 		<PackageReference Include="Volo.Abp.AutoMapper" Version="5.3.2" />
 		<PackageReference Include="Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared" Version="5.3.2" />
+		<PackageReference Include="Volo.Abp.TenantManagement.Domain" Version="5.3.2" />
+		<PackageReference Include="Volo.Abp.AspNetCore.Mvc.UI.MultiTenancy" Version="5.3.2" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\..\..\fwt\src\PolpAbp.Framework.Domain\PolpAbp.Framework.Domain.csproj" />
+	  <ProjectReference Include="..\PolpAbp.Presentation.Contracts\PolpAbp.Presentation.Contracts.csproj" />
 	</ItemGroup>	
 
 </Project>

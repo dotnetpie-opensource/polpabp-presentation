@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using System.ComponentModel.DataAnnotations;
 using Volo.Abp;
 using Volo.Abp.Account;
 using Volo.Abp.Account.Localization;
@@ -13,6 +15,12 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account;
 
 public abstract class PolpAbpAccountPageModel : AbpPageModel
 {
+    [BindProperty(SupportsGet = true)]
+    public string? ReturnUrl { get; set; }
+
+    [BindProperty(SupportsGet = true)]
+    public string? ReturnUrlHash { get; set; }
+
     public IAccountAppService AccountAppService { get; set; }
     public SignInManager<IdentityUser> SignInManager { get; set; }
     public IdentityUserManager UserManager { get; set; }

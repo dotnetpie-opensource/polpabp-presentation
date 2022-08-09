@@ -1,21 +1,29 @@
-﻿using Volo.Abp.Account;
+﻿using PolpAbp.Framework;
+using PolpAbp.Presentation.Contracts;
+using Volo.Abp.Account;
 using Volo.Abp.Account.Localization;
 using Volo.Abp.AspNetCore.Mvc.Localization;
+using Volo.Abp.AspNetCore.Mvc.UI.MultiTenancy;
 using Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared;
 using Volo.Abp.AutoMapper;
 using Volo.Abp.ExceptionHandling;
 using Volo.Abp.Identity.AspNetCore;
 using Volo.Abp.Modularity;
+using Volo.Abp.TenantManagement;
 using Volo.Abp.VirtualFileSystem;
 
 namespace PolpAbp.Presentation.Account.Web
 {
     [DependsOn(
-    typeof(AbpAccountApplicationContractsModule),
-    typeof(AbpIdentityAspNetCoreModule),
-    typeof(AbpAspNetCoreMvcUiThemeSharedModule),
-    typeof(AbpExceptionHandlingModule),
-    typeof(AbpAutoMapperModule)
+        typeof(AbpAccountApplicationContractsModule),
+        typeof(AbpIdentityAspNetCoreModule),
+        typeof(AbpAspNetCoreMvcUiThemeSharedModule),
+        typeof(AbpExceptionHandlingModule),
+        typeof(AbpAutoMapperModule),
+        typeof(PresentationContractsModule),
+        typeof(PolpAbpFrameworkDomainModule),
+        typeof(AbpTenantManagementDomainModule),
+        typeof(AbpAspNetCoreMvcUiMultiTenancyModule)
     )]
     public class PresentationAccountWebModule : AbpModule
     {
