@@ -10,65 +10,61 @@
 @inject IHtmlLocalizer<AccountResource> L
 @inject IHtmlLocalizer<AbpUiMultiTenancyResource> M
 
-<div class="card mt-3 shadow-sm rounded">
-    <div class="card-body p-5">
-        <h4 class="mb-4 fw-semibold">
-            Locating your information
-        </h4>
+<h4 class="mb-4 fw-semibold">
+    Locating your information
+</h4>
 
-        @if (Model.TenantList != null && Model.TenantList.Count > 0)
-        {
-            <div class="alert alert-info d-flex align-items-center" role="alert">
-                <div>
-                    Please select one organization below
-                </div>
-            </div>
-
-            <form method="post">
-
-                <div class="mb-3">
-                    <abp-select asp-for="Selection.Id" label="@M["Tenant"].Value" />
-                </div>
-
-                <div class="d-grid gap-2">
-                    <abp-button type="submit" button-type="Secondary" formnovalidate="formnovalidate" name="Action" value="Cancel" class="btn-lg mt-3">
-                        @L["Back"]
-                    </abp-button>
-
-                    <abp-button type="submit" button-type="Primary" name="Action" value="SelectionStep" class="btn-lg mt-3">
-                        @L["Continue"]
-                        <span class="spinner-box"></span>
-                    </abp-button>
-                </div>
-            </form>
-        }
-        else
-        {
-            <div class="alert alert-info d-flex align-items-center" role="alert">
-                <div>
-                    Please type your email address or your organization name
-                </div>
-            </div>
-
-            <form method="post">
-                <div class="mb-3">
-                    <abp-input asp-for="Input.TenantOrEmailAddress" auto-focus="true" />
-                </div>
-
-                @if (Model.IsRecaptchaEnabled)
-                {
-                    <div class="mb-3">
-                        @Html.ReCaptcha()
-                    </div>
-                }
-
-                <div class="d-grid gap-2">
-                    <abp-button type="submit" button-type="Primary" name="Action" value="InputStep" class="btn-block btn-lg mt-3">
-                        @L["Continue"]
-                        <span class="spinner-box"></span>
-                    </abp-button>
-                </div>
-            </form>
-        }
+@if (Model.TenantList != null && Model.TenantList.Count > 0)
+{
+    <div class="alert alert-info d-flex align-items-center" role="alert">
+        <div>
+            Please select one organization below
+        </div>
     </div>
-</div>
+
+    <form method="post">
+
+        <div class="mb-3">
+            <abp-select asp-for="Selection.Id" label="@M["Tenant"].Value" />
+        </div>
+
+        <div class="d-grid gap-2">
+            <abp-button type="submit" button-type="Secondary" formnovalidate="formnovalidate" name="Action" value="Cancel" class="btn-lg mt-3">
+                @L["Back"]
+            </abp-button>
+
+            <abp-button type="submit" button-type="Primary" name="Action" value="SelectionStep" class="btn-lg mt-3">
+                @L["Continue"]
+                <span class="spinner-box"></span>
+            </abp-button>
+        </div>
+    </form>
+}
+else
+{
+    <div class="alert alert-info d-flex align-items-center" role="alert">
+        <div>
+            Please type your email address or your organization name
+        </div>
+    </div>
+
+    <form method="post">
+        <div class="mb-3">
+            <abp-input asp-for="Input.TenantOrEmailAddress" auto-focus="true" />
+        </div>
+
+        @if (Model.IsRecaptchaEnabled)
+        {
+            <div class="mb-3">
+                @Html.ReCaptcha()
+            </div>
+        }
+
+        <div class="d-grid gap-2">
+            <abp-button type="submit" button-type="Primary" name="Action" value="InputStep" class="btn-block btn-lg mt-3">
+                @L["Continue"]
+                <span class="spinner-box"></span>
+            </abp-button>
+        </div>
+    </form>
+}
