@@ -3,8 +3,37 @@ namespace PolpAbp.Presentation.Account.Web
 {
     public static class CookieExtensions
     {
+        // todo: Configurable
         public const string TenantCookieName = "PolpAbpTenantId";
         public const string MfaCookieName = "MultiFactorAuth";
+
+        public static void SetNamedCookie(this HttpResponse response, string name, string value, string domain = null, TimeSpan? span = null)
+        {
+            var options = new CookieOptions();
+            if (!string.IsNullOrWhiteSpace(domain))
+            {
+                options.Domain = domain;
+            }
+            if (span.HasValue)
+            {
+                var now = DateTimeOffset.UtcNow;
+                var expired = now + span;
+                options.Expires = expired;
+            }
+            // Remember 
+            response.Cookies.Append(name, value, options);
+        }
+
+        // Clean all cookie
+        public static void ClearCookies(this HttpResponse response, string domain)
+        {
+            var options = new CookieOptions
+            {
+                Domain = domain,
+            };
+
+            response.Cookies.Delete(TenantCookieName, options);
+        }
 
         #region Tenant
         public static bool HasTenantCookie(this HttpRequest request)
@@ -20,19 +49,7 @@ namespace PolpAbp.Presentation.Account.Web
 
         public static void SetTenantCookieValue(this HttpResponse response, string value, string domain = null, TimeSpan? span = null)
         {
-            var options = new CookieOptions();
-            if (!string.IsNullOrWhiteSpace(domain))
-            {
-                options.Domain = domain;    
-            }
-            if (span.HasValue)
-            {
-                var now = DateTimeOffset.UtcNow;
-                var expired = now + span;
-                options.Expires = expired;
-            }
-            // Remember 
-            response.Cookies.Append(TenantCookieName, value, options);
+            response.SetNamedCookie(TenantCookieName, value, domain, span);
         }
         #endregion
 
@@ -50,32 +67,11 @@ namespace PolpAbp.Presentation.Account.Web
 
         public static void SetMfaCookieValue(this HttpResponse response, string value, string domain, TimeSpan? span = null)
         {
-            var options = new CookieOptions
-            {
-                Domain = domain
-            };
-            if (span.HasValue)
-            {
-                var now = DateTimeOffset.UtcNow;
-                var expired = now + span;
-                options.Expires = expired;
-            }
-            // Remember 
-            response.Cookies.Append(MfaCookieName, value, options);
+            response.SetNamedCookie(MfaCookieName, value, domain, span);
         }
         #endregion
 
 
-        // Clean all cookie
-        public static void ClearCookies(this HttpResponse response, string domain)
-        {
-            var options = new CookieOptions
-            {
-                Domain = domain,
-            };
-
-            response.Cookies.Delete(TenantCookieName, options);
-        }
 
     }
 }

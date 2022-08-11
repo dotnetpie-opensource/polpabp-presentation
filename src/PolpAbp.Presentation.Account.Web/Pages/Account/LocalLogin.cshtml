@@ -1,0 +1,67 @@
+﻿@page
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Microsoft.Extensions.Localization
+@using Volo.Abp.Account.Localization
+@using Volo.Abp.Account.Settings
+@using Volo.Abp.AspNetCore.Mvc.UI.MultiTenancy.Localization
+@using Volo.Abp.Settings
+@using AspNetCore.ReCaptcha
+@model PolpAbp.Presentation.Account.Web.Pages.Account.LocalLoginModel
+
+@inject IHtmlLocalizer<AccountResource> L
+
+<h4 class="mb-4 fw-semibold">
+    Login
+</h4>
+
+<div class="alert alert-info d-flex align-items-center" role="alert">
+    <div>
+        Please type your password to continue
+    </div>
+</div>
+
+<form method="post">
+
+    <input asp-for="Input.UserNameOrEmailAddress" type="hidden" />
+
+    @if (Model.IsUserNameEnabled)
+    {
+        <div class="mb-3">
+            <label class="form-label">@L["DisplayName:UserName"]</label>
+            <input class="form-control" disabled value="@Model.Input.UserNameOrEmailAddress">
+        </div>
+
+    }
+    else
+    {
+        <div class="mb-3">
+            <label class="form-label">@L["DisplayName:UserName"]</label>
+            <input class="form-control" disabled value="@Model.Input.UserNameOrEmailAddress">
+        </div>
+    }
+
+    <div class="mb-3">
+        <label asp-for="Input.Password" class="form-label"></label>
+        <input asp-for="Input.Password" class="form-control" />
+        <span asp-validation-for="Input.Password" class="text-danger"></span>
+    </div>
+
+    <abp-row>
+        <abp-column>
+            <abp-input asp-for="Input.RememberMe" class="mb-4" />
+        </abp-column>
+        <abp-column class="text-end">
+            <a href="@Url.Page("./ForgotPassword", new {returnUrl = Model.ReturnUrl, returnUrlHash = Model.ReturnUrlHash})">@L["ForgotPassword"]</a>
+        </abp-column>
+    </abp-row>
+
+    <div class="d-grid gap-2">
+        <abp-button type="submit" button-type="Secondary" formnovalidate="formnovalidate" name="Action" value="Cancel" class="btn-lg mt-3">
+            @L["Back"]
+        </abp-button>
+        <abp-button type="submit" button-type="Primary" name="Action" value="Input" class="btn-lg mt-3">
+            @L["Continue"]
+            <span class="spinner-box"></span>
+        </abp-button>
+    </div>
+</form>

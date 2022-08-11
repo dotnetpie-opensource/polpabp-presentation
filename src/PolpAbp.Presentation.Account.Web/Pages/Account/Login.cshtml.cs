@@ -1,22 +1,14 @@
 using Microsoft.AspNetCore.Mvc;
-using PolpAbp.Presentation.Account.Web.Settings;
 using System.ComponentModel.DataAnnotations;
 using System.Web;
 using Volo.Abp.Identity;
-using Volo.Abp.Settings;
 using Volo.Abp.Validation;
 
 namespace PolpAbp.Presentation.Account.Web.Pages.Account
 {
     [TenantPrerequisite]
-    public class LoginModel : PolpAbpAccountPageModel
+    public class LoginModel : LoginModelBase
     {
-        [BindProperty(SupportsGet = true)]
-        public string? UserNameOrEmail { get; set; }
-
-        public string NormalizedUserNameOrEmail => HttpUtility.UrlDecode(UserNameOrEmail ?? string.Empty);
-
-        public bool IsUserNameEnabled { get; set; }
 
         [BindProperty]
         public LoginInputModel Input { get; set; }
@@ -26,44 +18,9 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
             // Load settings
             await LoadSettingsAsync();
 
-            IdentityUser? user = null;
-
-            if (!string.IsNullOrEmpty(UserNameOrEmail))
-            {
-                if (IsUserNameEnabled)
-                {
-                    user = await UserManager.FindByNameAsync(NormalizedUserNameOrEmail);
-                }
-                else if (ValidationHelper.IsValidEmailAddress(NormalizedUserNameOrEmail))
-                {
-                    user = await UserManager.FindByEmailAsync(NormalizedUserNameOrEmail);
-                }
-            }
-
-            if (user != null)
-            {
-                if (!user.IsExternal)
-                {
-                    return RedirectToPage("./LocalLogin", new
-                    {
-                        // todo: Maybe use Id
-                        Email = HttpUtility.UrlEncode(user.Email),
-                        ReturnUrl = ReturnUrl,
-                        ReturnUrlHash = ReturnUrlHash
-                    });
-                }
-                else
-                {
-                    return RedirectToPage("./ExternalLogin", new
-                    {
-                        // todo: Maybe use Id
-                        Email = HttpUtility.UrlEncode(user.Email),
-                        ReturnUrl = ReturnUrl,
-                        ReturnUrlHash = ReturnUrlHash
-                    });
-
-                }
-            }
+            // todo: Input has been initialized?
+            Input = new LoginInputModel();
+            Input.UserNameOrEmailAddress = NormalizedUserNameOrEmailAddress;
 
             return Page();
         }
@@ -77,9 +34,10 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
             {
 
                 ValidateModel();
+
                 if (!IsUserNameEnabled)
                 {
-                    if (!ValidationHelper.IsValidEmailAddress(NormalizedUserNameOrEmail))
+                    if (!ValidationHelper.IsValidEmailAddress(Input.UserNameOrEmailAddress))
                     {
                         Alerts.Warning("Please type a valid email address");
                         return Page();
@@ -90,11 +48,11 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 
                 if (IsUserNameEnabled)
                 {
-                    user = await UserManager.FindByNameAsync(NormalizedUserNameOrEmail);
+                    user = await UserManager.FindByNameAsync(Input.UserNameOrEmailAddress);
                 }
-                else if (ValidationHelper.IsValidEmailAddress(NormalizedUserNameOrEmail))
+                else if (ValidationHelper.IsValidEmailAddress(Input.UserNameOrEmailAddress))
                 {
-                    user = await UserManager.FindByEmailAsync(NormalizedUserNameOrEmail);
+                    user = await UserManager.FindByEmailAsync(Input.UserNameOrEmailAddress);
                 }
 
                 if (user != null)
@@ -104,9 +62,9 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                         return RedirectToPage("./LocalLogin", new
                         {
                             // todo: Maybe use Id
-                            Email = HttpUtility.UrlEncode(user.Email),
-                            ReturnUrl = ReturnUrl,
-                            ReturnUrlHash = ReturnUrlHash
+                            userNameOrEmailAddress = HttpUtility.UrlEncode(IsUserNameEnabled ? user.UserName : user.Email),
+                            returnUrl = ReturnUrl,
+                            returnUrlHash = ReturnUrlHash
                         });
                     }
                     else
@@ -114,9 +72,9 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                         return RedirectToPage("./ExternalLogin", new
                         {
                             // todo: Maybe use Id
-                            Email = HttpUtility.UrlEncode(user.Email),
-                            ReturnUrl = ReturnUrl,
-                            ReturnUrlHash = ReturnUrlHash
+                            userNameOrEmailAddress = HttpUtility.UrlEncode(IsUserNameEnabled ? user.UserName : user.Email),
+                            returnUrl = ReturnUrl,
+                            returnUrlHash = ReturnUrlHash
                         });
 
                     }
@@ -130,19 +88,13 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                 // Need to reload the page.
                 return RedirectToPage("./Login", new
                 {
-                    UserNameOrEmail = NormalizedUserNameOrEmail,
-                    ReturnUrl = ReturnUrl,
-                    ReturnUrlHash = ReturnUrlHash
+                    userNameOrEmailAddress = NormalizedUserNameOrEmailAddress,
+                    returnUrl = ReturnUrl,
+                    returnUrlHash = ReturnUrlHash
                 });
             }
 
             return Page();
-        }
-
-        protected async Task LoadSettingsAsync()
-        {
-            // Use host ...
-            IsUserNameEnabled = await SettingProvider.IsTrueAsync(AccountWebSettingNames.IsUserNameEnabled);
         }
 
         public class LoginInputModel
