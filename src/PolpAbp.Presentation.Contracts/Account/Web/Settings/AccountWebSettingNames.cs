@@ -13,6 +13,6 @@
         /// <summary>
         /// Decides if the user name is used for login for the tenant.
         /// </summary>
-        public const string IsUsernameEnabled = "PolpAbp.Presentation.Account.Web.IsUsernameEnabled";
+        public const string IsUserNameEnabled = "PolpAbp.Presentation.Account.Web.IsUserNameEnabled";
     }
 }

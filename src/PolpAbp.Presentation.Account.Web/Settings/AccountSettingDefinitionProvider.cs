@@ -26,10 +26,10 @@ namespace PolpAbp.Presentation.Account.Web.Settings
 
             context.Add(
                 new SettingDefinition(
-                    AccountWebSettingNames.IsUsernameEnabled,
+                    AccountWebSettingNames.IsUserNameEnabled,
                     "false",
-                    L("DisplayName:Presentation.Account.Web.IsUsernameEnabled"),
-                    L("Description:Presentation.Account.Web.IsUsernameEnabled"), isVisibleToClients: true)
+                    L("DisplayName:Presentation.Account.Web.IsUserNameEnabled"),
+                    L("Description:Presentation.Account.Web.IsUserNameEnabled"), isVisibleToClients: true)
             );
         }
 

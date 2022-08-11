@@ -6,7 +6,7 @@
     "Description:Presentation.Account.Web.IsHostRecaptchaEnabled": "Indicates if the server will enable Recaptcha to protect the system from attackers.",
     "DisplayName:Presentation.Account.Web.IsTenantRecaptchaEnabled": "Is Recaptcha enabled",
     "Description:Presentation.Account.Web.IsTenantRecaptchaEnabled": "Indicates if the server will enable Recaptcha to protect the system from attackers.",
-    "DisplayName:Presentation.Account.Web.IsUsernameEnabled": "Is Username enabled",
-    "Description:Presentation.Account.Web.IsUsernameEnabled": "Indicates if the user name is used for login"
+    "DisplayName:Presentation.Account.Web.IsUserNameEnabled": "Is Username enabled",
+    "Description:Presentation.Account.Web.IsUserNameEnabled": "Indicates if the user name is used for login"
   }
 }

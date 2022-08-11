@@ -61,7 +61,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
             // Load settings
             await LoadSettingsAsync();
 
-            if (action == "InputStep")
+            if (action == "Input")
             {
 
                 if (IsRecaptchaEnabled)
@@ -106,7 +106,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                     }
                 } */
             }
-            else if (action == "SelectionStep")
+            else if (action == "Selection")
             {
                 if (Selection != null && Selection.Id.HasValue)
                 {
