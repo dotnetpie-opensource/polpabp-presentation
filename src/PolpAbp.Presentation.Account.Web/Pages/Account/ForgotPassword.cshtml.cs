@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
-using System.Web;
+using Volo.Abp;
+using Volo.Abp.Account;
 using Volo.Abp.Identity;
 using Volo.Abp.Validation;
 
@@ -8,19 +9,17 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 {
     [TenantPrerequisite]
     [OnlyAnonymous]
-    public class LoginModel : LoginModelBase
+    public class ForgotPasswordModel : LoginModelBase
     {
-
         [BindProperty]
-        public LoginInputModel Input { get; set; }
+        public InputModel Input { get; set; }
 
         public virtual async Task<IActionResult> OnGetAsync()
         {
             // Load settings
             await LoadSettingsAsync();
 
-            // todo: Input has been initialized?
-            Input = new LoginInputModel();
+            Input = new InputModel();
             Input.UserNameOrEmailAddress = NormalizedUserNameOrEmailAddress;
 
             return Page();
@@ -33,7 +32,6 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 
             if (action == "Input")
             {
-
                 ValidateModel();
 
                 if (!IsUserNameEnabled)
@@ -58,47 +56,40 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 
                 if (user != null)
                 {
-                    if (!user.IsExternal)
-                    {
-                        return RedirectToPage("./LocalLogin", new
-                        {
-                            // todo: Maybe use Id
-                            userNameOrEmailAddress = HttpUtility.UrlEncode(IsUserNameEnabled ? user.UserName : user.Email),
-                            returnUrl = ReturnUrl,
-                            returnUrlHash = ReturnUrlHash
-                        });
-                    }
-                    else
-                    {
-                        return RedirectToPage("./ExternalLogin", new
-                        {
-                            // todo: Maybe use Id
-                            userNameOrEmailAddress = HttpUtility.UrlEncode(IsUserNameEnabled ? user.UserName : user.Email),
-                            returnUrl = ReturnUrl,
-                            returnUrlHash = ReturnUrlHash
-                        });
 
+                    try
+                    {
+                        await AccountAppService.SendPasswordResetCodeAsync(
+                            new SendPasswordResetCodeDto
+                            {
+                                Email = user.Email,
+                                AppName = "MVC", //TODO: Const!
+                                ReturnUrl = ReturnUrl,
+                                ReturnUrlHash = ReturnUrlHash
+                            }
+                        );
+                    }
+                    catch (UserFriendlyException e)
+                    {
+                        Alerts.Danger(GetLocalizeExceptionMessage(e));
+                        return Page();
                     }
                 }
-            }
-            else if (action == "ResetTenant")
-            {
-                // Remove tenant cookies
-                Response.SetTenantCookieValue(String.Empty);
 
-                // Need to reload the page.
-                return RedirectToPage("./Login", new
+            }
+
+            // For security reason, we will redirect the user to another page regardless 
+            // whether the user exits or not.
+            return RedirectToPage(
+                "./PasswordResetLinkSent",
+                new
                 {
-                    userNameOrEmailAddress = NormalizedUserNameOrEmailAddress,
                     returnUrl = ReturnUrl,
                     returnUrlHash = ReturnUrlHash
                 });
-            }
-
-            return Page();
         }
 
-        public class LoginInputModel
+        public class InputModel
         {
             [Required]
             [DynamicStringLength(typeof(IdentityUserConsts), nameof(IdentityUserConsts.MaxEmailLength))]

@@ -11,6 +11,8 @@ using Volo.Abp.Validation;
 
 namespace PolpAbp.Presentation.Account.Web.Pages.Account
 {
+    [OnlyAnonymous]
+    [TenantPrerequisite]
     public class LocalLoginModel : LoginModelBase
     {
         [BindProperty]

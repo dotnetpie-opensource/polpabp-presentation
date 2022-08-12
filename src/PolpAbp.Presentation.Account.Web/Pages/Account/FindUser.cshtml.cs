@@ -17,6 +17,7 @@ using Volo.Abp.Validation;
 
 namespace PolpAbp.Presentation.Account.Web.Pages.Account
 {
+    [OnlyAnonymous]
     public class FindUserModel : PolpAbpAccountPageModel
     {
 

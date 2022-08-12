@@ -22,13 +22,12 @@
 
 <form method="post">
 
-    <input asp-for="Input.UserNameOrEmailAddress" type="hidden" />
-
     @if (Model.IsUserNameEnabled)
     {
         <div class="mb-3">
             <label class="form-label">@L["DisplayName:UserName"]</label>
-            <input class="form-control" disabled value="@Model.Input.UserNameOrEmailAddress">
+            <input asp-for="Input.UserNameOrEmailAddress" class="form-control" autocomplete="new-password">
+            <span asp-validation-for="Input.UserNameOrEmailAddress" class="text-danger"></span>
         </div>
 
     }
@@ -36,13 +35,14 @@
     {
         <div class="mb-3">
             <label class="form-label">@L["DisplayName:UserName"]</label>
-            <input class="form-control" disabled value="@Model.Input.UserNameOrEmailAddress">
+            <input asp-for="Input.UserNameOrEmailAddress" class="form-control" autocomplete="new-password">
+            <span asp-validation-for="Input.UserNameOrEmailAddress" class="text-danger"></span>
         </div>
     }
 
     <div class="mb-3">
         <label asp-for="Input.Password" class="form-label"></label>
-        <input asp-for="Input.Password" class="form-control" />
+        <input asp-for="Input.Password" class="form-control" data-auto-focus="true" autocomplete="new-password" />
         <span asp-validation-for="Input.Password" class="text-danger"></span>
     </div>
 
