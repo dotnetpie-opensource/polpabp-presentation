@@ -15,7 +15,7 @@ namespace PolpAbp.Presentation.Account.Web
                 {
                     var query = context.HttpContext.Request.QueryString;
                     // todo: ? main or MainApp ???
-                    context.Result = new RedirectResult("/main");
+                    context.Result = new RedirectResult("/Account/MainApp" + query??"");
                 }
             }
         }
