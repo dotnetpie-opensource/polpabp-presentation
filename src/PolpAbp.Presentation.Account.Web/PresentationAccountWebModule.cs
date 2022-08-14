@@ -15,15 +15,15 @@ using Volo.Abp.VirtualFileSystem;
 namespace PolpAbp.Presentation.Account.Web
 {
     [DependsOn(
+        typeof(AbpAutoMapperModule),
+        typeof(AbpExceptionHandlingModule),
+        typeof(AbpTenantManagementDomainModule),
         typeof(AbpAccountApplicationContractsModule),
         typeof(AbpIdentityAspNetCoreModule),
         typeof(AbpAspNetCoreMvcUiThemeSharedModule),
-        typeof(AbpExceptionHandlingModule),
-        typeof(AbpAutoMapperModule),
-        typeof(PresentationContractsModule),
+        typeof(AbpAspNetCoreMvcUiMultiTenancyModule),
         typeof(PolpAbpFrameworkDomainModule),
-        typeof(AbpTenantManagementDomainModule),
-        typeof(AbpAspNetCoreMvcUiMultiTenancyModule)
+        typeof(PresentationContractsModule)
     )]
     public class PresentationAccountWebModule : AbpModule
     {
