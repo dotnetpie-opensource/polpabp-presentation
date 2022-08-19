@@ -59,6 +59,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 
                     try
                     {
+                        // todo: Should we use the background to send out it????
                         await AccountAppService.SendPasswordResetCodeAsync(
                             new SendPasswordResetCodeDto
                             {

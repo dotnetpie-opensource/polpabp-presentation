@@ -12,6 +12,9 @@ using Volo.Abp.TenantManagement;
 
 namespace PolpAbp.Presentation.Account.Web.Pages.Account
 {
+    // This page runs regardless the tenant.
+    // It will use the 
+    [OnlyAnonymous]
     public class EmailActivationModel : LoginModelBase
     {
         [HiddenInput]
