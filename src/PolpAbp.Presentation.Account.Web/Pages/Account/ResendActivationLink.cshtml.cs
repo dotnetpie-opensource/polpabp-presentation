@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
+using PolpAbp.Framework.Emailing.Account;
 using System.ComponentModel.DataAnnotations;
 using Volo.Abp;
-using Volo.Abp.Account;
 using Volo.Abp.Identity;
 using Volo.Abp.Validation;
 
@@ -9,10 +9,12 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 {
     [TenantPrerequisite]
     [OnlyAnonymous]
-    public class ForgotPasswordModel : LoginModelBase
+    public class ResendActivationLinkModel : LoginModelBase
     {
         [BindProperty]
         public InputModel Input { get; set; }
+
+        protected IFrameworkAccountEmailer AccountEmailer => LazyServiceProvider.LazyGetRequiredService<IFrameworkAccountEmailer>();
 
         public virtual async Task<IActionResult> OnGetAsync()
         {
@@ -54,22 +56,13 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                     user = await UserManager.FindByEmailAsync(Input.UserNameOrEmailAddress);
                 }
 
-                if (user != null)
+                if (user != null && !user.EmailConfirmed)
                 {
 
                     try
                     {
-                        // todo: Should we use the background ??
-                        // In that case, the email may not be sent instantly.
-                        await AccountAppService.SendPasswordResetCodeAsync(
-                            new SendPasswordResetCodeDto
-                            {
-                                Email = user.Email,
-                                AppName = "MVC", //TODO: Const!
-                                ReturnUrl = ReturnUrl,
-                                ReturnUrlHash = ReturnUrlHash
-                            }
-                        );
+                        // Send it instantly, because the user is waiting for it.
+                        await AccountEmailer.SendEmailActivationLinkAsync(user.Email);
                     }
                     catch (UserFriendlyException e)
                     {
@@ -77,6 +70,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                         return Page();
                     }
                 }
+
 
             }
             else if (action == "Cancel")
@@ -87,7 +81,6 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                     ReturnUrlHash = ReturnUrlHash
                 });
             }
-
             // For security reason, we will redirect the user to another page regardless 
             // whether the user exits or not.
             return RedirectToPage(

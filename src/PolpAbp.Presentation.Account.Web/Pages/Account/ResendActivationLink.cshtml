@@ -6,14 +6,15 @@
 @using Volo.Abp.AspNetCore.Mvc.UI.MultiTenancy.Localization
 @using Volo.Abp.Settings
 @using AspNetCore.ReCaptcha
-@model PolpAbp.Presentation.Account.Web.Pages.Account.ForgotPasswordModel
+@model PolpAbp.Presentation.Account.Web.Pages.Account.ResendActivationLinkModel
+
 @inject IHtmlLocalizer<AccountResource> L
 
 <h4 class="mb-4 fw-semibold">
-    @L["ForgotPassword"]
+    @L["ResendActivationLink"]
 </h4>
 
-<p>@L["SendPasswordResetLink_Information"]</p>
+<p>@L["ResendActivationLink_Information"]</p>
 
 <div class="alert alert-info d-flex align-items-center" role="alert">
     @if (Model.IsUserNameEnabled)
