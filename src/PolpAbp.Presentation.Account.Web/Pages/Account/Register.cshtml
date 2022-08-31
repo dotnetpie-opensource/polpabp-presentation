@@ -7,5 +7,34 @@
 @using Volo.Abp.Settings
 @using AspNetCore.ReCaptcha
 @model PolpAbp.Presentation.Account.Web.Pages.Account.RegisterModel
-@{
-}
+@inject IHtmlLocalizer<AccountResource> L
+
+<h4 class="mb-4 fw-semibold">
+    Create your organization
+</h4>
+
+<form method="post">
+
+    <div class="mb-3">
+        <abp-input asp-for="Input.TenantName" auto-focus="true" />
+    </div>
+
+    <div class="mb-3">
+        <abp-input asp-for="Input.EmailAddress" />
+    </div>
+
+    <div class="mb-3">
+        <abp-input asp-for="Input.Password" />
+    </div>
+
+    <div class="mb-3">
+        <abp-input asp-for="Input.ConfirmPassword" />
+    </div>
+
+    <div class="d-grid gap-2">
+        <abp-button type="submit" button-type="Primary" name="Action" value="Selection" class="btn-lg mt-3">
+            @L["Continue"]
+            <span class="spinner-box"></span>
+        </abp-button>
+    </div>
+</form>

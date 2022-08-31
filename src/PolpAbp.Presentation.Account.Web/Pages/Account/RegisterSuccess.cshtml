@@ -1,0 +1,22 @@
+﻿@page
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Microsoft.Extensions.Localization
+@using Volo.Abp.Account.Localization
+@using Volo.Abp.Account.Settings
+@using Volo.Abp.AspNetCore.Mvc.UI.MultiTenancy.Localization
+@using Volo.Abp.Settings
+@using AspNetCore.ReCaptcha
+@model PolpAbp.Presentation.Account.Web.Pages.Account.RegisterSuccessModel
+@inject IHtmlLocalizer<AccountResource> L
+
+<h4 class="mb-4 fw-semibold">
+    Registration Success
+</h4>
+
+<form method="post">
+
+    <p>Your organization has been created. Next please check your email box to activate your organization account.</p>
+
+    <a abp-button="Primary" asp-page="./Login">&larr; @L["BackToLogin"]</a>
+
+</form>

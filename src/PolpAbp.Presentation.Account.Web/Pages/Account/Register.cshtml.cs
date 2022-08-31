@@ -1,8 +1,14 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using PolpAbp.Framework.Emailing.Account;
+using PolpAbp.Presentation.Account.Web.Settings;
 using System.ComponentModel.DataAnnotations;
+using Volo.Abp;
 using Volo.Abp.Auditing;
+using Volo.Abp.Data;
 using Volo.Abp.Identity;
+using Volo.Abp.Settings;
+using Volo.Abp.TenantManagement;
 using Volo.Abp.Validation;
 
 namespace PolpAbp.Presentation.Account.Web.Pages.Account
@@ -19,8 +25,62 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
         [BindProperty(SupportsGet = true)]
         public string ExternalLoginAuthSchema { get; set; }
 
-        public void OnGet()
+        public bool IsRecaptchaEnabled { get; set; }
+
+        // DI
+        public ITenantManager TenantManager { get; set; }
+        public ITenantRepository TenantRepository { get; set; }
+        public IDataSeeder DataSeeder { get; set; }
+
+        protected IFrameworkAccountEmailer AccountEmailer => LazyServiceProvider.LazyGetRequiredService<IFrameworkAccountEmailer>();
+
+        public virtual Task<IActionResult> OnGetAsync()
         {
+            // Render page 
+            return Task.FromResult(Page() as IActionResult);
+        }
+
+        public virtual async Task<IActionResult> OnPostAsync(string action)
+        {
+            if (action == "Input")
+            {
+                try
+                {
+                    await RegisterTenantAsync();
+
+                    // Success and then instructions
+                    return RedirectToPage("./RegisterSuccess");
+
+                }
+                catch (Exception e)
+                {
+                    Alerts.Danger(GetLocalizeExceptionMessage(e));
+                    return Page();
+                }
+            }
+
+            return Page();
+        }
+
+        protected async Task RegisterTenantAsync()
+        {
+            // todo: Verify if the tenant name is available or not.
+            var tenant = await TenantManager.CreateAsync(Input.TenantName);
+            await TenantRepository.InsertAsync(tenant, true); // Save automatically
+
+            // Create data for tenant.
+            // 1. The admin
+            using (CurrentTenant.Change(tenant.Id, tenant.Name))
+            {
+                await DataSeeder.SeedAsync(new DataSeedContext(tenant.Id)
+                    .WithProperty("AdminEmail", Input.EmailAddress)
+                    .WithProperty("AdminPassword", Input.Password));
+
+            }
+            // Send out a confirmation email, regardless the current tenant.
+            // Send it instantly, because the user is waiting for it.
+            await AccountEmailer.SendEmailActivationLinkAsync(Input.EmailAddress);
+
         }
 
         protected bool IsRegistrationDisabled
@@ -31,11 +91,18 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
             }
         }
 
+        protected async Task LoadSettingsAsync()
+        {
+            // Use host ...
+            IsRecaptchaEnabled = await SettingProvider.IsTrueAsync(AccountWebSettingNames.IsHostRecaptchaEnabled);
+        }
+
         public class PostInput
         {
             [Required]
-            [DynamicStringLength(typeof(IdentityUserConsts), nameof(IdentityUserConsts.MaxUserNameLength))]
-            public string UserName { get; set; }
+            [MinLength(4)]
+            [MaxLength(256)]
+            public string TenantName { get; set; }
 
             [Required]
             [EmailAddress]
@@ -47,6 +114,13 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
             [DataType(DataType.Password)]
             [DisableAuditing]
             public string Password { get; set; }
+
+            [Required]
+            [DynamicStringLength(typeof(IdentityUserConsts), nameof(IdentityUserConsts.MaxPasswordLength))]
+            [DataType(DataType.Password)]
+            [DisableAuditing]
+            public string ConfirmPassword { get; set; }
+
         }
     }
 }
