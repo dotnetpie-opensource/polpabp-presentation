@@ -42,6 +42,13 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 
         public virtual async Task<IActionResult> OnPostAsync(string action)
         {
+            // Shortcut
+            if (IsRegistrationDisabled)
+            {
+                Alerts.Warning("Registertion is not available now. Please try it later!");
+                return Page();
+            }
+
             if (action == "Input")
             {
                 try
@@ -73,13 +80,13 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
             using (CurrentTenant.Change(tenant.Id, tenant.Name))
             {
                 await DataSeeder.SeedAsync(new DataSeedContext(tenant.Id)
-                    .WithProperty("AdminEmail", Input.EmailAddress)
+                    .WithProperty("AdminEmail", Input.AdminEmailAddress)
                     .WithProperty("AdminPassword", Input.Password));
 
             }
             // Send out a confirmation email, regardless the current tenant.
             // Send it instantly, because the user is waiting for it.
-            await AccountEmailer.SendEmailActivationLinkAsync(Input.EmailAddress);
+            await AccountEmailer.SendEmailActivationLinkAsync(Input.AdminEmailAddress);
 
         }
 
@@ -87,7 +94,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
         {
             get
             {
-                return Configuration.GetValue<bool>("PolpAbpFramework:BackgroundEmail");
+                return Configuration.GetValue<bool>("PolpAbpFramework:RegistrationDisabled");
             }
         }
 
@@ -107,7 +114,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
             [Required]
             [EmailAddress]
             [DynamicStringLength(typeof(IdentityUserConsts), nameof(IdentityUserConsts.MaxEmailLength))]
-            public string EmailAddress { get; set; }
+            public string AdminEmailAddress { get; set; }
 
             [Required]
             [DynamicStringLength(typeof(IdentityUserConsts), nameof(IdentityUserConsts.MaxPasswordLength))]

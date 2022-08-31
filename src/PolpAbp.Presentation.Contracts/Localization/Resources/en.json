@@ -1,6 +1,10 @@
 {
   "culture": "en",
   "texts": {
+    "DisplayName:TenantName": "Organization name",
+    "Description:TenantName": "A unique name to idenity your organization.",
+    "DisplayName:AdminEmailAddress": "Administrator email address",
+    "Description:AdminEmailAddress": "The email address of the intended administrator.",
     "DisplayName:TenantOrEmailAddress": "Your email address or your organization name",
     "DisplayName:Presentation.Account.Web.IsHostRecaptchaEnabled": "Is Recaptcha enabled",
     "Description:Presentation.Account.Web.IsHostRecaptchaEnabled": "Indicates if the server will enable Recaptcha to protect the system from attackers.",
