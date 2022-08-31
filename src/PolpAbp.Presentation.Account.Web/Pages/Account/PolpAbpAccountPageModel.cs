@@ -28,6 +28,8 @@ public abstract class PolpAbpAccountPageModel : AbpPageModel
     public IOptions<IdentityOptions> IdentityOptions { get; set; }
     public IExceptionToErrorInfoConverter ExceptionToErrorInfoConverter { get; set; }
 
+    protected IConfiguration Configuration => LazyServiceProvider.LazyGetRequiredService<IConfiguration>();
+
     protected PolpAbpAccountPageModel()
     {
         LocalizationResourceType = typeof(AccountResource);

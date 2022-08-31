@@ -15,7 +15,6 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 
         public bool IsUserNameEnabled { get; set; }
 
-        protected IConfiguration Configuration => LazyServiceProvider.LazyGetRequiredService<IConfiguration>();
 
         protected virtual async Task LoadSettingsAsync()
         {
