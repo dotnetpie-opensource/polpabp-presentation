@@ -21,12 +21,12 @@ public abstract class PolpAbpAccountPageModel : AbpPageModel
     [BindProperty(SupportsGet = true)]
     public string? ReturnUrlHash { get; set; }
 
-    public IAccountAppService AccountAppService { get; set; }
-    public SignInManager<IdentityUser> SignInManager { get; set; }
-    public IdentityUserManager UserManager { get; set; }
-    public IdentitySecurityLogManager IdentitySecurityLogManager { get; set; }
-    public IOptions<IdentityOptions> IdentityOptions { get; set; }
-    public IExceptionToErrorInfoConverter ExceptionToErrorInfoConverter { get; set; }
+    protected IAccountAppService AccountAppService => LazyServiceProvider.LazyGetRequiredService<IAccountAppService>();
+    protected SignInManager<IdentityUser> SignInManager => LazyServiceProvider.LazyGetRequiredService<SignInManager<IdentityUser>>();
+    protected IdentityUserManager UserManager => LazyServiceProvider.LazyGetRequiredService<IdentityUserManager>();
+    protected IdentitySecurityLogManager IdentitySecurityLogManager => LazyServiceProvider.LazyGetRequiredService<IdentitySecurityLogManager>();
+    protected IOptions<IdentityOptions> IdentityOptions => LazyServiceProvider.LazyGetRequiredService<IOptions<IdentityOptions>>();
+    protected IExceptionToErrorInfoConverter ExceptionToErrorInfoConverter => LazyServiceProvider.LazyGetRequiredService<IExceptionToErrorInfoConverter>();
 
     protected IConfiguration Configuration => LazyServiceProvider.LazyGetRequiredService<IConfiguration>();
 

@@ -14,18 +14,22 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
         [BindProperty]
         public InputModel Input { get; set; }
 
+        public ForgotPasswordModel() : base()
+        {
+            Input = new InputModel();
+        }
+
         public virtual async Task<IActionResult> OnGetAsync()
         {
             // Load settings
             await LoadSettingsAsync();
 
-            Input = new InputModel();
             Input.UserNameOrEmailAddress = NormalizedUserNameOrEmailAddress;
 
             return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync(string action)
+        public virtual async Task<IActionResult> OnPostAsync(string action)
         {
             // Load settings
             await LoadSettingsAsync();

@@ -14,19 +14,22 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
         [BindProperty]
         public LoginInputModel Input { get; set; }
 
+        public LoginModel() : base()
+        {
+            Input = new LoginInputModel();
+        }
+
         public virtual async Task<IActionResult> OnGetAsync()
         {
             // Load settings
             await LoadSettingsAsync();
 
-            // todo: Input has been initialized?
-            Input = new LoginInputModel();
             Input.UserNameOrEmailAddress = NormalizedUserNameOrEmailAddress;
 
             return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync(string action)
+        public virtual async Task<IActionResult> OnPostAsync(string action)
         {
             // Load settings
             await LoadSettingsAsync();

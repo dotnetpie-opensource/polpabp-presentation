@@ -1,0 +1,42 @@
+﻿@page
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Microsoft.Extensions.Localization
+@using Volo.Abp.Account.Localization
+@using Volo.Abp.Account.Settings
+@using Volo.Abp.AspNetCore.Mvc.UI.MultiTenancy.Localization
+@using Volo.Abp.Settings
+@using AspNetCore.ReCaptcha
+@model PolpAbp.Presentation.Account.Web.Pages.Account.RegisterDefineAdminModel
+@inject IHtmlLocalizer<AccountResource> L
+
+<h4 class="mb-4 fw-semibold">
+    Create your organization
+</h4>
+
+<div class="progress">
+    <div aria-valuemax="100" aria-valuemin="0" aria-valuenow="50" class="progress-bar progress-bar-striped progress-bar-animated bg-danger" role="progressbar" style="width: 66%"></div>
+</div>
+
+<form method="post" class="py-4">
+    <h5 class="mb-4">
+        <span class="badge bg-dark me-1">2/3</span> 
+        Next, please provide the administrator information
+    </h5>
+
+    <abp-input asp-for="Input.AdminEmailAddress" auto-focus="true" />
+
+    <abp-input asp-for="Input.Password" value="@Model.Input.Password" />
+
+    <abp-input asp-for="Input.ConfirmPassword" value="@Model.Input.ConfirmPassword" />
+
+    <div class="d-grid gap-2">
+        <abp-button type="submit" button-type="Primary" name="Action" value="Input" class="btn-lg mt-3">
+            @L["Continue"]
+            <span class="spinner-box"></span>
+        </abp-button>
+        <abp-button type="submit" button-type="Secondary" formnovalidate="formnovalidate" name="Action" value="Cancel" class="btn-lg mt-3">
+            @L["Back"]
+        </abp-button>
+    </div>
+
+</form>

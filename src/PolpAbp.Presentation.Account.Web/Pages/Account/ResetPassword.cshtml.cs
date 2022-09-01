@@ -19,21 +19,21 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
         [Required]
         [HiddenInput]
         [BindProperty(SupportsGet = true)]
-        public string ResetToken { get; set; }
+        public string? ResetToken { get; set; }
 
         [Required]
         [BindProperty]
         [DataType(DataType.Password)]
         [DynamicStringLength(typeof(IdentityUserConsts), nameof(IdentityUserConsts.MaxPasswordLength))]
         [DisableAuditing]
-        public string Password { get; set; }
+        public string? Password { get; set; }
 
         [Required]
         [BindProperty]
         [DataType(DataType.Password)]
         [DynamicStringLength(typeof(IdentityUserConsts), nameof(IdentityUserConsts.MaxPasswordLength))]
         [DisableAuditing]
-        public string ConfirmPassword { get; set; }
+        public string? ConfirmPassword { get; set; }
 
         public virtual Task<IActionResult> OnGetAsync()
         {

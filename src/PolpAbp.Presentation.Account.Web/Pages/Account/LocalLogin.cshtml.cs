@@ -18,18 +18,22 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
         [BindProperty]
         public PostInput Input { get; set; }
 
+        public LocalLoginModel() : base()
+        {
+            Input = new PostInput();
+        }
+
         public virtual async Task<IActionResult> OnGetAsync()
         {
             // Load settings
             await LoadSettingsAsync();
 
-            Input = new PostInput();
             Input.UserNameOrEmailAddress = NormalizedUserNameOrEmailAddress;
 
             return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync(string action)
+        public virtual async Task<IActionResult> OnPostAsync(string action)
         {
             // Load settings
             await LoadSettingsAsync();

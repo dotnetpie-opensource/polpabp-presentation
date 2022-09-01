@@ -7,8 +7,9 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
     [Authorize]
     public class MainAppModel : PolpAbpAccountPageModel
     {
-        public void OnGet()
+        public virtual Task<IActionResult> OnGetAsync()
         {
+            return Task.FromResult<IActionResult>(Page());
         }
     }
 }

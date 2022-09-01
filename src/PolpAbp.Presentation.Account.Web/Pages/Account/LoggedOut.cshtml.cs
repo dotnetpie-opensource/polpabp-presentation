@@ -1,6 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using static PolpAbp.Presentation.Account.Web.Pages.Account.LoginModel;
 
 namespace PolpAbp.Presentation.Account.Web.Pages.Account
 {

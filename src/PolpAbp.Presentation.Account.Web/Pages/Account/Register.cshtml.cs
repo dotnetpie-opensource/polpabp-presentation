@@ -1,20 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using PolpAbp.Framework.Emailing.Account;
-using PolpAbp.Presentation.Account.Web.Settings;
 using System.ComponentModel.DataAnnotations;
-using Volo.Abp;
-using Volo.Abp.Auditing;
-using Volo.Abp.Data;
-using Volo.Abp.Identity;
-using Volo.Abp.Settings;
-using Volo.Abp.TenantManagement;
-using Volo.Abp.Validation;
 
 namespace PolpAbp.Presentation.Account.Web.Pages.Account
 {
     [OnlyAnonymous]
-    public class RegisterModel : PolpAbpAccountPageModel
+    public class RegisterModel : RegisterModelBase
     {
         [BindProperty]
         public PostInput Input { get; set; }
@@ -22,86 +12,50 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
         [BindProperty(SupportsGet = true)]
         public bool IsExternalLogin { get; set; }
 
-        [BindProperty(SupportsGet = true)]
-        public string ExternalLoginAuthSchema { get; set; }
-
-        public bool IsRecaptchaEnabled { get; set; }
-
-        // DI
-        public ITenantManager TenantManager { get; set; }
-        public ITenantRepository TenantRepository { get; set; }
-        public IDataSeeder DataSeeder { get; set; }
-
-        protected IFrameworkAccountEmailer AccountEmailer => LazyServiceProvider.LazyGetRequiredService<IFrameworkAccountEmailer>();
-
-        public virtual Task<IActionResult> OnGetAsync()
+        public RegisterModel() : base()
         {
+            Input = new PostInput();
+        }
+
+
+        public virtual async Task<IActionResult> OnGetAsync()
+        {
+            await LoadSettingsAsync();
+
+            Input.TenantName = TempData.Peek(nameof(PostInput.TenantName))?.ToString() ?? string.Empty;
             // Render page 
-            return Task.FromResult(Page() as IActionResult);
+            return Page();
         }
 
         public virtual async Task<IActionResult> OnPostAsync(string action)
         {
+            await LoadSettingsAsync();
+
             // Shortcut
             if (IsRegistrationDisabled)
             {
-                Alerts.Warning("Registertion is not available now. Please try it later!");
+                Alerts.Warning("Registration is not available now. Please try it later!");
                 return Page();
             }
 
             if (action == "Input")
             {
-                try
-                {
-                    await RegisterTenantAsync();
+                // Validate model
+                ValidateModel();
 
-                    // Success and then instructions
-                    return RedirectToPage("./RegisterSuccess");
-
-                }
-                catch (Exception e)
+                if (!string.Equals(TempData.Peek(nameof(PostInput.TenantName))?.ToString(), Input.TenantName))
                 {
-                    Alerts.Danger(GetLocalizeExceptionMessage(e));
-                    return Page();
+                    // Clean up data 
+                    _ = TempData["Password"];
                 }
+
+                TempData[nameof(PostInput.TenantName)] = Input.TenantName;
+
+                // Success and then instructions
+                return RedirectToPage("./RegisterDefineAdmin");
             }
 
             return Page();
-        }
-
-        protected async Task RegisterTenantAsync()
-        {
-            // todo: Verify if the tenant name is available or not.
-            var tenant = await TenantManager.CreateAsync(Input.TenantName);
-            await TenantRepository.InsertAsync(tenant, true); // Save automatically
-
-            // Create data for tenant.
-            // 1. The admin
-            using (CurrentTenant.Change(tenant.Id, tenant.Name))
-            {
-                await DataSeeder.SeedAsync(new DataSeedContext(tenant.Id)
-                    .WithProperty("AdminEmail", Input.AdminEmailAddress)
-                    .WithProperty("AdminPassword", Input.Password));
-
-            }
-            // Send out a confirmation email, regardless the current tenant.
-            // Send it instantly, because the user is waiting for it.
-            await AccountEmailer.SendEmailActivationLinkAsync(Input.AdminEmailAddress);
-
-        }
-
-        protected bool IsRegistrationDisabled
-        {
-            get
-            {
-                return Configuration.GetValue<bool>("PolpAbpFramework:RegistrationDisabled");
-            }
-        }
-
-        protected async Task LoadSettingsAsync()
-        {
-            // Use host ...
-            IsRecaptchaEnabled = await SettingProvider.IsTrueAsync(AccountWebSettingNames.IsHostRecaptchaEnabled);
         }
 
         public class PostInput
@@ -109,25 +63,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
             [Required]
             [MinLength(4)]
             [MaxLength(256)]
-            public string TenantName { get; set; }
-
-            [Required]
-            [EmailAddress]
-            [DynamicStringLength(typeof(IdentityUserConsts), nameof(IdentityUserConsts.MaxEmailLength))]
-            public string AdminEmailAddress { get; set; }
-
-            [Required]
-            [DynamicStringLength(typeof(IdentityUserConsts), nameof(IdentityUserConsts.MaxPasswordLength))]
-            [DataType(DataType.Password)]
-            [DisableAuditing]
-            public string Password { get; set; }
-
-            [Required]
-            [DynamicStringLength(typeof(IdentityUserConsts), nameof(IdentityUserConsts.MaxPasswordLength))]
-            [DataType(DataType.Password)]
-            [DisableAuditing]
-            public string ConfirmPassword { get; set; }
-
+            public string? TenantName { get; set; }
         }
     }
 }

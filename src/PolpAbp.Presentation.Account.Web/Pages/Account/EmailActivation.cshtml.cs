@@ -1,12 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using PolpAbp.Presentation.Account.Web.Pages.Account;
-using Volo.Abp.AspNetCore.Mvc.UI.RazorPages;
+using System.ComponentModel.DataAnnotations;
 using Volo.Abp.MultiTenancy;
 using Volo.Abp.TenantManagement;
 
@@ -29,27 +22,27 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
         [Required]
         [HiddenInput]
         [BindProperty(SupportsGet = true)]
-        public string ConfirmationCode { get; set; }
+        public string? ConfirmationCode { get; set; }
 
-        public string TenantName { get; set; }
+        public string? TenantName { get; set; }
 
-        public string EmailName { get; set; }
+        public string? EmailName { get; set; }
 
         public ActivationState State { get; set; }
 
-        protected virtual ITenantResolveResultAccessor TenantResolveResultAccessor { get; }
-        private readonly ITenantRepository _tenantRepository;
+        protected readonly ITenantResolveResultAccessor TenantResolveResultAccessor;
+        protected readonly ITenantRepository TenantRepository;
 
         public EmailActivationModel(ITenantResolveResultAccessor tenantResolveResultAccessor,
-            ITenantRepository tenantRepository)
+            ITenantRepository tenantRepository) : base()
         {
             TenantResolveResultAccessor = tenantResolveResultAccessor;
-            _tenantRepository = tenantRepository;
+            TenantRepository = tenantRepository;
         }
 
         public async virtual Task<IActionResult> OnGet()
         {
-            var tenant = await _tenantRepository.GetAsync(TenantId);
+            var tenant = await TenantRepository.GetAsync(TenantId);
             if (tenant != null)
             {
                 TenantName = tenant.Name;

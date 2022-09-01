@@ -1,13 +1,11 @@
 using AspNetCore.ReCaptcha;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.Extensions.Localization;
 using PolpAbp.Framework.Identity;
 using PolpAbp.Presentation.Account.Web.Settings;
 using System.ComponentModel.DataAnnotations;
 using System.Web;
 using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap.TagHelpers.Form;
-using Volo.Abp.AspNetCore.Mvc.UI.MultiTenancy.Localization;
 using Volo.Abp.Data;
 using Volo.Abp.Identity;
 using Volo.Abp.MultiTenancy;
@@ -35,12 +33,27 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
         public bool IsRecaptchaEnabled { get; set; }
 
         // DI
-        public IDataFilter DataFilter { get; set; }
-        public IIdentityUserRepositoryExt IdentityUserRepositoryExt { get; set; }
-        public ITenantRepository TenantRepository { get; set; }
-        public IReCaptchaService RecaptchaService { get; set; }
+        protected readonly IDataFilter DataFilter;
+        protected readonly IIdentityUserRepositoryExt IdentityUserRepositoryExt;
+        protected readonly ITenantRepository TenantRepository;
+        protected readonly IReCaptchaService RecaptchaService;
 
         public string NormalizedTenantOrEmailAddress => HttpUtility.UrlDecode(TenantOrEmailAddress ?? string.Empty);
+
+        public FindUserModel(IDataFilter dataFilter,
+            IIdentityUserRepositoryExt identityUserRepositoryExt,
+            ITenantRepository tenantRepository,
+            IReCaptchaService reCaptchaService) : base()
+        {
+            DataFilter = dataFilter;
+            IdentityUserRepositoryExt = identityUserRepositoryExt;
+            TenantRepository = tenantRepository;
+            RecaptchaService = reCaptchaService;
+
+            Input = new PostInput();
+            Selection = new PostSelect();
+            TenantList = new List<SelectListItem>();
+        }
 
         public virtual async Task<IActionResult> OnGetAsync()
         {
@@ -57,7 +70,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
             return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync(string action)
+        public virtual async Task<IActionResult> OnPostAsync(string action)
         {
             // Load settings
             await LoadSettingsAsync();
