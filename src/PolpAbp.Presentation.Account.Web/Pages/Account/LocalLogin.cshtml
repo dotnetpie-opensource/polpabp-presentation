@@ -65,3 +65,13 @@
         </abp-button>
     </div>
 </form>
+
+<!-- todo: Add a condition -->
+<div class="d-flex flex-column align-items-start mt-5 mb-3">
+    <h6>Help links</h6>
+    <ul>
+        <li>
+            <a class="btn btn-link fst-italic" href="@Url.Page("./ResendActivationLink", new {UserNameOrEmailAddress = Model.Input.UserNameOrEmailAddress})">@L["ResendActivationLink"]</a>
+        </li>
+    </ul>
+</div>

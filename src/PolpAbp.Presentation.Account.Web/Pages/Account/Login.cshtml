@@ -32,15 +32,11 @@
 
     @if (Model.IsUserNameEnabled)
     {
-        <div class="mb-3">
-            <abp-input asp-for="Input.UserNameOrEmailAddress" auto-focus="true" />
-        </div>
+        <abp-input asp-for="Input.UserNameOrEmailAddress" auto-focus="true" />
     }
     else
     {
-        <div class="mb-3">
-            <abp-input asp-for="Input.UserNameOrEmailAddress" auto-focus="true" label="@L["DisplayName:Email"].Value" />
-        </div>
+        <abp-input asp-for="Input.UserNameOrEmailAddress" auto-focus="true" label="@L["DisplayName:Email"].Value" />
     }
 
     <div class="d-grid gap-2">
@@ -50,3 +46,14 @@
         </abp-button>
     </div>
 </form>
+
+<!-- todo: Add a condition -->
+<div class="d-flex flex-column align-items-start mt-5 mb-3">
+    <h6>Help links</h6>
+    <ul>
+        <!-- todo: Add a link for the member registration -->
+        <li>
+            <a class="btn btn-link fst-italic" href="@Url.Page("./ResendActivationLink", new {UserNameOrEmailAddress = Model.Input.UserNameOrEmailAddress})">@L["ResendActivationLink"]</a>
+        </li>
+    </ul>
+</div>
