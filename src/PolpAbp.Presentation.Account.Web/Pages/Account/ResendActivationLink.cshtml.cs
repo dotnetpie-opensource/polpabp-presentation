@@ -68,7 +68,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                     try
                     {
                         // Send it instantly, because the user is waiting for it.
-                        await AccountEmailer.SendEmailActivationLinkAsync(user.Email);
+                        await AccountEmailer.SendEmailActivationLinkAsync(user.Id);
                     }
                     catch (UserFriendlyException e)
                     {

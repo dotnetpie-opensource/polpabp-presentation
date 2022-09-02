@@ -75,6 +75,8 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
             var tenant = await TenantManager.CreateAsync(Input.TenantName);
             await TenantRepository.InsertAsync(tenant, true); // Save automatically
 
+            IdentityUser admin = null;
+
             // Create data for tenant.
             // 1. The admin
             using (CurrentTenant.Change(tenant.Id, tenant.Name))
@@ -83,11 +85,11 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                     .WithProperty("AdminEmail", Input.AdminEmailAddress)
                     .WithProperty("AdminPassword", Input.Password));
 
+                admin = await UserManager.FindByEmailAsync(Input.AdminEmailAddress);
             }
             // Send out a confirmation email, regardless the current tenant.
             // Send it instantly, because the user is waiting for it.
-            await AccountEmailer.SendEmailActivationLinkAsync(Input.AdminEmailAddress);
-
+            await AccountEmailer.SendEmailActivationLinkAsync(admin!.Id);
         }
 
         public class PostInput
