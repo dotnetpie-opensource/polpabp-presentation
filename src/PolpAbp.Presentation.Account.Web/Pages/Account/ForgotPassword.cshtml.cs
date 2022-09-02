@@ -1,8 +1,11 @@
+using AspNetCore.ReCaptcha;
 using Microsoft.AspNetCore.Mvc;
+using PolpAbp.Presentation.Account.Web.Settings;
 using System.ComponentModel.DataAnnotations;
 using Volo.Abp;
 using Volo.Abp.Account;
 using Volo.Abp.Identity;
+using Volo.Abp.Settings;
 using Volo.Abp.Validation;
 
 namespace PolpAbp.Presentation.Account.Web.Pages.Account
@@ -36,6 +39,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 
             if (action == "Input")
             {
+
                 ValidateModel();
 
                 if (!IsUserNameEnabled)

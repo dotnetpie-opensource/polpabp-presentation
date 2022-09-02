@@ -24,9 +24,7 @@
 
     <form method="post">
 
-        <div class="mb-3">
-            <abp-select asp-for="Selection.Id" label="@M["Tenant"].Value" />
-        </div>
+        <abp-select asp-for="Selection.Id" label="@M["Tenant"].Value" />
 
         <div class="d-grid gap-2">
             <abp-button type="submit" button-type="Primary" name="Action" value="Selection" class="btn-lg mt-3">
@@ -48,9 +46,7 @@ else
     </div>
 
     <form method="post">
-        <div class="mb-3">
-            <abp-input asp-for="Input.TenantOrEmailAddress" auto-focus="true" />
-        </div>
+        <abp-input asp-for="Input.TenantOrEmailAddress" auto-focus="true" />
 
         @if (Model.IsRecaptchaEnabled)
         {

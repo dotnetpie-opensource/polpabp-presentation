@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using PolpAbp.Framework.Identity;
 using PolpAbp.Presentation.Account.Web.Settings;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 using System.Web;
 using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap.TagHelpers.Form;
 using Volo.Abp.Data;
@@ -29,8 +30,6 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
         public PostSelect Selection { get; set; }
 
         public List<SelectListItem> TenantList { get; set; }
-
-        public bool IsRecaptchaEnabled { get; set; }
 
         // DI
         protected readonly IDataFilter DataFilter;
@@ -77,11 +76,10 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 
             if (action == "Input")
             {
-
                 if (IsRecaptchaEnabled)
                 {
-                    _ = HttpContext.Request.Form.TryGetValue(PresentationAccountWebConstants.RecaptchaReponseKey, out var reCaptchaResponse);
-                    var isGood = await RecaptchaService.VerifyAsync(reCaptchaResponse);
+                    var recaptchaValue = ParseRecaptchResponse();
+                    var isGood = await RecaptchaService.VerifyAsync(recaptchaValue);
                     if (!isGood)
                     {
                         // TODO: localization
@@ -94,8 +92,8 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                 // Tenant not set this moment.
                 ValidateModel();
 
-                // Return all tenants
-                await AttemptBuildTenantsAync(Input.TenantOrEmailAddress);
+                // Return all tenants 
+                await AttemptBuildTenantsAync(Input.TenantOrEmailAddress!); // after validation not null
 
                 if (TenantList.Count == 0)
                 {
@@ -188,16 +186,16 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
             }
         }
 
-        protected async Task LoadSettingsAsync()
+        protected override async Task LoadSettingsAsync()
         {
-            // Use host ...
-            IsRecaptchaEnabled = await SettingProvider.IsTrueAsync(AccountWebSettingNames.IsHostRecaptchaEnabled);
+            await base.LoadSettingsAsync();
+            await ReadInRecaptchaEnabledAsync();
         }
 
         public class PostInput
         {
             [Required]
-            public string TenantOrEmailAddress { get; set; }
+            public string? TenantOrEmailAddress { get; set; }
         }
 
         public class PostSelect

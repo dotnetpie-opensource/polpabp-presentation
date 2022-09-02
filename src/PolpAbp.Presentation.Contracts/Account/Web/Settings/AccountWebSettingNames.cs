@@ -2,17 +2,18 @@
 {
     public class AccountWebSettingNames
     {
-        /// <summary>
-        /// Decides if Recaptcha is enabled for the host.
-        /// </summary>
-        public const string IsHostRecaptchaEnabled = "PolpAbp.Presentation.Account.Web.IsHostRecaptchaEnabled";
-
         // Decides if Recaptcha is enabled for the tenant.
-        public const string IsTenantRecaptchaEnabled = "PolpAbp.Presentation.Account.Web.IsTenantRecaptchaEnabled";
+        public const string IsTenantRecaptchaDisabled = "PolpAbp.Presentation.Account.Web.IsTenantRecaptchaDisabled";
 
         /// <summary>
         /// Decides if the user name is used for login for the tenant.
         /// </summary>
-        public const string IsUserNameEnabled = "PolpAbp.Presentation.Account.Web.IsUserNameEnabled";
+        public const string IsTenantUserNameEnabled = "PolpAbp.Presentation.Account.Web.IsTenantUserNameEnabled";
+
+        /// <summary>
+        /// Decides if the registration is disabled or not for the tenant .
+        /// </summary>
+        public const string IsTenantRegistrationDisabled = "PolpAbp.Presentation.Account.Web.IsTenantRegistrationDisabled";
+
     }
 }

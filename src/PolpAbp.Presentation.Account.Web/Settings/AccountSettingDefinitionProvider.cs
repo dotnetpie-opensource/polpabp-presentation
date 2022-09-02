@@ -10,26 +10,26 @@ namespace PolpAbp.Presentation.Account.Web.Settings
         {
             context.Add(
                 new SettingDefinition(
-                    AccountWebSettingNames.IsHostRecaptchaEnabled,
+                    AccountWebSettingNames.IsTenantRegistrationDisabled,
                     "false",
-                    L("DisplayName:Presentation.Account.Web.IsHostRecaptchaEnabled"),
-                    L("Description:Presentation.Account.Web.IsHostRecaptchaEnabled"), isVisibleToClients: true)
+                    L("DisplayName:Presentation.Account.Web.IsTenantRegistrationDisabled"),
+                    L("Description:Presentation.Account.Web.IsTenantRegistrationDisabled"), isVisibleToClients: true)
             );
 
             context.Add(
                 new SettingDefinition(
-                    AccountWebSettingNames.IsTenantRecaptchaEnabled,
+                    AccountWebSettingNames.IsTenantRecaptchaDisabled,
                     "false",
-                    L("DisplayName:Presentation.Account.Web.IsTenantRecaptchaEnabled"),
-                    L("Description:Presentation.Account.Web.IsTenantRecaptchaEnabled"), isVisibleToClients: true)
+                    L("DisplayName:Presentation.Account.Web.IsTenantRecaptchaDisabled"),
+                    L("Description:Presentation.Account.Web.IsTenantRecaptchaDisabled"), isVisibleToClients: true)
             );
 
             context.Add(
                 new SettingDefinition(
-                    AccountWebSettingNames.IsUserNameEnabled,
+                    AccountWebSettingNames.IsTenantUserNameEnabled,
                     "false",
-                    L("DisplayName:Presentation.Account.Web.IsUserNameEnabled"),
-                    L("Description:Presentation.Account.Web.IsUserNameEnabled"), isVisibleToClients: true)
+                    L("DisplayName:Presentation.Account.Web.IsTenantUserNameEnabled"),
+                    L("Description:Presentation.Account.Web.IsTenantUserNameEnabled"), isVisibleToClients: true)
             );
         }
 

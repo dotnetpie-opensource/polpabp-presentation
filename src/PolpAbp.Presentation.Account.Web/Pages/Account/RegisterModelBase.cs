@@ -1,14 +1,11 @@
 ﻿using PolpAbp.Framework.Emailing.Account;
-using PolpAbp.Presentation.Account.Web.Settings;
 using Volo.Abp.Data;
-using Volo.Abp.Settings;
 using Volo.Abp.TenantManagement;
 
 namespace PolpAbp.Presentation.Account.Web.Pages.Account
 {
     public class RegisterModelBase : PolpAbpAccountPageModel
     {
-        public bool IsRecaptchaEnabled { get; set; }
 
         // DI
         protected ITenantManager TenantManager => LazyServiceProvider.LazyGetRequiredService<ITenantManager>();
@@ -17,7 +14,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 
         protected IFrameworkAccountEmailer AccountEmailer => LazyServiceProvider.LazyGetRequiredService<IFrameworkAccountEmailer>();
 
-
+        // System determined, regardless the tenant.
         protected bool IsRegistrationDisabled
         {
             get
@@ -26,10 +23,5 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
             }
         }
 
-        protected async Task LoadSettingsAsync()
-        {
-            // Use host ...
-            IsRecaptchaEnabled = await SettingProvider.IsTrueAsync(AccountWebSettingNames.IsHostRecaptchaEnabled);
-        }
     }
 }

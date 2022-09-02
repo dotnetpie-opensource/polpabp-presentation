@@ -1,3 +1,4 @@
+using AspNetCore.ReCaptcha;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using Volo.Abp.Auditing;
@@ -12,11 +13,13 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
         [BindProperty]
         public PostInput Input { get; set; }
 
-        public RegisterConfirmModel() : base()
+        protected readonly IReCaptchaService RecaptchaService;
+
+        public RegisterConfirmModel(IReCaptchaService recaptchaService) : base()
         {
+            RecaptchaService = recaptchaService;
             Input = new PostInput();
         }
-
 
         public virtual async Task<IActionResult> OnGetAsync()
         {
@@ -44,8 +47,21 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 
             if (action == "Input")
             {
+                if (IsRecaptchaEnabled)
+                {
+                    var recaptchaValue = ParseRecaptchResponse();
+                    var isGood = await RecaptchaService.VerifyAsync(recaptchaValue);
+                    if (!isGood)
+                    {
+                        // TODO: localization
+                        Alerts.Danger("Please verify that you are not a robot.");
+
+                        return Page();
+                    }
+                }
+
                 ValidateModel();
-                
+
                 try
                 {
                     await RegisterTenantAsync();
@@ -90,6 +106,13 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
             // Send out a confirmation email, regardless the current tenant.
             // Send it instantly, because the user is waiting for it.
             await AccountEmailer.SendEmailActivationLinkAsync(admin!.Id);
+        }
+
+        protected override async Task LoadSettingsAsync()
+        {
+            await base.LoadSettingsAsync();
+            // Use host ...
+            await ReadInRecaptchaEnabledAsync();
         }
 
         public class PostInput

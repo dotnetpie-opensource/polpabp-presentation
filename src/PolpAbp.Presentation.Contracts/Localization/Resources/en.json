@@ -6,12 +6,12 @@
     "DisplayName:AdminEmailAddress": "Administrator email address",
     "Description:AdminEmailAddress": "The email address of the intended administrator.",
     "DisplayName:TenantOrEmailAddress": "Your email address or your organization name",
-    "DisplayName:Presentation.Account.Web.IsHostRecaptchaEnabled": "Is Recaptcha enabled",
-    "Description:Presentation.Account.Web.IsHostRecaptchaEnabled": "Indicates if the server will enable Recaptcha to protect the system from attackers.",
-    "DisplayName:Presentation.Account.Web.IsTenantRecaptchaEnabled": "Is Recaptcha enabled",
-    "Description:Presentation.Account.Web.IsTenantRecaptchaEnabled": "Indicates if the server will enable Recaptcha to protect the system from attackers.",
-    "DisplayName:Presentation.Account.Web.IsUserNameEnabled": "Is Username enabled",
-    "Description:Presentation.Account.Web.IsUserNameEnabled": "Indicates if the user name is used for login",
+    "DisplayName:Presentation.Account.Web.IsTenantRecaptchaDisabled": "Is Recaptcha disabled",
+    "Description:Presentation.Account.Web.IsTenantRecaptchaDisabled": "Indicates if the server will disable Recaptcha.",
+    "DisplayName:Presentation.Account.Web.IsTenantUserNameEnabled": "Is Username enabled",
+    "Description:Presentation.Account.Web.IsTenantUserNameEnabled": "Indicates if the user name is used for login",
+    "DisplayName:Presentation.Account.Web.IsTenantRegistrationDisabled": "Is registration disabled",
+    "Description:Presentation.Account.Web.IsTenantRegistrationDisabled": "Indicates if the registraion is disabled",
     "LoggedOutText": "You have been signed out!"
   }
 }

@@ -42,6 +42,8 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 
         public async virtual Task<IActionResult> OnGet()
         {
+            await LoadSettingsAsync();
+
             var tenant = await TenantRepository.GetAsync(TenantId);
             if (tenant != null)
             {
