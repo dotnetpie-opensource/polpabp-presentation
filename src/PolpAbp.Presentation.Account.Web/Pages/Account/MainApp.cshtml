@@ -1,5 +1,46 @@
 ﻿@page
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Microsoft.Extensions.Localization
+@using Volo.Abp.Account.Localization
+@using Volo.Abp.Account.Settings
+@using Volo.Abp.AspNetCore.Mvc.UI.MultiTenancy.Localization
+@using Volo.Abp.AspNetCore.Mvc.UI.Theming
+@using Volo.Abp.Settings
+@using AspNetCore.ReCaptcha
 @model PolpAbp.Presentation.Account.Web.Pages.Account.MainAppModel
+@inject IHtmlLocalizer<AccountResource> L
+@inject IThemeManager ThemeManager
 @{
-
+    Layout = ThemeManager.CurrentTheme.GetApplicationLayout();
+    ViewBag.FluidLayout = false;
+    ViewBag.Title = "Default Entry for Authenticated Users";
 }
+
+
+<abp-row>
+    <abp-column class="col mx-auto w-lg-max-500 min-vh-100 p-10 p-lg-15">
+
+        <div class="d-flex justify-content-center my-4">
+            <h3>
+                @Model.UserAccountInfo.Organization
+            </h3>
+        </div>
+
+        <div class="card shadow-sm rounded mb-3">
+            <div class="card-body p-5">
+                
+                <h4 class="mb-4 fw-semibold">
+                    @Model.UserAccountInfo.FullName
+                </h4>
+
+                <p>
+                    You have logged into your system.
+                </p>
+
+                <a abp-button="Primary" asp-page="./Logout">@L["Logout"]</a>
+            </div>
+        </div>
+
+    </abp-column>
+</abp-row>
+

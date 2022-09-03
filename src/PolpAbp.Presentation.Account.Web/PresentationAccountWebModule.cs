@@ -10,6 +10,7 @@ using Volo.Abp.ExceptionHandling;
 using Volo.Abp.Identity.AspNetCore;
 using Volo.Abp.Modularity;
 using Volo.Abp.TenantManagement;
+using Volo.Abp.UI.Navigation;
 using Volo.Abp.VirtualFileSystem;
 
 namespace PolpAbp.Presentation.Account.Web
@@ -48,7 +49,14 @@ namespace PolpAbp.Presentation.Account.Web
                 options.FileSets.AddEmbedded<PresentationAccountWebModule>();
             });
 
+
+            Configure<AbpNavigationOptions>(options =>
+            {
+                options.MenuContributors.Add(new PresentationAccountUserMenuContributor());
+            });
+
             context.Services.AddAutoMapperObjectMapper<PresentationAccountWebModule>();
+            
             Configure<AbpAutoMapperOptions>(options =>
             {
                 options.AddProfile<PresentationAccountWebAutomapperProfile>(validate: true);

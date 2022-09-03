@@ -7,8 +7,11 @@
 @using Volo.Abp.Settings
 @using AspNetCore.ReCaptcha
 @model PolpAbp.Presentation.Account.Web.Pages.Account.LocalLoginModel
-
 @inject IHtmlLocalizer<AccountResource> L
+@{
+    ViewBag.Title = "Login with Your User Name/Email and Password";
+    ViewBag.Description = "Logs into the system with the pair of your user name/email and your password.";
+}
 
 <h4 class="mb-4 fw-semibold">
     Login

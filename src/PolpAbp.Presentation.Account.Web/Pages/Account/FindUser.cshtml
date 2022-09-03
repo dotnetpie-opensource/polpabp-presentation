@@ -9,6 +9,10 @@
 @model PolpAbp.Presentation.Account.Web.Pages.Account.FindUserModel
 @inject IHtmlLocalizer<AccountResource> L
 @inject IHtmlLocalizer<AbpUiMultiTenancyResource> M
+@{
+    ViewBag.Title = "Locates Your Account Information";
+    ViewBag.Description = "Finds out your account information with your organization name or your user name or your email.";
+}
 
 <h4 class="mb-4 fw-semibold">
     Locating your information

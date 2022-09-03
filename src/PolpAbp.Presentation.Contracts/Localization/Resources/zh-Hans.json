@@ -12,6 +12,7 @@
     "Description:Presentation.Account.Web.IsTenantUserNameEnabled": "Indicates if the user name is used for login",
     "DisplayName:Presentation.Account.Web.IsTenantRegistrationDisabled": "Is registration disabled",
     "Description:Presentation.Account.Web.IsTenantRegistrationDisabled": "Indicates if the registraion is disabled",
-    "LoggedOutText": "You have been signed out!"
+    "LoggedOutText": "You have been signed out!",
+    "MainApp": "Application Page"
   }
 }

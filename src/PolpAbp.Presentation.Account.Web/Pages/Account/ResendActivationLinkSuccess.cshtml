@@ -8,6 +8,10 @@
 @using AspNetCore.ReCaptcha
 @model PolpAbp.Presentation.Account.Web.Pages.Account.ResendActivationLinkSuccessModel
 @inject IHtmlLocalizer<AccountResource> L
+@{
+    ViewBag.Title = "Success Message Following Resending Account Activation Link";
+    ViewBag.Description = "Displays the success message after your account activation link is sent out.";
+}
 
 <h4 class="mb-4 fw-semibold">
     @L["ResendActivationLink"]

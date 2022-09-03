@@ -7,6 +7,10 @@
 @using Volo.Abp.Settings
 @using AspNetCore.ReCaptcha
 @model PolpAbp.Presentation.Account.Web.Pages.Account.LoggedOutModel
+@{
+    ViewBag.Title = "Successful Logout";
+    ViewBag.Description = "Displays the success message after you logs out of the system.";
+}
 
 @inject IHtmlLocalizer<AccountResource> L
 

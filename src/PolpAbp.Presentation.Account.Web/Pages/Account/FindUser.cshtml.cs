@@ -31,6 +31,8 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 
         public List<SelectListItem> TenantList { get; set; }
 
+        protected const string CachedEmailAddressKey = "FindUserEmailAddress";
+
         // DI
         protected readonly IDataFilter DataFilter;
         protected readonly IIdentityUserRepositoryExt IdentityUserRepositoryExt;
@@ -94,6 +96,15 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 
                 // Return all tenants 
                 await AttemptBuildTenantsAync(Input.TenantOrEmailAddress!); // after validation not null
+                if (TenantList.Any() && ValidationHelper.IsValidEmailAddress(Input.TenantOrEmailAddress))
+                {
+                    TempData[CachedEmailAddressKey] = Input.TenantOrEmailAddress;
+                } 
+                else
+                {
+                    // Clean up the entry
+                    var _ = TempData[CachedEmailAddressKey];
+                }
 
                 if (TenantList.Count == 0)
                 {
@@ -127,11 +138,27 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 
                     if (!string.IsNullOrEmpty(ReturnUrl))
                     {
+                        // Be smart
+                        if (ReturnUrl.ToLower().EndsWith("/account/login"))
+                        {
+                            return RedirectToPage("./Login", new
+                            {
+                                UserNameOrEmailAddress = HttpUtility.UrlEncode(TempData[CachedEmailAddressKey]!.ToString())
+                            });
+                        }
+
                         return Redirect(ReturnUrl);
                     }
                     else
                     {
-                        // To Login 
+                        if (TempData.Peek(CachedEmailAddressKey) != null)
+                        {
+                            return RedirectToPage("./Login", new
+                            {
+                                UserNameOrEmailAddress = HttpUtility.UrlEncode(TempData[CachedEmailAddressKey]!.ToString())
+                            });
+                        }
+                        // To Login by default.
                         return RedirectToPage("./Login");
                     }
                 }

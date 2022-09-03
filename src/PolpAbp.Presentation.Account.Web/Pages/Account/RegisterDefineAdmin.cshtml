@@ -8,6 +8,10 @@
 @using AspNetCore.ReCaptcha
 @model PolpAbp.Presentation.Account.Web.Pages.Account.RegisterDefineAdminModel
 @inject IHtmlLocalizer<AccountResource> L
+@{
+    ViewBag.Title = "Organization Administrator Information";
+    ViewBag.Description = "Collects the administrator information of your organization for creating your organization account.";
+}
 
 <h4 class="mb-4 fw-semibold">
     Create your organization

@@ -7,8 +7,11 @@
 @using Volo.Abp.Settings
 @using AspNetCore.ReCaptcha
 @model PolpAbp.Presentation.Account.Web.Pages.Account.ResendActivationLinkModel
-
 @inject IHtmlLocalizer<AccountResource> L
+@{
+    ViewBag.Title = "Resends Account Activation Link";
+    ViewBag.Description = "Requests to send out an activation link to your email address.";
+}
 
 <h4 class="mb-4 fw-semibold">
     @L["ResendActivationLink"]

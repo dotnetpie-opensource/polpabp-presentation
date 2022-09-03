@@ -9,12 +9,16 @@
 @using PolpAbp.Presentation.Account.Web.Pages.Account
 @model PolpAbp.Presentation.Account.Web.Pages.Account.EmailActivationModel
 @inject IHtmlLocalizer<AccountResource> L
+@{
+    ViewBag.Title = "Account Activation Result";
+    ViewBag.Description = "Displays the activation result after you clicks the account activation link from your email.";
+}
 
 <h4 class="mb-4 fw-semibold">
     @L["EmailActivation"]
 </h4>
 @if (Model.State == EmailActivationModel.ActivationState.Success)
-    {
+{
 
     <h5>Your account is ready.</h5>
 
@@ -35,20 +39,20 @@
             @Model.TenantName
         </dd>
     </dl>
-    }
-    else if (Model.State == EmailActivationModel.ActivationState.Already)
-    {
+}
+else if (Model.State == EmailActivationModel.ActivationState.Already)
+{
 
     <h5>Your account is ready.</h5>
 
     <p>YPlease follow the button below to login.</p>
-    }
-    else
-    {
-<div class="alert alert-danger d-flex align-items-center" role="alert">
-    Something went wrong. Please contact your organization if this error persists.
-</div>
-    }
+}
+else
+{
+    <div class="alert alert-danger d-flex align-items-center" role="alert">
+        Something went wrong. Please contact your organization if this error persists.
+    </div>
+}
 
 <a abp-button="Primary" asp-page="./Login"
    asp-all-route-data="@(new Dictionary<string, string> {{"returnUrl", Model.ReturnUrl}, {"returnUrlHash", Model.ReturnUrlHash}})">
