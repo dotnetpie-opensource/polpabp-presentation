@@ -40,15 +40,25 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                 return Page();
             }
 
-
             if (action == "Input")
             {
-                ValidateModel();
-    
-                TempData[nameof(PostInput.AdminEmailAddress)] = Input.AdminEmailAddress;
-                TempData[nameof(PostInput.Password)] = Input.Password;
+                try
+                {
+                    ValidateModel();
 
-                return RedirectToPage("./RegisterConfirm");
+                    TempData[nameof(PostInput.AdminEmailAddress)] = Input.AdminEmailAddress;
+                    TempData[nameof(PostInput.Password)] = Input.Password;
+
+                    return RedirectToPage("./RegisterConfirm");
+                }
+                catch (AbpValidationException ex)
+                {
+                    // Handle this error.
+                    foreach (var a in ex.ValidationErrors)
+                    {
+                        Alerts.Add(Volo.Abp.AspNetCore.Mvc.UI.Alerts.AlertType.Danger, a.ErrorMessage);
+                    }
+                }
             }
             else if (action == "Cancel")
             {
@@ -56,6 +66,23 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
             }
 
             return Page();
+        }
+
+        protected override void ValidateModel()
+        {
+            var passwordValidator = new PasswordValidator(PwdComplexity, L, ModelState);
+            if (passwordValidator.ValidateComplexity(Input.Password))
+            {
+                passwordValidator.ValidateConfirmPassword(Input.Password, Input.ConfirmPassword);
+            }
+
+            base.ValidateModel();
+        }
+
+        protected override async Task LoadSettingsAsync()
+        {
+            await base.LoadSettingsAsync();
+            await ReadInPasswordComplexityAsync();
         }
 
         public class PostInput

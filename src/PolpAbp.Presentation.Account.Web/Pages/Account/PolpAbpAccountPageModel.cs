@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using PolpAbp.Framework.Identity;
 using Volo.Abp;
 using Volo.Abp.Account;
 using Volo.Abp.Account.Localization;
@@ -21,6 +22,8 @@ public abstract class PolpAbpAccountPageModel : AbpPageModel
     public string? ReturnUrlHash { get; set; }
 
     public bool IsRecaptchaEnabled { get; set; }
+
+    public PasswordComplexity PwdComplexity { get; private set; }
 
     protected IAccountAppService AccountAppService => LazyServiceProvider.LazyGetRequiredService<IAccountAppService>();
     protected SignInManager<IdentityUser> SignInManager => LazyServiceProvider.LazyGetRequiredService<SignInManager<IdentityUser>>();
@@ -45,6 +48,7 @@ public abstract class PolpAbpAccountPageModel : AbpPageModel
 
     protected PolpAbpAccountPageModel()
     {
+        PwdComplexity = new PasswordComplexity();
         LocalizationResourceType = typeof(AccountResource);
         ObjectMapperContext = typeof(PresentationAccountWebModule);
     }
@@ -72,7 +76,12 @@ public abstract class PolpAbpAccountPageModel : AbpPageModel
         return response;
     }
 
-
+    // Helpers for validating passwords 
+    protected virtual Task ReadInPasswordComplexityAsync()
+    {
+        Configuration.GetSection("PolpAbp:Account:PasswordComplexity").Bind(PwdComplexity);
+        return Task.CompletedTask;
+    }
 
     protected virtual void CheckCurrentTenant(Guid? tenantId)
     {
