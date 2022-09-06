@@ -128,6 +128,19 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                     ReturnUrlHash = ReturnUrlHash
                 });
             }
+            else if (action == "ResetTenant")
+            {
+                // Remove tenant cookies
+                Response.SetTenantCookieValue(String.Empty);
+
+                // Need to reload the page.
+                return RedirectToPage("./Login", new
+                {
+                    userNameOrEmailAddress = NormalizedUserNameOrEmailAddress,
+                    returnUrl = ReturnUrl,
+                    returnUrlHash = ReturnUrlHash
+                });
+            }
 
             return Page();
         }
