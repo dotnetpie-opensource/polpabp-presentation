@@ -1,0 +1,22 @@
+﻿@page
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Microsoft.Extensions.Localization
+@using Volo.Abp.Account.Localization
+@using Volo.Abp.Account.Settings
+@using Volo.Abp.AspNetCore.Mvc.UI.MultiTenancy.Localization
+@using Volo.Abp.Settings
+@using AspNetCore.ReCaptcha
+@model PolpAbp.Presentation.Account.Web.Pages.Account.LoginSuccessModel
+@inject IHtmlLocalizer<AccountResource> L
+@{
+    ViewBag.Title = "Login Success Result";
+    ViewBag.Description = "Displays the success message after you have logged into the system.";
+}
+
+<h4 class="mb-4 fw-semibold">
+    Authentication Success
+</h4>
+
+<p>
+    You have been authenticated. Please close this page to continue!
+</p>
