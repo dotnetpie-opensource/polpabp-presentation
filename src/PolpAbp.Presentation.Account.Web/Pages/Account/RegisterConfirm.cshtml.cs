@@ -60,21 +60,23 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                     }
                 }
 
-                ValidateModel();
 
                 try
                 {
+                    ValidateModel();
                     await RegisterTenantAsync();
 
                     TempData.Clear();
                     // Success and then instructions
                     return RedirectToPage("./RegisterSuccess");
-
                 }
-                catch (Exception e)
+                catch (AbpValidationException ex)
                 {
-                    Alerts.Danger(GetLocalizeExceptionMessage(e));
-                    return Page();
+                    // Handle this error.
+                    foreach (var a in ex.ValidationErrors)
+                    {
+                        Alerts.Add(Volo.Abp.AspNetCore.Mvc.UI.Alerts.AlertType.Danger, a.ErrorMessage);
+                    }
                 }
             }
             else if (action == "Cancel")

@@ -39,33 +39,31 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 
             if (action == "Input")
             {
-
-                ValidateModel();
-
-                if (!IsUserNameEnabled)
+                try
                 {
-                    if (!ValidationHelper.IsValidEmailAddress(Input.UserNameOrEmailAddress))
+                    ValidateModel();
+
+                    if (!IsUserNameEnabled)
                     {
-                        Alerts.Warning("Please type a valid email address");
-                        return Page();
+                        if (!ValidationHelper.IsValidEmailAddress(Input.UserNameOrEmailAddress))
+                        {
+                            Alerts.Warning("Please type a valid email address");
+                            return Page();
+                        }
                     }
-                }
 
-                IdentityUser? user = null;
+                    IdentityUser? user = null;
 
-                if (IsUserNameEnabled)
-                {
-                    user = await UserManager.FindByNameAsync(Input.UserNameOrEmailAddress);
-                }
-                else if (ValidationHelper.IsValidEmailAddress(Input.UserNameOrEmailAddress))
-                {
-                    user = await UserManager.FindByEmailAsync(Input.UserNameOrEmailAddress);
-                }
+                    if (IsUserNameEnabled)
+                    {
+                        user = await UserManager.FindByNameAsync(Input.UserNameOrEmailAddress);
+                    }
+                    else if (ValidationHelper.IsValidEmailAddress(Input.UserNameOrEmailAddress))
+                    {
+                        user = await UserManager.FindByEmailAsync(Input.UserNameOrEmailAddress);
+                    }
 
-                if (user != null)
-                {
-
-                    try
+                    if (user != null)
                     {
                         // todo: Should we use the background ??
                         // In that case, the email may not be sent instantly.
@@ -78,12 +76,23 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                                 ReturnUrlHash = ReturnUrlHash
                             }
                         );
+
                     }
-                    catch (UserFriendlyException e)
+                }
+                catch (UserFriendlyException e)
+                {
+                    Alerts.Danger(GetLocalizeExceptionMessage(e));
+                    return Page();
+                }
+                catch (AbpValidationException ex)
+                {
+                    // Handle this error.
+                    foreach (var a in ex.ValidationErrors)
                     {
-                        Alerts.Danger(GetLocalizeExceptionMessage(e));
-                        return Page();
+                        Alerts.Add(Volo.Abp.AspNetCore.Mvc.UI.Alerts.AlertType.Danger, a.ErrorMessage);
                     }
+
+                    return Page();
                 }
 
             }

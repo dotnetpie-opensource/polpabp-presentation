@@ -40,83 +40,93 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 
             if (action == "Input")
             {
-                // On purpose use it here to allow the other actions.
-                await CheckLocalLoginAsync();
-
-                ValidateModel();
-
-                if (!IsUserNameEnabled)
+                try
                 {
-                    if (!ValidationHelper.IsValidEmailAddress(Input.UserNameOrEmailAddress))
+                    // On purpose use it here to allow the other actions.
+                    await CheckLocalLoginAsync();
+
+                    ValidateModel();
+
+                    if (!IsUserNameEnabled)
                     {
-                        Alerts.Warning("Please type a valid email address");
+                        if (!ValidationHelper.IsValidEmailAddress(Input.UserNameOrEmailAddress))
+                        {
+                            Alerts.Warning("Please type a valid email address");
+                            return Page();
+                        }
+                    }
+
+                    IdentityUser? user = null;
+
+                    if (IsUserNameEnabled)
+                    {
+                        user = await UserManager.FindByNameAsync(Input.UserNameOrEmailAddress);
+                    }
+                    else if (ValidationHelper.IsValidEmailAddress(Input.UserNameOrEmailAddress))
+                    {
+                        user = await UserManager.FindByEmailAsync(Input.UserNameOrEmailAddress);
+                    }
+
+                    if (user == null)
+                    {
+                        Alerts.Danger(L["InvalidUserNameOrPassword"]);
                         return Page();
                     }
+
+                    // todo: Login 
+                    var result = await SignInManager.PasswordSignInAsync(
+                        user!.UserName,
+                        Input.Password,
+                        Input.RememberMe,
+                        true
+                        );
+
+                    await IdentitySecurityLogManager.SaveAsync(new IdentitySecurityLogContext()
+                    {
+                        Identity = IdentitySecurityLogIdentityConsts.Identity,
+                        Action = result.ToIdentitySecurityLogAction(),
+                        UserName = Input.UserNameOrEmailAddress
+                    });
+
+                    if (result.RequiresTwoFactor)
+                    {
+                        // todo: tfa
+                        // return await TwoFactorLoginResultAsync();
+                    }
+
+                    if (result.IsLockedOut)
+                    {
+                        Alerts.Warning(L["UserLockedOutMessage"]);
+                        return Page();
+                    }
+
+                    if (result.IsNotAllowed)
+                    {
+                        Alerts.Warning(L["LoginIsNotAllowed"]);
+                        return Page();
+                    }
+
+                    if (!result.Succeeded)
+                    {
+                        Alerts.Danger(L["InvalidUserNameOrPassword"]);
+                        return Page();
+                    }
+
+                    // todo: Make MainApp configurable ...
+                    return RedirectToPage("./MainApp", new
+                    {
+                        returnUrl = ReturnUrl,
+                        returnUrlHash = ReturnUrlHash
+                    });
                 }
-
-                IdentityUser? user = null;
-
-                if (IsUserNameEnabled)
+                catch (AbpValidationException ex)
                 {
-                    user = await UserManager.FindByNameAsync(Input.UserNameOrEmailAddress);
+                    // Handle this error.
+                    foreach (var a in ex.ValidationErrors)
+                    {
+                        Alerts.Add(Volo.Abp.AspNetCore.Mvc.UI.Alerts.AlertType.Danger, a.ErrorMessage);
+                    }
                 }
-                else if (ValidationHelper.IsValidEmailAddress(Input.UserNameOrEmailAddress))
-                {
-                    user = await UserManager.FindByEmailAsync(Input.UserNameOrEmailAddress);
-                }
-
-                if (user == null)
-                {
-                    Alerts.Danger(L["InvalidUserNameOrPassword"]);
-                    return Page();
-                }
-
-                // todo: Login 
-                var result = await SignInManager.PasswordSignInAsync(
-                    user!.UserName,
-                    Input.Password,
-                    Input.RememberMe,
-                    true
-                    );
-
-                await IdentitySecurityLogManager.SaveAsync(new IdentitySecurityLogContext()
-                {
-                    Identity = IdentitySecurityLogIdentityConsts.Identity,
-                    Action = result.ToIdentitySecurityLogAction(),
-                    UserName = Input.UserNameOrEmailAddress
-                });
-
-                if (result.RequiresTwoFactor)
-                {
-                    // todo: tfa
-                    // return await TwoFactorLoginResultAsync();
-                }
-
-                if (result.IsLockedOut)
-                {
-                    Alerts.Warning(L["UserLockedOutMessage"]);
-                    return Page();
-                }
-
-                if (result.IsNotAllowed)
-                {
-                    Alerts.Warning(L["LoginIsNotAllowed"]);
-                    return Page();
-                }
-
-                if (!result.Succeeded)
-                {
-                    Alerts.Danger(L["InvalidUserNameOrPassword"]);
-                    return Page();
-                }
-
-                // todo: Make MainApp configurable ...
-                return RedirectToPage("./MainApp", new
-                {
-                    returnUrl = ReturnUrl,
-                    returnUrlHash = ReturnUrlHash
-                });
-
             }
             else if (action == "Cancel")
             {

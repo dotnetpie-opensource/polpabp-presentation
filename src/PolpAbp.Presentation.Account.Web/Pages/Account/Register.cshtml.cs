@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
 using System.ComponentModel.DataAnnotations;
+using Volo.Abp.Validation;
 
 namespace PolpAbp.Presentation.Account.Web.Pages.Account
 {
@@ -41,19 +42,30 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 
             if (action == "Input")
             {
-                // Validate model
-                ValidateModel();
-
-                if (!string.Equals(TempData.Peek(nameof(PostInput.TenantName))?.ToString(), Input.TenantName))
+                try
                 {
-                    // Clean up data 
-                    _ = TempData["Password"];
+                    // Validate model
+                    ValidateModel();
+
+                    if (!string.Equals(TempData.Peek(nameof(PostInput.TenantName))?.ToString(), Input.TenantName))
+                    {
+                        // Clean up data 
+                        _ = TempData["Password"];
+                    }
+
+                    TempData[nameof(PostInput.TenantName)] = Input.TenantName;
+
+                    // Success and then instructions
+                    return RedirectToPage("./RegisterDefineAdmin");
                 }
-
-                TempData[nameof(PostInput.TenantName)] = Input.TenantName;
-
-                // Success and then instructions
-                return RedirectToPage("./RegisterDefineAdmin");
+                catch (AbpValidationException ex)
+                {
+                    // Handle this error.
+                    foreach (var a in ex.ValidationErrors)
+                    {
+                        Alerts.Add(Volo.Abp.AspNetCore.Mvc.UI.Alerts.AlertType.Danger, a.ErrorMessage);
+                    }
+                }
             }
 
             return Page();

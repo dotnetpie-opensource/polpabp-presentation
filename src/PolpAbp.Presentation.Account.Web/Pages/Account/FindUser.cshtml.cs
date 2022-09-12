@@ -90,44 +90,54 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                         return Page();
                     }
                 }
-
-                // Tenant not set this moment.
-                ValidateModel();
-
-                // Return all tenants 
-                await AttemptBuildTenantsAync(Input.TenantOrEmailAddress!); // after validation not null
-                if (TenantList.Any() && ValidationHelper.IsValidEmailAddress(Input.TenantOrEmailAddress))
+                try
                 {
-                    TempData[CachedEmailAddressKey] = Input.TenantOrEmailAddress;
-                } 
-                else
-                {
-                    // Clean up the entry
-                    var _ = TempData[CachedEmailAddressKey];
-                }
+                    // Tenant not set this moment.
+                    ValidateModel();
 
-                if (TenantList.Count == 0)
-                {
-                    // TODO: localization
-                    Alerts.Danger("Invalid organization or email address.");
-                }
-
-                /*
-                if (TenantList.Count == 1)
-                {
-                    // Set up the tenant and move on.
-                    Response.SetTenantCookieValue(TenantList.First().Value);
-
-                    if (!string.IsNullOrEmpty(ReturnUrl))
+                    // Return all tenants 
+                    await AttemptBuildTenantsAync(Input.TenantOrEmailAddress!); // after validation not null
+                    if (TenantList.Any() && ValidationHelper.IsValidEmailAddress(Input.TenantOrEmailAddress))
                     {
-                        return Redirect(ReturnUrl);
+                        TempData[CachedEmailAddressKey] = Input.TenantOrEmailAddress;
                     }
                     else
                     {
-                        // To Login 
-                        return RedirectToPage("./Login");
+                        // Clean up the entry
+                        var _ = TempData[CachedEmailAddressKey];
                     }
-                } */
+
+                    if (TenantList.Count == 0)
+                    {
+                        // TODO: localization
+                        Alerts.Danger("Invalid organization or email address.");
+                    }
+
+                    /*
+                    if (TenantList.Count == 1)
+                    {
+                        // Set up the tenant and move on.
+                        Response.SetTenantCookieValue(TenantList.First().Value);
+
+                        if (!string.IsNullOrEmpty(ReturnUrl))
+                        {
+                            return Redirect(ReturnUrl);
+                        }
+                        else
+                        {
+                            // To Login 
+                            return RedirectToPage("./Login");
+                        }
+                    } */
+                } 
+                catch (AbpValidationException ex)
+                {
+                    // Handle this error.
+                    foreach (var a in ex.ValidationErrors)
+                    {
+                        Alerts.Add(Volo.Abp.AspNetCore.Mvc.UI.Alerts.AlertType.Danger, a.ErrorMessage);
+                    }
+                }
             }
             else if (action == "Selection")
             {
