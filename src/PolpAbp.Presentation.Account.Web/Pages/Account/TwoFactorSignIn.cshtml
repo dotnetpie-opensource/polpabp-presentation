@@ -19,7 +19,7 @@
 
 <form method="post" data-ajax="true" data-ajax-method="post" data-ajax-complete="completed">    
     <div class="d-flex gap-2">
-        <abp-button type="submit" button-type="Primary" name="Action" value="EmailCode">
+        <abp-button type="submit" button-type="Primary" name="Action" value="SendCodeByEmail">
             Email
         </abp-button>
     </div>
@@ -41,7 +41,7 @@
     <h6>Help links</h6>
     <ul>
         <li>
-            <a class="btn btn-link fst-italic" href="@Url.Page("./ResendActivationLink", new {UserNameOrEmailAddress = Model.Input.UserNameOrEmailAddress})">@L["ResendActivationLink"]</a>
+            <a class="btn btn-link fst-italic" href="@Url.Page("./ResendActivationLink")">@L["ResendActivationLink"]</a>
         </li>
     </ul>
 </div>

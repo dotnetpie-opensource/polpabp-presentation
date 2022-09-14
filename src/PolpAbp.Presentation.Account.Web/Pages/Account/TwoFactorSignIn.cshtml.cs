@@ -2,12 +2,17 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using PolpAbp.Framework.Emailing.Account;
 using PolpAbp.Presentation.Account.Web.Settings;
+using Scriban;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 using Volo.Abp.Auditing;
+using Volo.Abp.Emailing;
 using Volo.Abp.Identity;
 using Volo.Abp.Settings;
+using Volo.Abp.TenantManagement;
+using Volo.Abp.TextTemplating;
 using Volo.Abp.Validation;
 
 namespace PolpAbp.Presentation.Account.Web.Pages.Account
@@ -24,8 +29,13 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 
         public List<string> TwoFactorCodeProviders { get; set; }
 
-        public TwoFactorSignInModel() : base()
+        protected readonly IFrameworkAccountEmailer AccountEmailer;
+
+
+        public TwoFactorSignInModel(IFrameworkAccountEmailer accountEmailer) : base()
         {
+            AccountEmailer = accountEmailer;
+
             Input = new PostInput();
             RememberMe = false;
             TwoFactorCodeProviders = new List<string>();
@@ -71,13 +81,17 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                     }
                 }
             } 
-            else if (action == "EmailCode")
+            else if (action == "SendCodeByEmail")
             {
                 var userId = await RetrieveTwoFactorUserIdAsync();
                 if (userId.HasValue)
                 {
                     var user = await UserManager.FindByIdAsync(userId.ToString());
-                    // await UserManager.GenerateTwoFactorTokenAsync(user);
+                    var token = await UserManager.GenerateTwoFactorTokenAsync(user, TokenOptions.DefaultEmailProvider);
+
+                    await AccountEmailer.SendTwoFactorCodeAsync(user.Id, token);
+
+                    Alerts.Success(L["TwoFactorCode_SentSuccess"].Value);
                 }
             }
 
@@ -89,7 +103,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
             await base.LoadSettingsAsync();
             // todo: Load more providers 
             TwoFactorCodeProviders.Clear();
-            TwoFactorCodeProviders.Add("email");
+            TwoFactorCodeProviders.Add("Email");
         }
 
 

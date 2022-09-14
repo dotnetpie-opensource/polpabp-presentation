@@ -6,6 +6,7 @@ using Volo.Abp.AspNetCore.Mvc.Localization;
 using Volo.Abp.AspNetCore.Mvc.UI.MultiTenancy;
 using Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared;
 using Volo.Abp.AutoMapper;
+using Volo.Abp.Emailing;
 using Volo.Abp.ExceptionHandling;
 using Volo.Abp.Identity.AspNetCore;
 using Volo.Abp.Modularity;
@@ -20,6 +21,7 @@ namespace PolpAbp.Presentation.Account.Web
         typeof(AbpExceptionHandlingModule),
         typeof(AbpTenantManagementDomainModule),
         typeof(AbpAccountApplicationContractsModule),
+        typeof(AbpEmailingModule),
         typeof(AbpIdentityAspNetCoreModule),
         typeof(AbpAspNetCoreMvcUiThemeSharedModule),
         typeof(AbpAspNetCoreMvcUiMultiTenancyModule),
