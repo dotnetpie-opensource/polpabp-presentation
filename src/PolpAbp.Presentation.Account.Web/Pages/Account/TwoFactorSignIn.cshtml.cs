@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using PolpAbp.Framework;
 using PolpAbp.Framework.Emailing.Account;
 using PolpAbp.Presentation.Account.Web.Settings;
 using Scriban;
@@ -27,7 +28,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
         [BindProperty]
         public PostInput Input { get; set; }
 
-        public List<string> TwoFactorCodeProviders { get; set; }
+        public List<TwoFactorProvider> TwoFactorCodeProviders { get; set; }
 
         protected readonly IFrameworkAccountEmailer AccountEmailer;
 
@@ -38,7 +39,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 
             Input = new PostInput();
             RememberMe = false;
-            TwoFactorCodeProviders = new List<string>();
+            TwoFactorCodeProviders = new List<TwoFactorProvider>();
         }
 
         public virtual async Task<IActionResult> OnGetAsync()
@@ -60,7 +61,11 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                 {
                     ValidateModel();
 
-                    var ret = await SignInManager.TwoFactorSignInAsync(null, Input.Code, Input.RememberMe, Input.RememberClient);
+                    var provider = TempData.Peek("PolpAbp.Account.TwoFactorCode.Provider") as string;
+
+                    // todo: Provider is wrong.
+
+                    var ret = await SignInManager.TwoFactorSignInAsync(provider, Input.Code, Input.RememberMe, Input.RememberClient);
                     if (ret.Succeeded)
                     {
 
@@ -91,6 +96,24 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 
                     await AccountEmailer.SendTwoFactorCodeAsync(user.Id, token);
 
+                    TempData["PolpAbp.Account.TwoFactorCode.Provider"] = TokenOptions.DefaultEmailProvider;
+
+                    Alerts.Success(L["TwoFactorCode_SentSuccess"].Value);
+                }
+            }
+            else if (action == "SendCodeByPhone")
+            {
+                var userId = await RetrieveTwoFactorUserIdAsync();
+                if (userId.HasValue)
+                {
+                    var user = await UserManager.FindByIdAsync(userId.ToString());
+                    var token = await UserManager.GenerateTwoFactorTokenAsync(user, TokenOptions.DefaultPhoneProvider);
+
+                    TempData["PolpAbp.Account.TwoFactorCode.Provider"] = TokenOptions.DefaultPhoneProvider;
+
+                    // todo: Send via phone
+                    await AccountEmailer.SendTwoFactorCodeAsync(user.Id, token);
+
                     Alerts.Success(L["TwoFactorCode_SentSuccess"].Value);
                 }
             }
@@ -103,7 +126,34 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
             await base.LoadSettingsAsync();
             // todo: Load more providers 
             TwoFactorCodeProviders.Clear();
-            TwoFactorCodeProviders.Add("Email");
+
+            var userId = await RetrieveTwoFactorUserIdAsync();
+            var user = await UserManager.FindByIdAsync(userId.ToString());
+            if (user != null) {
+
+                var providers = await UserManager.GetValidTwoFactorProvidersAsync(user);
+                foreach (var p in providers)
+                {
+                    if (string.Equals(p, TokenOptions.DefaultEmailProvider, StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        TwoFactorCodeProviders.Add(new TwoFactorProvider
+                        {
+                            Name = p,
+                            Action = "SendCodeByEmail",
+                            Display = "Send to " + user.NormalizedEmail.MaskEmailAddress()
+                        });
+                    }
+                    else if (string.Equals(p, TokenOptions.DefaultPhoneProvider, StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        TwoFactorCodeProviders.Add(new TwoFactorProvider
+                        {
+                            Name = p,
+                            Action = "SendCodeByPhone",
+                            Display = "Send to " + user.PhoneNumber.MaskPhoneNumber()
+                        });
+                    }
+                }
+            }
         }
 
 
@@ -137,6 +187,13 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
             // Remember this cookie across the session.
             // Still useful after the browser is closed 
             public bool RememberMe { get; set; }
+        }
+
+        public class TwoFactorProvider
+        {
+            public string Name { get; set; }
+            public string Action { get; set; }
+            public string Display { get; set; }
         }
     }
 }

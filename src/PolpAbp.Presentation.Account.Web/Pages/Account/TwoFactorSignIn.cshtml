@@ -17,24 +17,47 @@
     Two Factor Login
 </h4>
 
-<form method="post" data-ajax="true" data-ajax-method="post" data-ajax-complete="completed">    
-    <div class="d-flex gap-2">
-        <abp-button type="submit" button-type="Primary" name="Action" value="SendCodeByEmail">
-            Email
-        </abp-button>
+<div class="card mb-3">
+    <div class="card-body">
+        <h5 class="Card-title">Request Code</h5>
+        <p class="card-text">
+            Did you get a code? Please click one of the following to get a code.
+        </p>
+        <form method="post" data-ajax="true" data-ajax-method="post" data-ajax-complete="completed">
+            <div class="d-flex gap-2">
+                @{
+                    foreach (var p in Model.TwoFactorCodeProviders)
+                    {
+                        <abp-button type="submit" button-type="Primary" name="Action" value="@p.Action">
+                            @p.Display
+                        </abp-button>
+                    }
+                }
+            </div>
+        </form>
     </div>
-</form>
+</div>
 
-<form method="post">
-    <abp-input asp-for="Input.RememberMe" />
-    <abp-input asp-for="Input.RememberClient" />
-    <div class="d-grid gap-2">
-        <abp-button type="submit" button-type="Primary" name="Action" value="Input" class="btn-lg mt-3">
-            @L["Submit"]
-            <span class="spinner-box"></span>
-        </abp-button>
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">Verify Code</h5>
+        <p class="card-text">
+            Please type the code you just received.
+        </p>
+        <form method="post">
+            <abp-input asp-for="Input.Code" auto-focus="true" />
+            <abp-input asp-for="Input.RememberMe" />
+            <abp-input asp-for="Input.RememberClient" />
+            <div class="d-grid gap-2">
+                <abp-button type="submit" button-type="Primary" name="Action" value="Input" class="btn-lg mt-3">
+                    @L["Submit"]
+                    <span class="spinner-box"></span>
+                </abp-button>
+            </div>
+        </form>
+
     </div>
-</form>
+</div>
 
 <!-- todo: Add a condition -->
 <div class="d-flex flex-column align-items-start mt-5 mb-3">
