@@ -90,8 +90,12 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 
                     if (result.RequiresTwoFactor)
                     {
-                        // todo: tfa
-                        // return await TwoFactorLoginResultAsync();
+                        return RedirectToPage("./TwoFactorSignIn", new
+                        {
+                            RememberMe = Input.RememberMe,
+                            returnUrl = ReturnUrl,
+                            returnUrlHash = ReturnUrlHash
+                        });
                     }
 
                     if (result.IsLockedOut)
