@@ -49,12 +49,13 @@
         <span asp-validation-for="Input.Password" class="text-danger"></span>
     </div>
 
-    <abp-row>
+
+    <abp-row class="mb-3">
         <abp-column>
-            <abp-input asp-for="Input.RememberMe" class="mb-4" />
+            <abp-input asp-for="Input.RememberMe" />
         </abp-column>
         <abp-column class="text-end">
-            <a href="@Url.Page("./ForgotPassword", new {returnUrl = Model.ReturnUrl, returnUrlHash = Model.ReturnUrlHash})">@L["ForgotPassword"]</a>
+            <a href="@Url.Page("./ForgotPassword", new {returnUrl = Model.ReturnUrl, returnUrlHash = Model.ReturnUrlHash, UserNameOrEmailAddress = Model.Input.UserNameOrEmailAddress})">@L["ForgotPassword"]</a>
         </abp-column>
     </abp-row>
 

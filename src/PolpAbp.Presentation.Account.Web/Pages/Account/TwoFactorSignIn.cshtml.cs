@@ -30,34 +30,17 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
         [BindProperty]
         public PostInput Input { get; set; }
 
-        public List<TwoFactorProvider> TwoFactorCodeProviders { get; set; }
-
-        protected readonly IFrameworkAccountEmailer AccountEmailer;
-        protected readonly ISmsSender SmsSender;
-
-        protected string SmsSenderName
+        public TwoFactorSignInModel() : base()
         {
-            get
-            {
-                return Configuration.GetValue<string>("PolpAbp:Framework:SmsSenderName", string.Empty);
-            }
-        }
-
-        public TwoFactorSignInModel(IFrameworkAccountEmailer accountEmailer,
-            ISmsSender smsSender) : base()
-        {
-            AccountEmailer = accountEmailer;
-            SmsSender = smsSender;
-
             Input = new PostInput();
             RememberMe = false;
-            TwoFactorCodeProviders = new List<TwoFactorProvider>();
         }
 
         public virtual async Task<IActionResult> OnGetAsync()
         {
             // Load settings
             await LoadSettingsAsync();
+            Input.RememberMe = RememberMe;
 
             return Page();
         }
@@ -98,96 +81,8 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                     }
                 }
             } 
-            else if (action == "SendCodeByEmail")
-            {
-                var userId = await RetrieveTwoFactorUserIdAsync();
-                if (userId.HasValue)
-                {
-                    var user = await UserManager.FindByIdAsync(userId.ToString());
-                    var token = await UserManager.GenerateTwoFactorTokenAsync(user, TokenOptions.DefaultEmailProvider);
-
-                    await AccountEmailer.SendTwoFactorCodeAsync(user.Id, token);
-
-                    TempData["PolpAbp.Account.TwoFactorCode.Provider"] = TokenOptions.DefaultEmailProvider;
-
-                    Alerts.Success(L["TwoFactorCode_SentSuccess"].Value);
-                }
-            }
-            else if (action == "SendCodeByPhone")
-            {
-                var userId = await RetrieveTwoFactorUserIdAsync();
-                if (userId.HasValue)
-                {
-                    var user = await UserManager.FindByIdAsync(userId.ToString());
-                    var token = await UserManager.GenerateTwoFactorTokenAsync(user, TokenOptions.DefaultPhoneProvider);
-
-                    var body = L["TwoFactorCode_Sms", SmsSenderName, token];
-                    TempData["PolpAbp.Account.TwoFactorCode.Provider"] = TokenOptions.DefaultPhoneProvider;
-
-                    // todo: Check if the organization configuration.
-                    // todo: Settings
-                    // var allowedCountry =
-                    var msg = new SmsMessage(user.PhoneNumber, body);
-                    msg.Properties.Add("CountryCode", 236);
-                    // todo: Send via phone
-                    await SmsSender.SendAsync(msg);
-
-                    Alerts.Success(L["TwoFactorCode_SentSuccess"].Value);
-                }
-            }
 
             return Page();
-        }
-
-        protected override async Task LoadSettingsAsync()
-        {
-            await base.LoadSettingsAsync();
-            // todo: Load more providers 
-            TwoFactorCodeProviders.Clear();
-
-            var userId = await RetrieveTwoFactorUserIdAsync();
-            var user = await UserManager.FindByIdAsync(userId.ToString());
-            if (user != null) {
-
-                var providers = await UserManager.GetValidTwoFactorProvidersAsync(user);
-                foreach (var p in providers)
-                {
-                    if (string.Equals(p, TokenOptions.DefaultEmailProvider, StringComparison.CurrentCultureIgnoreCase))
-                    {
-                        TwoFactorCodeProviders.Add(new TwoFactorProvider
-                        {
-                            Name = p,
-                            Action = "SendCodeByEmail",
-                            Display = "Send to " + user.NormalizedEmail.MaskEmailAddress()
-                        });
-                    }
-                    else if (string.Equals(p, TokenOptions.DefaultPhoneProvider, StringComparison.CurrentCultureIgnoreCase))
-                    {
-                        TwoFactorCodeProviders.Add(new TwoFactorProvider
-                        {
-                            Name = p,
-                            Action = "SendCodeByPhone",
-                            Display = "Send to " + user.PhoneNumber.MaskPhoneNumber()
-                        });
-                    }
-                }
-            }
-        }
-
-
-        private async Task<Guid?> RetrieveTwoFactorUserIdAsync()
-        {
-            var result = await HttpContext.AuthenticateAsync(IdentityConstants.TwoFactorUserIdScheme);
-            if (result?.Principal != null)
-            {
-                var userId = result.Principal.FindFirstValue(ClaimTypes.Name);
-                if (Guid.TryParse(userId, out var id))
-                {
-                    return id;
-                }
-            }
-
-            return null;
         }
 
         public class PostInput
@@ -205,13 +100,8 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
             // Remember this cookie across the session.
             // Still useful after the browser is closed 
             public bool RememberMe { get; set; }
-        }
 
-        public class TwoFactorProvider
-        {
-            public string Name { get; set; }
-            public string Action { get; set; }
-            public string Display { get; set; }
+            public bool IsRecoveryCode { get; set; }
         }
     }
 }

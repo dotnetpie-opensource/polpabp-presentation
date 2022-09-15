@@ -90,7 +90,11 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 
                     if (result.RequiresTwoFactor)
                     {
-                        return RedirectToPage("./TwoFactorSignIn", new
+                        // todo: Check if wen directly redirect a user to
+                        // the two factor sign in page or request page
+                        // depending on if a user set up an authenticator.
+
+                        return RedirectToPage("./TwoFactorRequest", new
                         {
                             RememberMe = Input.RememberMe,
                             returnUrl = ReturnUrl,

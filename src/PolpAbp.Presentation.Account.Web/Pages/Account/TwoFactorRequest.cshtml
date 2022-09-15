@@ -1,0 +1,45 @@
+﻿@page
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Microsoft.Extensions.Localization
+@using Volo.Abp.Account.Localization
+@using Volo.Abp.Account.Settings
+@using Volo.Abp.AspNetCore.Mvc.UI.MultiTenancy.Localization
+@using Volo.Abp.Settings
+@using AspNetCore.ReCaptcha
+@model PolpAbp.Presentation.Account.Web.Pages.Account.TwoFactorRequestModel
+@inject IHtmlLocalizer<AccountResource> L
+@{
+    ViewBag.Title = "Request Two Facor Code";
+    ViewBag.Description = "Requests a two factor code.";
+}
+
+<h4 class="mb-4 fw-semibold">
+    Get Two Factor Code
+</h4>
+
+<p>
+    Did you get a code? Please click one of the following to get a code.
+</p>
+
+<form method="post" data-ajax="true" data-ajax-method="post" data-ajax-complete="completed">
+    <div class="d-flex gap-2">
+        @{
+            foreach (var p in Model.TwoFactorCodeProviders)
+            {
+                <abp-button type="submit" button-type="Primary" name="Action" value="@p.Action">
+                    @p.Display
+                </abp-button>
+            }
+        }
+    </div>
+</form>
+
+<!-- todo: Add a condition -->
+<div class="d-flex flex-column align-items-start mt-5 mb-3">
+    <h6>Help links</h6>
+    <ul>
+        <li>
+            <a class="btn btn-link fst-italic" href="@Url.Page("./Login")">Login</a>
+        </li>
+    </ul>
+</div>
