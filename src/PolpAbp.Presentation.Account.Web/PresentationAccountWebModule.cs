@@ -10,6 +10,7 @@ using Volo.Abp.Emailing;
 using Volo.Abp.ExceptionHandling;
 using Volo.Abp.Identity.AspNetCore;
 using Volo.Abp.Modularity;
+using Volo.Abp.Sms;
 using Volo.Abp.TenantManagement;
 using Volo.Abp.UI.Navigation;
 using Volo.Abp.VirtualFileSystem;
@@ -22,6 +23,7 @@ namespace PolpAbp.Presentation.Account.Web
         typeof(AbpTenantManagementDomainModule),
         typeof(AbpAccountApplicationContractsModule),
         typeof(AbpEmailingModule),
+        typeof(AbpSmsModule),
         typeof(AbpIdentityAspNetCoreModule),
         typeof(AbpAspNetCoreMvcUiThemeSharedModule),
         typeof(AbpAspNetCoreMvcUiMultiTenancyModule),

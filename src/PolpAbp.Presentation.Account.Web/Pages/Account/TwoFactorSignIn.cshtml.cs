@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Configuration;
 using PolpAbp.Framework;
 using PolpAbp.Framework.Emailing.Account;
 using PolpAbp.Presentation.Account.Web.Settings;
@@ -12,6 +13,7 @@ using Volo.Abp.Auditing;
 using Volo.Abp.Emailing;
 using Volo.Abp.Identity;
 using Volo.Abp.Settings;
+using Volo.Abp.Sms;
 using Volo.Abp.TenantManagement;
 using Volo.Abp.TextTemplating;
 using Volo.Abp.Validation;
@@ -31,11 +33,21 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
         public List<TwoFactorProvider> TwoFactorCodeProviders { get; set; }
 
         protected readonly IFrameworkAccountEmailer AccountEmailer;
+        protected readonly ISmsSender SmsSender;
 
+        protected string SmsSenderName
+        {
+            get
+            {
+                return Configuration.GetValue<string>("PolpAbp:Framework:SmsSenderName", string.Empty);
+            }
+        }
 
-        public TwoFactorSignInModel(IFrameworkAccountEmailer accountEmailer) : base()
+        public TwoFactorSignInModel(IFrameworkAccountEmailer accountEmailer,
+            ISmsSender smsSender) : base()
         {
             AccountEmailer = accountEmailer;
+            SmsSender = smsSender;
 
             Input = new PostInput();
             RememberMe = false;
@@ -109,10 +121,16 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                     var user = await UserManager.FindByIdAsync(userId.ToString());
                     var token = await UserManager.GenerateTwoFactorTokenAsync(user, TokenOptions.DefaultPhoneProvider);
 
+                    var body = L["TwoFactorCode_Sms", SmsSenderName, token];
                     TempData["PolpAbp.Account.TwoFactorCode.Provider"] = TokenOptions.DefaultPhoneProvider;
 
+                    // todo: Check if the organization configuration.
+                    // todo: Settings
+                    // var allowedCountry =
+                    var msg = new SmsMessage(user.PhoneNumber, body);
+                    msg.Properties.Add("CountryCode", 236);
                     // todo: Send via phone
-                    await AccountEmailer.SendTwoFactorCodeAsync(user.Id, token);
+                    await SmsSender.SendAsync(msg);
 
                     Alerts.Success(L["TwoFactorCode_SentSuccess"].Value);
                 }
