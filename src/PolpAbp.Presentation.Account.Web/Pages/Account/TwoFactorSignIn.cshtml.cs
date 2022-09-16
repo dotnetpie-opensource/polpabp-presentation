@@ -1,21 +1,7 @@
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Extensions.Configuration;
-using PolpAbp.Framework;
-using PolpAbp.Framework.Emailing.Account;
-using PolpAbp.Presentation.Account.Web.Settings;
-using Scriban;
 using System.ComponentModel.DataAnnotations;
-using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc;
 using Volo.Abp.Auditing;
-using Volo.Abp.Emailing;
 using Volo.Abp.Identity;
-using Volo.Abp.Settings;
-using Volo.Abp.Sms;
-using Volo.Abp.TenantManagement;
-using Volo.Abp.TextTemplating;
 using Volo.Abp.Validation;
 
 namespace PolpAbp.Presentation.Account.Web.Pages.Account

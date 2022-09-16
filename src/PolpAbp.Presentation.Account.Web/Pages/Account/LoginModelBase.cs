@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using PolpAbp.Presentation.Account.Web.Settings;
-using System.Web;
+﻿using System.Web;
+using Microsoft.AspNetCore.Mvc;
+using PolpAbp.Framework.Settings;
 using Volo.Abp.Settings;
 
 namespace PolpAbp.Presentation.Account.Web.Pages.Account
@@ -19,7 +19,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
         {
             await base.LoadSettingsAsync();
             // Use host ...
-            IsUserNameEnabled = await SettingProvider.IsTrueAsync(AccountWebSettingNames.IsTenantUserNameEnabled);
+            IsUserNameEnabled = await SettingProvider.IsTrueAsync(FrameworkSettings.IsUserNameEnabled);
         }
       
     }
