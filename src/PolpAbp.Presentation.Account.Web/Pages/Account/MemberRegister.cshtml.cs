@@ -1,5 +1,6 @@
 using AspNetCore.ReCaptcha;
 using Microsoft.AspNetCore.Mvc;
+using PolpAbp.Framework.Emailing.Account;
 using PolpAbp.Framework.Settings;
 using System.ComponentModel.DataAnnotations;
 using System.Web;
@@ -18,12 +19,20 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
         [BindProperty]
         public PostInput Input { get; set; }
 
-        protected readonly IReCaptchaService RecaptchaService;
+        protected MemberRegistrationEnum RegistrationType = MemberRegistrationEnum.RequireEmailActivation;
+        protected bool IsNewRegistrationNotyEnabled = false;
 
-        public MemberRegisterModel(IReCaptchaService reCaptchaService) : base()
+        protected readonly IReCaptchaService RecaptchaService;
+        protected readonly IFrameworkAccountEmailer AccountEmailer;
+
+
+        public MemberRegisterModel(IReCaptchaService reCaptchaService,
+            IFrameworkAccountEmailer accountEmailer) : base()
         {
             Input = new PostInput();
+
             RecaptchaService = reCaptchaService;
+            AccountEmailer = accountEmailer;
         }
 
         public virtual async Task<IActionResult> OnGetAsync()
@@ -89,10 +98,40 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                     user.Surname = Input.LastName;
                     await UserManager.UpdateAsync(user);
 
-                    // todo: decide if we can activate this user ..
+                    if (RegistrationType == MemberRegistrationEnum.AutoActive)
+                    {
+                        // Make the user be active now.
+                        user.SetIsActive(true);
+                        await UserManager.UpdateAsync(user);
 
-                    // todo: Message 
+                        if (IsNewRegistrationNotyEnabled)
+                        {
+                            await AccountEmailer.SendMemberRegistrationNotyAsync(user!.Id);
+                        }
 
+                        Alerts.Success("Your account is ready for use. Please login!");
+                    }
+                    else if (RegistrationType == MemberRegistrationEnum.RequireAdminApprovel)
+                    {
+                        // todo: Send out an email to the admin for the approval.
+                        await AccountEmailer.SendMemberRegistrationApprovalAsync(user!.Id);
+
+                        Alerts.Success("Your account is almost ready. Your registation request has been sent to the administrators of your organization. Please wait for their approval.");
+                    }
+                    else
+                    {
+                        // todo: Send out an activation email.
+                        // Send out a confirmation email, regardless the current tenant.
+                        // Send it instantly, because the user is waiting for it.
+                        await AccountEmailer.SendEmailActivationLinkAsync(user!.Id);
+
+                        if (IsNewRegistrationNotyEnabled)
+                        {
+                            await AccountEmailer.SendMemberRegistrationNotyAsync(user!.Id);
+                        }
+
+                        Alerts.Success("Your account is almost ready. An email has been sent to your email box. Please check your email box to confirm your account.");
+                    }
 
                     return RedirectToPage("./MemberRegisterSuccess");
                 }
@@ -125,6 +164,10 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
             await base.LoadSettingsAsync();
             await ReadInRecaptchaEnabledAsync();
             await ReadInPasswordComplexityAsync();
+
+            // Load
+            RegistrationType = (MemberRegistrationEnum)(await SettingProvider.GetAsync<int>(FrameworkSettings.RegistrationApprovalType, 0));
+            IsNewRegistrationNotyEnabled = await SettingProvider.GetAsync<bool>(FrameworkSettings.IsNewRegistrationNotyEnabled, false);
         }
 
         protected override async Task ReadInPasswordComplexityAsync()
