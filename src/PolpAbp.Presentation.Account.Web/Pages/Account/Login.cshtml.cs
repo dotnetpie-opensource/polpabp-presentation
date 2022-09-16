@@ -116,7 +116,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
         {
             [Required]
             [DynamicStringLength(typeof(IdentityUserConsts), nameof(IdentityUserConsts.MaxEmailLength))]
-            public string UserNameOrEmailAddress { get; set; }
+            public string? UserNameOrEmailAddress { get; set; }
         }
     }
 }

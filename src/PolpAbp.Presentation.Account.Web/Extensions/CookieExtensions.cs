@@ -7,7 +7,7 @@ namespace PolpAbp.Presentation.Account.Web
         public const string TenantCookieName = "PolpAbpTenantId";
         public const string MfaCookieName = "MultiFactorAuth";
 
-        public static void SetNamedCookie(this HttpResponse response, string name, string value, string domain = null, TimeSpan? span = null)
+        public static void SetNamedCookie(this HttpResponse response, string name, string value, string? domain = null, TimeSpan? span = null)
         {
             var options = new CookieOptions();
             if (!string.IsNullOrWhiteSpace(domain))
@@ -47,7 +47,7 @@ namespace PolpAbp.Presentation.Account.Web
             return c ?? string.Empty;
         }
 
-        public static void SetTenantCookieValue(this HttpResponse response, string value, string domain = null, TimeSpan? span = null)
+        public static void SetTenantCookieValue(this HttpResponse response, string value, string? domain = null, TimeSpan? span = null)
         {
             response.SetNamedCookie(TenantCookieName, value, domain, span);
         }

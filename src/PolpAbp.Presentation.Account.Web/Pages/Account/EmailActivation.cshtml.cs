@@ -65,7 +65,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                                 await UserManager.ConfirmEmailAsync(user, ConfirmationCode);
                                 State = ActivationState.Success;
                             }
-                            catch (Exception e)
+                            catch (Exception ex)
                             {
                                 State = ActivationState.Failure;
                             }

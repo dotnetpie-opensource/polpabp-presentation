@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
+using PolpAbp.Framework;
 
 namespace PolpAbp.Presentation.Account.Web.Pages.Account
 {
@@ -9,31 +9,34 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
     {
         public UserAccountOutputDto UserAccountInfo { get; protected set; }
 
+        public MainAppModel() : base()
+        {
+            UserAccountInfo = new UserAccountOutputDto();
+        }
+
 
         public virtual async Task<IActionResult> OnGetAsync()
         {
             var userInfo = await UserManager.GetUserAsync(User);
 
-            UserAccountInfo = new UserAccountOutputDto
-            {
-                Organization = CurrentTenant.Name,
-                Name = userInfo.Name,
-                Surname = userInfo.Surname,
-                Email = userInfo.Email
-            };
+            // todo: Use automapper?
+            UserAccountInfo.Organization = CurrentTenant.Name;
+            UserAccountInfo.Name = userInfo.Name;
+            UserAccountInfo.Surname = userInfo.Surname;
+            UserAccountInfo.Email = userInfo.Email;
 
             return Page();
         }
 
         public class UserAccountOutputDto
         {
-            public string Name { get; set; }
-            public string Surname { get; set; }
-            public string Email { get; set; }
+            public string? Name { get; set; }
+            public string? Surname { get; set; }
+            public string? Email { get; set; }
 
-            public string Organization { get; set; }
+            public string? Organization { get; set; }
 
-            public string FullName => string.IsNullOrEmpty(Name) ? Surname : $"{Name} {Surname}";
+            public string FullName => UtitlityExtensions.ComposeFullName(Name, Surname);
 
         }
     }

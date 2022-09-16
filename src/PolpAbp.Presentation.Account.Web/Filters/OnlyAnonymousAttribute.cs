@@ -9,7 +9,7 @@ namespace PolpAbp.Presentation.Account.Web
     {
         public void OnAuthorization(AuthorizationFilterContext context)
         {
-            if (context?.HttpContext?.User != null)
+            if (context?.HttpContext?.User?.Identity != null)
             {
                 if (context.HttpContext.User.Identity.IsAuthenticated)
                 {

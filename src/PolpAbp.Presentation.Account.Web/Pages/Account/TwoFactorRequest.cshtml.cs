@@ -172,9 +172,9 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 
         public class TwoFactorProvider
         {
-            public string Name { get; set; }
-            public string Action { get; set; }
-            public string Display { get; set; }
+            public string? Name { get; set; }
+            public string? Action { get; set; }
+            public string? Display { get; set; }
         }
     }
 }

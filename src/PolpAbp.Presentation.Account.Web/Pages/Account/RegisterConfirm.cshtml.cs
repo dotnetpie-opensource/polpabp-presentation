@@ -93,7 +93,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
             var tenant = await TenantManager.CreateAsync(Input.TenantName);
             await TenantRepository.InsertAsync(tenant, true); // Save automatically
 
-            IdentityUser admin = null;
+            IdentityUser? admin = null;
 
             // Create data for tenant.
             // 1. The admin

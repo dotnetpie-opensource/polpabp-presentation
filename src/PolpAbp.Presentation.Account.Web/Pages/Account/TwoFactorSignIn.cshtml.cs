@@ -91,7 +91,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
             [DynamicStringLength(typeof(IdentityUserConsts), nameof(IdentityUserConsts.MaxPasswordLength))]
             [DataType(DataType.Password)]
             [DisableAuditing]
-            public string Code { get; set; }
+            public string? Code { get; set; }
 
             // Remember this client.
             public bool RememberClient { get; set; }

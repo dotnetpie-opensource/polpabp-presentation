@@ -17,7 +17,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
             ModelState = modelState;
         }
 
-        public bool ValidateComplexity(string password)
+        public bool ValidateComplexity(string? password)
         {
             if (string.IsNullOrWhiteSpace(password))
             {
@@ -58,7 +58,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
             return true;
         }
 
-        public bool ValidateConfirmPassword(string password, string confirmPassword)
+        public bool ValidateConfirmPassword(string? password, string? confirmPassword)
         {
             if (!Equals(password, confirmPassword))
             {

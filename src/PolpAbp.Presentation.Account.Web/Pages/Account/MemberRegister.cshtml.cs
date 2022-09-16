@@ -61,8 +61,8 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                     ValidateModel();
 
                     // trim
-                    Input.EmailAddress = Input.EmailAddress.Trim();
-                    Input.Password = Input.Password.Trim();
+                    Input.EmailAddress = Input!.EmailAddress!.Trim();
+                    Input.Password = Input!.Password!.Trim();
 
                     // Check if this email is available or not
                     var userInfo = await UserManager.FindByEmailAsync(Input.EmailAddress);
@@ -143,27 +143,27 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
             [Required]
             [EmailAddress]
             [DynamicStringLength(typeof(IdentityUserConsts), nameof(IdentityUserConsts.MaxEmailLength))]
-            public string EmailAddress { get; set; }
+            public string? EmailAddress { get; set; }
 
             [Required]
             [DynamicStringLength(typeof(IdentityUserConsts), nameof(IdentityUserConsts.MaxPasswordLength))]
             [DataType(DataType.Password)]
             [DisableAuditing]
-            public string Password { get; set; }
+            public string? Password { get; set; }
 
             [Required]
             [DynamicStringLength(typeof(IdentityUserConsts), nameof(IdentityUserConsts.MaxPasswordLength))]
             [DataType(DataType.Password)]
             [DisableAuditing]
-            public string ConfirmPassword { get; set; }
+            public string? ConfirmPassword { get; set; }
 
             [Required]
             [DynamicStringLength(typeof(IdentityUserConsts), nameof(IdentityUserConsts.MaxNameLength))]
-            public string FirstName { get; set; }
+            public string? FirstName { get; set; }
 
             [Required]
             [DynamicStringLength(typeof(IdentityUserConsts), nameof(IdentityUserConsts.MaxSurnameLength))]
-            public string LastName { get; set; }
+            public string? LastName { get; set; }
 
         }
     }
