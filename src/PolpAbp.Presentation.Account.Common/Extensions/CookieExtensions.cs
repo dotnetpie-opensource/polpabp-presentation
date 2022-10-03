@@ -1,5 +1,7 @@
 ﻿// On purpose we do not include extensions in the namespace
-namespace PolpAbp.Presentation.Account.Web
+using Microsoft.AspNetCore.Http;
+
+namespace PolpAbp.Presentation.Account
 {
     public static class CookieExtensions
     {

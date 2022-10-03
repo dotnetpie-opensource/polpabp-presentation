@@ -6,7 +6,7 @@ using Volo.Abp.MultiTenancy;
 
 // On purpose, we do not include Filter in the namespace.
 // So we do not need additional namespace in the pages.
-namespace PolpAbp.Presentation.Account.Web
+namespace PolpAbp.Presentation.Account
 {
     public class TenantPrerequisiteAttribute : Attribute, IAuthorizationFilter
     {

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 
 // On purpose, we do not include Filter in the namespace.
 // So we do not need additional namespace in the pages.
-namespace PolpAbp.Presentation.Account.Web
+namespace PolpAbp.Presentation.Account
 {
     public class OnlyAnonymousAttribute : Attribute, IAuthorizationFilter
     {

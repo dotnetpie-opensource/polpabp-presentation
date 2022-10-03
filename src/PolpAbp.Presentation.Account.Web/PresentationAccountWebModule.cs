@@ -29,7 +29,8 @@ namespace PolpAbp.Presentation.Account.Web
         typeof(AbpAspNetCoreMvcUiMultiTenancyModule),
         typeof(PolpAbpFrameworkDomainModule),
         typeof(PolpAbpFrameworkApplicationContractsModule),
-        typeof(PresentationContractsModule)
+        typeof(PresentationContractsModule),
+        typeof(PresentationAccountCommonModule)
     )]
     public class PresentationAccountWebModule : AbpModule
     {
