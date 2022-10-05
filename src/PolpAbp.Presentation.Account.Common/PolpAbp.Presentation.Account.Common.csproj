@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <Import Project="..\..\configureawait.props" />
+	<Import Project="..\..\common.props" />	
+
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<AssemblyName>PolpAbp.Presentation.Account.Common</AssemblyName>
+		<PackageId>PolpAbp.Presentation.Account.Common</PackageId>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<RootNamespace>PolpAbp.Presentation.Account</RootNamespace>
+		<IsPackable>true</IsPackable>
+		<OutputType>Library</OutputType>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Volo.Abp.Identity.AspNetCore" Version="5.3.2" />
+		<PackageReference Include="Volo.Abp.AspNetCore.Mvc.UI" Version="5.3.2" />
+		<PackageReference Include="Volo.Abp.Account.Application.Contracts" Version="5.3.2" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\..\..\fwt\src\PolpAbp.Framework.Domain.Shared\PolpAbp.Framework.Domain.Shared.csproj" />
+	  <ProjectReference Include="..\..\..\fwt\src\PolpAbp.Framework.Core.Shared\PolpAbp.Framework.Core.Shared.csproj" />
+	  <ProjectReference Include="..\..\..\fwt\src\PolpAbp.Framework.Application.Contracts\PolpAbp.Framework.Application.Contracts.csproj" />
+	</ItemGroup>
+</Project>
