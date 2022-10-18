@@ -1,16 +1,16 @@
 ﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Localization;
-using PolpAbp.Framework.Identity;
+using PolpAbp.Framework.Security;
 
 namespace PolpAbp.Presentation.Account.Web.Pages.Account
 {
     public class PasswordValidator
     {
-        private readonly PasswordComplexity _setting;
+        private readonly PasswordComplexitySetting _setting;
         private readonly IStringLocalizer L;
         private readonly ModelStateDictionary ModelState;
 
-        public PasswordValidator(PasswordComplexity settings, IStringLocalizer l, ModelStateDictionary modelState)
+        public PasswordValidator(PasswordComplexitySetting settings, IStringLocalizer l, ModelStateDictionary modelState)
         {
             _setting = settings;
             L = l;

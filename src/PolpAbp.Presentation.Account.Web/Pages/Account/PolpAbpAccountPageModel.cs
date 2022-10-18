@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using PolpAbp.Framework.Identity;
+using PolpAbp.Framework.Security;
 using Volo.Abp;
 using Volo.Abp.Account;
 using Volo.Abp.Account.Localization;
@@ -23,7 +23,7 @@ public abstract class PolpAbpAccountPageModel : AbpPageModel
 
     public bool IsRecaptchaEnabled { get; set; }
 
-    public PasswordComplexity PwdComplexity { get; private set; }
+    public PasswordComplexitySetting PwdComplexity { get; private set; }
 
     protected IAccountAppService AccountAppService => LazyServiceProvider.LazyGetRequiredService<IAccountAppService>();
     protected SignInManager<IdentityUser> SignInManager => LazyServiceProvider.LazyGetRequiredService<SignInManager<IdentityUser>>();
@@ -48,7 +48,7 @@ public abstract class PolpAbpAccountPageModel : AbpPageModel
 
     protected PolpAbpAccountPageModel()
     {
-        PwdComplexity = new PasswordComplexity();
+        PwdComplexity = new PasswordComplexitySetting();
         LocalizationResourceType = typeof(AccountResource);
         ObjectMapperContext = typeof(PresentationAccountWebModule);
     }
