@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using System.Web;
+using Volo.Abp.Data;
 using Volo.Abp.Identity;
 using Volo.Abp.Validation;
 
@@ -75,6 +76,24 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                         }
                         else
                         {
+                            // Figure out the provider name.
+                            var providerName = user.GetProperty<string>("SsoScheme");
+                            if (!string.IsNullOrEmpty(providerName))
+                            {
+                                var ssoUrl = Configuration[$@"PolpAbp:ExternalLogin:{providerName}:LoginPage"];
+                                if (!string.IsNullOrEmpty(ssoUrl))
+                                {
+                                    return RedirectToPage(ssoUrl, new
+                                    {
+                                        // todo: Maybe use Id
+                                        userNameOrEmailAddress = HttpUtility.UrlEncode(IsUserNameEnabled ? user.UserName : user.Email),
+                                        returnUrl = ReturnUrl,
+                                        returnUrlHash = ReturnUrlHash
+                                    });
+                                }
+                            }
+
+                            // Fall back to the general case.
                             return RedirectToPage("./ExternalLogin", new
                             {
                                 // todo: Maybe use Id

@@ -59,6 +59,9 @@
         <!-- todo: Add a link for the member registration -->
         <li>
             <a class="btn btn-link fst-italic" href="@Url.Page("./ResendActivationLink", new {UserNameOrEmailAddress = Model.Input.UserNameOrEmailAddress})">@L["ResendActivationLink"]</a>
+
+            <!--TODO: Guard-->
+            <a class="btn btn-link fst-italic" href="@Url.Page("./ExternalLogin")">External Login</a>
         </li>
     </ul>
 </div>

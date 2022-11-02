@@ -135,11 +135,18 @@ public abstract class PolpAbpExternalAuthPageModel : AbpPageModel
     {
         public string DisplayName { get; set; }
         public string AuthenticationScheme { get; set; }
+        public string LoginPage { get; set; }
 
         public ExternalProviderModel(string name, string scheme)
         {
             DisplayName = name;
             AuthenticationScheme = scheme;
+        }
+
+        public ExternalProviderModel(ExternalProviderModel that)
+        {
+            DisplayName = that.DisplayName;
+            AuthenticationScheme = that.AuthenticationScheme;
         }
     }
 

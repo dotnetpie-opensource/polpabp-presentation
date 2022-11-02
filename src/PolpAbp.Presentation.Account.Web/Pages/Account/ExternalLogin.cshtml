@@ -1,4 +1,53 @@
 ﻿@page
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Microsoft.Extensions.Localization
+@using Volo.Abp.Account.Localization
+@using Volo.Abp.Account.Settings
+@using Volo.Abp.AspNetCore.Mvc.UI.MultiTenancy.Localization
+@using Volo.Abp.Settings
+@using AspNetCore.ReCaptcha
 @model PolpAbp.Presentation.Account.Web.Pages.Account.ExternalLoginModel
+@inject IHtmlLocalizer<AccountResource> L
 @{
+    ViewBag.Title = "SSO Login entry";
+    ViewBag.Description = "Redirects you to your SSO provider.";
 }
+
+<h4 class="mb-4 fw-semibold">
+    SSO Login
+</h4>
+
+<div class="alert alert-info d-flex align-items-center" role="alert">
+    <div>
+        Please choose your SSO provider and continue
+    </div>
+</div>
+
+<!--List of providers-->
+<div class="d-grid gap-2 mt-3 mb-3">
+    @{
+        foreach (var s in Model.SsoProviders)
+        {
+            <a class="btn btn-primary btn-lg" href="@Url.Page(s.LoginPage)">
+                @s.DisplayName
+                <span class="spinner-box"></span>
+            </a>
+        }
+    }
+</div>
+
+<!-- todo: Add a condition -->
+<div class="d-flex flex-column align-items-start mt-5 mb-3">
+    <h6>Help links</h6>
+    <ul>
+        <!-- todo: Add a link for the member registration -->
+        <li>
+            <a class="btn btn-link fst-italic" href="@Url.Page("./Login")">Login with your user name/email/password</a>
+        </li>
+        <li>
+            <!--TODO: Guard-->
+            <a class="btn btn-link fst-italic" href="@Url.Page("./ExternalLogin")">Login with your SSO providers</a>
+        </li>
+    </ul>
+</div>
+
