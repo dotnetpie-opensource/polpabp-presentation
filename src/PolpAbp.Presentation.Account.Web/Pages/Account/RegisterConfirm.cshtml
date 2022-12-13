@@ -28,9 +28,9 @@
         Last, please check the information below and submit it
     </h5>
 
-    <input asp-for="Input.TenantName" type="hidden" />
-    <input asp-for="Input.AdminEmailAddress" type="hidden" />
-    <input asp-for="Input.Password" type="hidden" />
+    <input asp-for="Input.TenantName" type="hidden" autocomplete="off" />
+    <input asp-for="Input.AdminEmailAddress" type="hidden" autocomplete="off" />
+    <input asp-for="Input.Password" type="hidden" autocomplete="off" />
 
     <dl class="row">
         <dt class="col-12 col-sm-6">@L["DisplayName:TenantName"]</dt>
@@ -43,7 +43,7 @@
         <dd class="col-12 col-sm-6 ms-3 ms-sm-0">@Model.Input.Password</dd>
      </dl>
 
-    </hr>
+    <hr/>
 
     @if (Model.IsRecaptchaEnabled)
     {

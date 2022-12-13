@@ -27,11 +27,11 @@
         Next, please provide the administrator information
     </h5>
 
-    <abp-input asp-for="Input.AdminEmailAddress" auto-focus="true" />
+    <abp-input asp-for="Input.AdminEmailAddress" auto-focus="true" autocomplete="email" />
 
-    <abp-input asp-for="Input.Password" value="@Model.Input.Password" />
+    <abp-input asp-for="Input.Password" value="@Model.Input.Password" autocomplete="new-password" />
 
-    <abp-input asp-for="Input.ConfirmPassword" value="@Model.Input.ConfirmPassword" />
+    <abp-input asp-for="Input.ConfirmPassword" value="@Model.Input.ConfirmPassword" autocomplete="off" auto-focus />
 
     <div class="d-grid gap-2">
         <abp-button type="submit" button-type="Primary" name="Action" value="Input" class="btn-lg mt-3">

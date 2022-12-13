@@ -29,7 +29,7 @@
     {
         <div class="mb-3">
             <label class="form-label">@L["DisplayName:UserName"]</label>
-            <input asp-for="Input.UserNameOrEmailAddress" class="form-control" autocomplete="new-password">
+            <input asp-for="Input.UserNameOrEmailAddress" class="form-control" autocomplete="off">
             <span asp-validation-for="Input.UserNameOrEmailAddress" class="text-danger"></span>
         </div>
 
@@ -38,14 +38,14 @@
     {
         <div class="mb-3">
             <label class="form-label">@L["DisplayName:EmailAddress"]</label>
-            <input asp-for="Input.UserNameOrEmailAddress" class="form-control" autocomplete="new-password">
+            <input asp-for="Input.UserNameOrEmailAddress" class="form-control" autocomplete="off">
             <span asp-validation-for="Input.UserNameOrEmailAddress" class="text-danger"></span>
         </div>
     }
 
     <div class="mb-3">
         <label asp-for="Input.Password" class="form-label"></label>
-        <input asp-for="Input.Password" class="form-control" data-auto-focus="true" autocomplete="new-password" />
+        <input asp-for="Input.Password" class="form-control" data-auto-focus="true" autocomplete="current-password" />
         <span asp-validation-for="Input.Password" class="text-danger"></span>
     </div>
 

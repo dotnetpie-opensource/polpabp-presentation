@@ -41,16 +41,51 @@
         </div>
     </form>
 }
-else
+else if (Model.Resolution.OptionId <= 0 || Model.Resolution.OptionId > 2)
 {
     <div class="alert alert-info d-flex align-items-center" role="alert">
         <div>
-            Please type your email address or your organization name
+            Please choose one way to locate your organization
         </div>
     </div>
 
     <form method="post">
-        <abp-input asp-for="Input.TenantOrEmailAddress" auto-focus="true" />
+
+        <div class="d-flex flex-wrap">
+            <div class="mb-3 me-3">
+                <input type="radio" class="btn-check" name="Resolution.OptionId" id="Resolution-By-Tenant" value="1" autocomplete="off" checked>
+                <label class="btn btn-outline-dark" for="Resolution-By-Tenant">Organization Name</label>
+            </div>
+
+            <div class="mb-3">
+                <input type="radio" class="btn-check" name="Resolution.OptionId" id="Resolution-By-Email" value="2" autocomplete="off">
+                <label class="btn btn-outline-dark" for="Resolution-By-Email">My Email Address</label>
+            </div>
+        </div>
+
+        <div class="d-grid gap-2">
+            <abp-button type="submit" button-type="Primary" name="Action" value="Resolution" class="btn-block btn-lg mt-3">
+                @L["Continue"]
+                <span class="spinner-box"></span>
+            </abp-button>
+        </div>
+    </form>
+}
+else if (Model.Resolution.OptionId == 1)
+{
+    <div class="alert alert-info d-flex align-items-center" role="alert">
+        <div>
+            Please type your organization name
+        </div>
+    </div>
+
+    <form method="post">
+        <input asp-for="Input.IsUsingEmailAddress" type="hidden" value="false" autocomplete="off" />
+        <div class="mb-3">
+            <label class="form-label">@L["DisplayName:TenantName"]</label>
+            <input asp-for="Input.TenantOrEmailAddress" class="form-control" data-auto-focus="true" autocomplete="organization">
+            <span asp-validation-for="Input.TenantOrEmailAddress" class="text-danger"></span>
+        </div>
 
         @if (Model.IsRecaptchaEnabled)
         {
@@ -63,6 +98,43 @@ else
             <abp-button type="submit" button-type="Primary" name="Action" value="Input" class="btn-block btn-lg mt-3">
                 @L["Continue"]
                 <span class="spinner-box"></span>
+            </abp-button>
+            <abp-button type="submit" button-type="Secondary" formnovalidate="formnovalidate" name="Action" value="Cancel" class="btn-lg mt-3">
+                @L["Back"]
+            </abp-button>
+        </div>
+    </form>
+}
+else
+{
+    <div class="alert alert-info d-flex align-items-center" role="alert">
+        <div>
+            Please type your email address
+        </div>
+    </div>
+
+    <form method="post">
+        <input asp-for="Input.IsUsingEmailAddress" type="hidden" value="true" autocomplete="off" />
+        <div class="mb-3">
+            <label class="form-label">@L["DisplayName:EmailAddress"]</label>
+            <input asp-for="Input.TenantOrEmailAddress" class="form-control" data-auto-focus="true" autocomplete="email">
+            <span asp-validation-for="Input.TenantOrEmailAddress" class="text-danger"></span>
+        </div>
+
+        @if (Model.IsRecaptchaEnabled)
+        {
+            <div class="mb-3">
+                @Html.ReCaptcha()
+            </div>
+        }
+
+        <div class="d-grid gap-2">
+            <abp-button type="submit" button-type="Primary" name="Action" value="Input" class="btn-block btn-lg mt-3">
+                @L["Continue"]
+                <span class="spinner-box"></span>
+            </abp-button>
+            <abp-button type="submit" button-type="Secondary" formnovalidate="formnovalidate" name="Action" value="Cancel" class="btn-lg mt-3">
+                @L["Back"]
             </abp-button>
         </div>
     </form>
