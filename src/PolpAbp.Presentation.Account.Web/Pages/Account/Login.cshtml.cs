@@ -25,7 +25,15 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
             // Load settings
             await LoadSettingsAsync();
 
-            Input.UserNameOrEmailAddress = NormalizedUserNameOrEmailAddress;
+            if (!string.IsNullOrEmpty(NormalizedUserName))
+            {
+                Input.UserNameOrEmailAddress = NormalizedUserName;
+            }
+            else if (!string.IsNullOrEmpty(NormalizedEmailAddress))
+            {
+                Input.UserNameOrEmailAddress = NormalizedEmailAddress;
+                Input.IsUsingEmailAddress = true;
+            }
 
             return Page();
         }
@@ -122,7 +130,8 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                 // Need to reload the page.
                 return RedirectToPage("./Login", new
                 {
-                    userNameOrEmailAddress = NormalizedUserNameOrEmailAddress,
+                    userName = NormalizedUserName,
+                    EmailAddress = NormalizedEmailAddress,
                     returnUrl = ReturnUrl,
                     returnUrlHash = ReturnUrlHash
                 });
@@ -133,6 +142,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 
         public class LoginInputModel
         {
+            public bool IsUsingEmailAddress { get; set; }
             [Required]
             [DynamicStringLength(typeof(IdentityUserConsts), nameof(IdentityUserConsts.MaxEmailLength))]
             public string? UserNameOrEmailAddress { get; set; }

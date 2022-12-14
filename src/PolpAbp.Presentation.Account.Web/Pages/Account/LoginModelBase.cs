@@ -8,9 +8,14 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
     public abstract class LoginModelBase : PolpAbpAccountPageModel
     {
         [BindProperty(SupportsGet = true)]
-        public string? UserNameOrEmailAddress { get; set; }
+        public string? UserName { get; set; }
 
-        public string NormalizedUserNameOrEmailAddress => HttpUtility.UrlDecode(UserNameOrEmailAddress ?? string.Empty);
+        [BindProperty(SupportsGet = true)]
+        public string? EmailAddress { get; set; }
+
+        public string NormalizedUserName => HttpUtility.UrlDecode(UserName ?? string.Empty);
+
+        public string NormalizedEmailAddress => HttpUtility.UrlDecode(EmailAddress ?? string.Empty);
 
         public bool IsUserNameEnabled { get; set; }
 
