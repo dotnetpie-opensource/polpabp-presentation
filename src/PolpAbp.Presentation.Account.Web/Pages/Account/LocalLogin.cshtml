@@ -6,11 +6,26 @@
 @using Volo.Abp.AspNetCore.Mvc.UI.MultiTenancy.Localization
 @using Volo.Abp.Settings
 @using AspNetCore.ReCaptcha
+@using System.Web
 @model PolpAbp.Presentation.Account.Web.Pages.Account.LocalLoginModel
 @inject IHtmlLocalizer<AccountResource> L
 @{
     ViewBag.Title = "Login with Your User Name/Email and Password";
     ViewBag.Description = "Logs into the system with the pair of your user name/email and your password.";
+
+    var reActivationLink = Url.Page("./ResendActivationLink", new
+    {
+        UserName = Model.Input.IsUsingEmailAddress ? string.Empty : HttpUtility.UrlEncode(Model.Input.UserNameOrEmailAddress),
+        EmailAddress = Model.Input.IsUsingEmailAddress ? HttpUtility.UrlEncode(Model.Input.UserNameOrEmailAddress) : string.Empty
+    });
+
+    var forgotPwdLink = Url.Page("./ForgotPassword", new
+    {
+        UserName = Model.Input.IsUsingEmailAddress ? string.Empty : HttpUtility.UrlEncode(Model.Input.UserNameOrEmailAddress),
+        EmailAddress = Model.Input.IsUsingEmailAddress ? HttpUtility.UrlEncode(Model.Input.UserNameOrEmailAddress) : string.Empty,
+        returnUrl = Model.ReturnUrl,
+        returnUrlHash = Model.ReturnUrlHash
+    });
 }
 
 <h4 class="mb-4 fw-semibold">
@@ -25,20 +40,21 @@
 
 <form method="post">
 
-    @if (Model.IsUserNameEnabled)
+    <input asp-for="Input.IsUsingEmailAddress" type="hidden" autocomplete="off" />
+
+    @if (Model.Input.IsUsingEmailAddress)
     {
         <div class="mb-3">
-            <label class="form-label">@L["DisplayName:UserName"]</label>
-            <input asp-for="Input.UserNameOrEmailAddress" class="form-control" autocomplete="off">
+            <label class="form-label">@L["DisplayName:EmailAddress"]</label>
+            <input asp-for="Input.UserNameOrEmailAddress" class="form-control" autocomplete="email" type="email">
             <span asp-validation-for="Input.UserNameOrEmailAddress" class="text-danger"></span>
         </div>
-
     }
     else
     {
         <div class="mb-3">
-            <label class="form-label">@L["DisplayName:EmailAddress"]</label>
-            <input asp-for="Input.UserNameOrEmailAddress" class="form-control" autocomplete="off">
+            <label class="form-label">@L["DisplayName:UserName"]</label>
+            <input asp-for="Input.UserNameOrEmailAddress" class="form-control" autocomplete="username">
             <span asp-validation-for="Input.UserNameOrEmailAddress" class="text-danger"></span>
         </div>
     }
@@ -55,7 +71,7 @@
             <abp-input asp-for="Input.RememberMe" />
         </abp-column>
         <abp-column class="text-end">
-            <a href="@Url.Page("./ForgotPassword", new {returnUrl = Model.ReturnUrl, returnUrlHash = Model.ReturnUrlHash, UserNameOrEmailAddress = Model.Input.UserNameOrEmailAddress})">@L["ForgotPassword"]</a>
+            <a href="@forgotPwdLink">@L["ForgotPassword"]</a>
         </abp-column>
     </abp-row>
 
@@ -75,7 +91,7 @@
     <h6>Help links</h6>
     <ul>
         <li>
-            <a class="btn btn-link fst-italic" href="@Url.Page("./ResendActivationLink", new {UserNameOrEmailAddress = Model.Input.UserNameOrEmailAddress})">@L["ResendActivationLink"]</a>
+            <a class="btn btn-link fst-italic" href="@reActivationLink">@L["ResendActivationLink"]</a>
         </li>
     </ul>
 </div>

@@ -11,13 +11,16 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
     [OnlyAnonymous]
     public class LoginModel : LoginModelBase
     {
-
         [BindProperty]
         public LoginInputModel Input { get; set; }
+
+        [BindProperty]
+        public PostResolution Resolution { get; set; }
 
         public LoginModel() : base()
         {
             Input = new LoginInputModel();
+            Resolution = new PostResolution();
         }
 
         public virtual async Task<IActionResult> OnGetAsync()
@@ -50,22 +53,20 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                 {
                     ValidateModel();
 
-                    if (!IsUserNameEnabled)
-                    {
-                        if (!ValidationHelper.IsValidEmailAddress(Input.UserNameOrEmailAddress))
-                        {
-                            Alerts.Warning("Please type a valid email address");
-                            return Page();
-                        }
-                    }
-
                     IdentityUser? user = null;
 
                     if (IsUserNameEnabled)
                     {
-                        user = await UserManager.FindByNameAsync(Input.UserNameOrEmailAddress);
+                        if (Input.IsUsingEmailAddress)
+                        {
+                            user = await UserManager.FindByEmailAsync(Input.UserNameOrEmailAddress);
+                        }
+                        else
+                        {
+                            user = await UserManager.FindByNameAsync(Input.UserNameOrEmailAddress);
+                        }
                     }
-                    else if (ValidationHelper.IsValidEmailAddress(Input.UserNameOrEmailAddress))
+                    else
                     {
                         user = await UserManager.FindByEmailAsync(Input.UserNameOrEmailAddress);
                     }
@@ -77,7 +78,8 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                             return RedirectToPage("./LocalLogin", new
                             {
                                 // todo: Maybe use Id
-                                userNameOrEmailAddress = HttpUtility.UrlEncode(IsUserNameEnabled ? user.UserName : user.Email),
+                                UserName = Input.IsUsingEmailAddress ? string.Empty : HttpUtility.UrlEncode(user.UserName),
+                                EmailAddress = Input.IsUsingEmailAddress ? HttpUtility.UrlEncode(user.Email) : string.Empty,
                                 returnUrl = ReturnUrl,
                                 returnUrlHash = ReturnUrlHash
                             });
@@ -94,7 +96,8 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                                     return RedirectToPage(ssoUrl, new
                                     {
                                         // todo: Maybe use Id
-                                        userNameOrEmailAddress = HttpUtility.UrlEncode(IsUserNameEnabled ? user.UserName : user.Email),
+                                        UserName = Input.IsUsingEmailAddress ? string.Empty : HttpUtility.UrlEncode(user.UserName),
+                                        EmailAddress = Input.IsUsingEmailAddress ? HttpUtility.UrlEncode(user.Email) : string.Empty,
                                         returnUrl = ReturnUrl,
                                         returnUrlHash = ReturnUrlHash
                                     });
@@ -105,7 +108,8 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                             return RedirectToPage("./ExternalLogin", new
                             {
                                 // todo: Maybe use Id
-                                userNameOrEmailAddress = HttpUtility.UrlEncode(IsUserNameEnabled ? user.UserName : user.Email),
+                                UserName = Input.IsUsingEmailAddress ? string.Empty : HttpUtility.UrlEncode(user.UserName),
+                                EmailAddress = Input.IsUsingEmailAddress ? HttpUtility.UrlEncode(user.Email) : string.Empty,
                                 returnUrl = ReturnUrl,
                                 returnUrlHash = ReturnUrlHash
                             });
@@ -121,6 +125,11 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                         Alerts.Add(Volo.Abp.AspNetCore.Mvc.UI.Alerts.AlertType.Danger, a.ErrorMessage);
                     }
                 }
+            }
+            else if (action == "Resolution")
+            {
+                // Re-render the page.
+                return Page();
             }
             else if (action == "ResetTenant")
             {
@@ -146,6 +155,11 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
             [Required]
             [DynamicStringLength(typeof(IdentityUserConsts), nameof(IdentityUserConsts.MaxEmailLength))]
             public string? UserNameOrEmailAddress { get; set; }
+        }
+
+        public class PostResolution
+        {
+            public int OptionId { get; set; }
         }
     }
 }

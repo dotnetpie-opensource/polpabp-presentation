@@ -28,7 +28,15 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
             // Load settings
             await LoadSettingsAsync();
 
-            Input.UserNameOrEmailAddress = NormalizedUserNameOrEmailAddress;
+            if (!string.IsNullOrEmpty(NormalizedUserName))
+            {
+                Input.UserNameOrEmailAddress = NormalizedUserName;
+            }
+            else if (!string.IsNullOrEmpty(NormalizedEmailAddress))
+            {
+                Input.UserNameOrEmailAddress = NormalizedEmailAddress;
+                Input.IsUsingEmailAddress = true;
+            }
 
             return Page();
         }
@@ -47,30 +55,27 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 
                     ValidateModel();
 
-                    if (!IsUserNameEnabled)
-                    {
-                        if (!ValidationHelper.IsValidEmailAddress(Input.UserNameOrEmailAddress))
-                        {
-                            Alerts.Warning("Please type a valid email address");
-                            return Page();
-                        }
-                    }
-
                     IdentityUser? user = null;
 
-                    if (IsUserNameEnabled)
-                    {
-                        user = await UserManager.FindByNameAsync(Input.UserNameOrEmailAddress);
-                    }
-                    else if (ValidationHelper.IsValidEmailAddress(Input.UserNameOrEmailAddress))
+                    if (Input.IsUsingEmailAddress)
                     {
                         user = await UserManager.FindByEmailAsync(Input.UserNameOrEmailAddress);
+                    }
+                    else
+                    {
+                        user = await UserManager.FindByNameAsync(Input.UserNameOrEmailAddress);
                     }
 
                     if (user == null)
                     {
                         Alerts.Danger(L["InvalidUserNameOrPassword"]);
-                        return Page();
+                        return RedirectToPage("./Login", new
+                        {
+                            UserName = NormalizedUserName,
+                            EmailAddress = NormalizedEmailAddress,
+                            returnUrl = ReturnUrl,
+                            returnUrlHash = ReturnUrlHash
+                        });
                     }
 
                     // todo: Login 
@@ -141,7 +146,8 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                 // Need to reload the page.
                 return RedirectToPage("./Login", new
                 {
-                    UserNameOrEmailAddress = NormalizedUserNameOrEmailAddress,
+                    UserName = NormalizedUserName,
+                    EmailAddress = NormalizedEmailAddress,
                     ReturnUrl = ReturnUrl,
                     ReturnUrlHash = ReturnUrlHash
                 });
@@ -154,7 +160,8 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                 // Need to reload the page.
                 return RedirectToPage("./Login", new
                 {
-                    userNameOrEmailAddress = NormalizedUserNameOrEmailAddress,
+                    UserName = NormalizedUserName,
+                    EmailAddress = NormalizedEmailAddress,
                     returnUrl = ReturnUrl,
                     returnUrlHash = ReturnUrlHash
                 });
@@ -173,6 +180,8 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 
         public class PostInput
         {
+            public bool IsUsingEmailAddress { get; set; }
+
             [Required]
             [DynamicStringLength(typeof(IdentityUserConsts), nameof(IdentityUserConsts.MaxEmailLength))]
             public string? UserNameOrEmailAddress { get; set; }

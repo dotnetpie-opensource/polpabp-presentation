@@ -6,51 +6,130 @@
 @using Volo.Abp.AspNetCore.Mvc.UI.MultiTenancy.Localization
 @using Volo.Abp.Settings
 @using AspNetCore.ReCaptcha
+@using System.Web
 @model PolpAbp.Presentation.Account.Web.Pages.Account.LoginModel
 @inject IHtmlLocalizer<AccountResource> L
 
 @{
     ViewBag.Title = "Single Login Entry Point";
-    ViewBag.Description = "Redirects you to use the right login method, either the pair of your user name/email and password, or your SSO providers.";
+    ViewBag.Description = "Redirects you to use the right login method, " +
+    "either the pair of your user name/email and password, or your SSO providers.";
+
+    var reActivationLink = Url.Page("./ResendActivationLink", new
+    {
+        UserName = Model.Input.IsUsingEmailAddress ? string.Empty : HttpUtility.UrlEncode(Model.Input.UserNameOrEmailAddress),
+        EmailAddress = Model.Input.IsUsingEmailAddress ? HttpUtility.UrlEncode(Model.Input.UserNameOrEmailAddress) : string.Empty
+    });
 }
 
 <h4 class="mb-4 fw-semibold">
     Locating your information
 </h4>
 
-<div class="alert alert-info d-flex align-items-center" role="alert">
-    @if (Model.IsUserNameEnabled)
+@if (Model.IsUserNameEnabled)
+{
+    if (Model.Resolution.OptionId <= 0 || Model.Resolution.OptionId > 2)
     {
-        <div>
-            Please type your user name or your email address
+        <div class="alert alert-info d-flex align-items-center" role="alert">
+            Please choose one way to locate your information
         </div>
+
+        <form method="post">
+
+            <div class="d-flex flex-wrap">
+                <div class="mb-3 me-3">
+                    <input type="radio" class="btn-check" name="Resolution.OptionId"
+                   id="Resolution-By-Email" value="1" autocomplete="off" checked>
+                    <label class="btn btn-outline-dark" for="Resolution-By-Tenant">Email Address</label>
+                </div>
+
+                <div class="mb-3">
+                    <input type="radio" class="btn-check" name="Resolution.OptionId"
+                   id="Resolution-By-Name" value="2" autocomplete="off">
+                    <label class="btn btn-outline-dark" for="Resolution-By-Email">User Name</label>
+                </div>
+            </div>
+
+            <div class="d-grid gap-2">
+                <abp-button type="submit" button-type="Primary" name="Action"
+                    value="Resolution" class="btn-block btn-lg mt-3">
+                    @L["Continue"]
+                    <span class="spinner-box"></span>
+                </abp-button>
+            </div>
+        </form>
     }
-    else
+    else if (Model.Resolution.OptionId == 1)
     {
-        <div>
+        <div class="alert alert-info d-flex align-items-center" role="alert">
             Please type your email address
         </div>
-    }
-</div>
 
-<form method="post">
+        <form method="post">
+            <input asp-for="Input.IsUsingEmailAddress" type="hidden" value="true" autocomplete="off" />
 
-    @if (Model.IsUserNameEnabled)
-    {
-        <abp-input asp-for="Input.UserNameOrEmailAddress" auto-focus="true" />
+            <abp-input asp-for="Input.UserNameOrEmailAddress" auto-focus="true" type="email"
+               label="@L["DisplayName:Email"].Value" autocomplete="email" />
+
+            <div class="d-grid gap-2">
+                <abp-button type="submit" button-type="Primary" name="Action" value="Input" class="btn-lg mt-3">
+                    @L["Continue"]
+                    <span class="spinner-box"></span>
+                </abp-button>
+                <abp-button type="submit" button-type="Secondary" formnovalidate="formnovalidate"
+                    name="Action" value="Cancel" class="btn-lg mt-3">
+                    @L["Back"]
+                </abp-button>
+            </div>
+        </form>
     }
     else
     {
-        <abp-input asp-for="Input.UserNameOrEmailAddress" auto-focus="true" label="@L["DisplayName:Email"].Value" />
+        <div class="alert alert-info d-flex align-items-center" role="alert">
+            Please type your user name
+        </div>
+
+        <form method="post">
+            <input asp-for="Input.IsUsingEmailAddress" type="hidden" value="false" autocomplete="off" />
+
+            <abp-input asp-for="Input.UserNameOrEmailAddress" auto-focus="true"
+               label="@L["DisplayName:UserName"].Value" autocomplete="username" />
+
+            <div class="d-grid gap-2">
+                <abp-button type="submit" button-type="Primary" name="Action" value="Input" class="btn-lg mt-3">
+                    @L["Continue"]
+                    <span class="spinner-box"></span>
+                </abp-button>
+                <abp-button type="submit" button-type="Secondary" formnovalidate="formnovalidate"
+                    name="Action" value="Cancel" class="btn-lg mt-3">
+                    @L["Back"]
+                </abp-button>
+            </div>
+        </form>
     }
 
-    <div class="d-grid gap-2">
-        <abp-button type="submit" button-type="Primary" name="Action" value="Input" class="btn-lg mt-3">
-            @L["Continue"]
-            <span class="spinner-box"></span>
-        </abp-button>
+}
+else
+{
+    <div class="alert alert-info d-flex align-items-center" role="alert">
+        Please type your email address
     </div>
-</form>
+
+    <form method="post">
+        <input asp-for="Input.IsUsingEmailAddress" type="hidden" value="true" autocomplete="off" />
+
+        <abp-input asp-for="Input.UserNameOrEmailAddress" auto-focus="true" type="email"
+               label="@L["DisplayName:Email"].Value" autocomplete="email" />
+
+        <div class="d-grid gap-2">
+            <abp-button type="submit" button-type="Primary" name="Action" value="Input" class="btn-lg mt-3">
+                @L["Continue"]
+                <span class="spinner-box"></span>
+            </abp-button>
+        </div>
+    </form>
+}
+
 
 <!-- todo: Add a condition -->
 <div class="d-flex flex-column align-items-start mt-5 mb-3">
@@ -58,7 +137,7 @@
     <ul>
         <!-- todo: Add a link for the member registration -->
         <li>
-            <a class="btn btn-link fst-italic" href="@Url.Page("./ResendActivationLink", new {UserNameOrEmailAddress = Model.Input.UserNameOrEmailAddress})">@L["ResendActivationLink"]</a>
+            <a class="btn btn-link fst-italic" href="@reActivationLink">@L["ResendActivationLink"]</a>
         </li>
         <li>
             <!--TODO: Guard-->

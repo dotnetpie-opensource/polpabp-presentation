@@ -28,7 +28,15 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
             // Load settings
             await LoadSettingsAsync();
 
-            Input.UserNameOrEmailAddress = NormalizedUserNameOrEmailAddress;
+            if (!string.IsNullOrEmpty(NormalizedUserName))
+            {
+                Input.UserNameOrEmailAddress = NormalizedUserName;
+            }
+            else if (!string.IsNullOrEmpty(NormalizedEmailAddress))
+            {
+                Input.UserNameOrEmailAddress = NormalizedEmailAddress;
+                Input.IsUsingEmailAddress = true;
+            }
 
             return Page();
         }
@@ -44,33 +52,21 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                 {
                     ValidateModel();
 
-                    if (!IsUserNameEnabled)
-                    {
-                        if (!ValidationHelper.IsValidEmailAddress(Input.UserNameOrEmailAddress))
-                        {
-                            Alerts.Warning("Please type a valid email address");
-                            return Page();
-                        }
-                    }
-
                     IdentityUser? user = null;
 
-                    if (IsUserNameEnabled)
-                    {
-                        user = await UserManager.FindByNameAsync(Input.UserNameOrEmailAddress);
-                    }
-                    else if (ValidationHelper.IsValidEmailAddress(Input.UserNameOrEmailAddress))
+                    if (Input.IsUsingEmailAddress)
                     {
                         user = await UserManager.FindByEmailAsync(Input.UserNameOrEmailAddress);
+                    }
+                    else
+                    {
+                        user = await UserManager.FindByNameAsync(Input.UserNameOrEmailAddress);
                     }
 
                     if (user != null && !user.EmailConfirmed)
                     {
-
-
                         // Send it instantly, because the user is waiting for it.
                         await AccountEmailer.SendEmailActivationLinkAsync(user.Id);
-
                     }
                 }
                 catch (AbpValidationException ex)
@@ -92,6 +88,8 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
             {
                 return RedirectToPage("./Login", new
                 {
+                    UserName = NormalizedUserName,
+                    EmailAddress = NormalizedEmailAddress,
                     ReturnUrl = ReturnUrl,
                     ReturnUrlHash = ReturnUrlHash
                 });
@@ -109,6 +107,8 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 
         public class InputModel
         {
+            public bool IsUsingEmailAddress { get; set; }
+
             [Required]
             [DynamicStringLength(typeof(IdentityUserConsts), nameof(IdentityUserConsts.MaxEmailLength))]
             public string? UserNameOrEmailAddress { get; set; }

@@ -20,33 +20,22 @@
 <p>@L["ResendActivationLink_Information"]</p>
 
 <div class="alert alert-info d-flex align-items-center" role="alert">
-    @if (Model.IsUserNameEnabled)
-    {
-        <div>
-            Please type your user name or your email address
-        </div>
-    }
-    else
-    {
-        <div>
-            Please type your email address
-        </div>
-    }
+    Please check your information and submit it
 </div>
 
 <form method="post">
 
-    @if (Model.IsUserNameEnabled)
+    <input asp-for="Input.IsUsingEmailAddress" type="hidden" autocomplete="off" />
+
+    @if (Model.Input.IsUsingEmailAddress)
     {
-        <div class="mb-3">
-            <abp-input asp-for="Input.UserNameOrEmailAddress" auto-focus="true" />
-        </div>
+        <abp-input asp-for="Input.UserNameOrEmailAddress" auto-focus="true" type="email"
+               label="@L["DisplayName:Email"].Value" autocomplete="email" />
     }
     else
     {
-        <div class="mb-3">
-            <abp-input asp-for="Input.UserNameOrEmailAddress" auto-focus="true" label="@L["DisplayName:Email"].Value" />
-        </div>
+        <abp-input asp-for="Input.UserNameOrEmailAddress" auto-focus="true"
+               label="@L["DisplayName:UserName"].Value" autocomplete="username" />
     }
 
     <div class="d-grid gap-2">
