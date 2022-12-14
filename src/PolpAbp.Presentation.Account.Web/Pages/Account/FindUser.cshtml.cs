@@ -171,7 +171,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                         {
                             return RedirectToPage("./Login", new
                             {
-                                UserNameOrEmailAddress = HttpUtility.UrlEncode(TempData[CachedEmailAddressKey]!.ToString())
+                                EmailAddress = HttpUtility.UrlEncode(TempData[CachedEmailAddressKey]?.ToString() ?? string.Empty)
                             });
                         }
 
@@ -183,7 +183,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                         {
                             return RedirectToPage("./Login", new
                             {
-                                UserNameOrEmailAddress = HttpUtility.UrlEncode(TempData[CachedEmailAddressKey]!.ToString())
+                                EmailAddress = HttpUtility.UrlEncode(TempData[CachedEmailAddressKey]?.ToString() ?? string.Empty)
                             });
                         }
                         // To Login by default.

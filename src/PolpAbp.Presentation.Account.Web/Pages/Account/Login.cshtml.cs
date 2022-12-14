@@ -139,8 +139,8 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                 // Need to reload the page.
                 return RedirectToPage("./Login", new
                 {
-                    userName = NormalizedUserName,
-                    EmailAddress = NormalizedEmailAddress,
+                    userName = UserName,
+                    EmailAddress = EmailAddress,
                     returnUrl = ReturnUrl,
                     returnUrlHash = ReturnUrlHash
                 });

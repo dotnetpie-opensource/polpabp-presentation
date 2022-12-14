@@ -88,8 +88,8 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
             {
                 return RedirectToPage("./Login", new
                 {
-                    UserName = NormalizedUserName,
-                    EmailAddress = NormalizedEmailAddress,
+                    UserName = UserName,
+                    EmailAddress = EmailAddress,
                     ReturnUrl = ReturnUrl,
                     ReturnUrlHash = ReturnUrlHash
                 });

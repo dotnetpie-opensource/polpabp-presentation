@@ -71,8 +71,8 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                         Alerts.Danger(L["InvalidUserNameOrPassword"]);
                         return RedirectToPage("./Login", new
                         {
-                            UserName = NormalizedUserName,
-                            EmailAddress = NormalizedEmailAddress,
+                            UserName = UserName,
+                            EmailAddress = EmailAddress,
                             returnUrl = ReturnUrl,
                             returnUrlHash = ReturnUrlHash
                         });
@@ -146,8 +146,8 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                 // Need to reload the page.
                 return RedirectToPage("./Login", new
                 {
-                    UserName = NormalizedUserName,
-                    EmailAddress = NormalizedEmailAddress,
+                    UserName = UserName,
+                    EmailAddress = EmailAddress,
                     ReturnUrl = ReturnUrl,
                     ReturnUrlHash = ReturnUrlHash
                 });
@@ -160,8 +160,8 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                 // Need to reload the page.
                 return RedirectToPage("./Login", new
                 {
-                    UserName = NormalizedUserName,
-                    EmailAddress = NormalizedEmailAddress,
+                    UserName = UserName,
+                    EmailAddress = EmailAddress,
                     returnUrl = ReturnUrl,
                     returnUrlHash = ReturnUrlHash
                 });
