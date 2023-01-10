@@ -145,10 +145,8 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                 Response.SetTenantCookieValue(String.Empty);
 
                 // Need to reload the page.
-                return RedirectToPage("./Login", new
+                return RedirectToPage("./FindUser", new
                 {
-                    userName = UserName,
-                    EmailAddress = EmailAddress,
                     returnUrl = ReturnUrl,
                     returnUrlHash = ReturnUrlHash
                 });

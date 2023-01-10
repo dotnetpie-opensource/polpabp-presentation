@@ -14,6 +14,7 @@
     ViewBag.Title = "Single Login Entry Point";
     ViewBag.Description = "Redirects you to use the right login method, " +
     "either the pair of your user name/email and password, or your SSO providers.";
+    ViewBag.ShowResetButton = true;
 
     var reActivationLink = Url.Page("./ResendActivationLink", new
     {

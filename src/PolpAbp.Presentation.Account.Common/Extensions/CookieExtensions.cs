@@ -5,9 +5,13 @@ namespace PolpAbp.Presentation.Account
 {
     public static class CookieExtensions
     {
+        // Because the following methods refer to the HttpResponse class, 
+        // there is no good way to lift the following static variables to be 
+        // configurable. 
+        // Instead, we require that the caller updates these static variables directly.
         // todo: Configurable
-        public const string TenantCookieName = "PolpAbpTenantId";
-        public const string MfaCookieName = "MultiFactorAuth";
+        public static string TenantCookieName = "PolpAbpTenantId";
+        public static string MfaCookieName = "MultiFactorAuth";
 
         public static void SetNamedCookie(this HttpResponse response, string name, string value, string? domain = null, TimeSpan? span = null)
         {
