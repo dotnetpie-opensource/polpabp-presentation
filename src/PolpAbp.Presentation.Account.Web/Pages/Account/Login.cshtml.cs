@@ -116,6 +116,14 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 
                         }
                     }
+                    else
+                    {
+                        return RedirectToPage("./FindUser", new
+                        {
+                            returnUrl = ReturnUrl,
+                            returnUrlHash = ReturnUrlHash
+                        });
+                    }
                 }
                 catch (AbpValidationException ex)
                 {

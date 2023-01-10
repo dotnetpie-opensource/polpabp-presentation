@@ -7,6 +7,12 @@ namespace PolpAbp.Presentation.Account
 {
     public class OnlyAnonymousAttribute : Attribute, IAuthorizationFilter
     {
+        private readonly string _redirectUrl;
+
+        public OnlyAnonymousAttribute(string redirectUrl = "/Account/MainApp") {
+            _redirectUrl = redirectUrl;
+        }
+
         public void OnAuthorization(AuthorizationFilterContext context)
         {
             if (context?.HttpContext?.User?.Identity != null)
@@ -14,8 +20,7 @@ namespace PolpAbp.Presentation.Account
                 if (context.HttpContext.User.Identity.IsAuthenticated)
                 {
                     var query = context.HttpContext.Request.QueryString;
-                    // todo: ? main or MainApp ???
-                    context.Result = new RedirectResult("/Account/MainApp" + query??"");
+                    context.Result = new RedirectResult(_redirectUrl + query??"");
                 }
             }
         }

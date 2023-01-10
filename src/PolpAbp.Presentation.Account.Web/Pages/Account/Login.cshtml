@@ -22,9 +22,107 @@
     });
 }
 
-<h4 class="mb-4 fw-semibold">
-    Locating your information
-</h4>
+@section docReady {
+    <script type="text/javascript">
+        const returnUrl = '@(Model.ReturnUrl)';
+        const returnUrlHash = '@(Model.ReturnUrlHash)';
+        const initEmail = '@(Model.Input.UserNameOrEmailAddress?.Trim().ToLower())';
+        const isRecaptchaVisible = @Model.IsRecaptchaEnabled.ToString().ToLower();
+        Lockr.prefix = 'lockr_';
+
+        function AppViewModel() {
+            var self = this;
+
+            self.pickVisible = ko.observable(false);
+            self.users = ko.observable([]);
+            self.formVisible = ko.pureComputed(function () {
+                return !self.pickVisible();
+            });
+            self.canGoBack = ko.pureComputed(function () {
+                return self.users().length && self.formVisible();
+            });
+        }
+
+        const viewModel = new AppViewModel();
+        ko.applyBindings(viewModel);
+
+        function updateUserList(changeVisible, isInitEmailEmpty) {
+            let users = Lockr.get('users');
+            if (users && users.length) {
+                let accounts = users.map(x => {
+                    return {
+                        email: x.email,
+                        lastUpdated: $.timeago(new Date(x.lastUpdated))
+                    }
+                });
+                isInitEmailEmpty && changeVisible && viewModel.pickVisible(true);
+                viewModel.users(accounts);
+            } else {
+                viewModel.users([]);
+                isInitEmailEmpty && changeVisible && viewModel.pickVisible(false);
+
+                setTimeout(() => {
+                    $('#Input_UserNameOrEmailAddress').focus();
+                }, 100);
+            }
+        }
+
+        $(document).ready(() => {
+
+            updateUserList(true, !isRecaptchaVisible && !initEmail);
+
+            $(".card").on('click', 'a.delete-me', (evt) => {
+                const $target = $(evt.target).closest('a');
+                let email = $target.data('email');
+                if (email) {
+                    let users = Lockr.get('users');
+                    if (users) {
+                        users = users.filter(a => a.email != email);
+                        Lockr.set('users', users);
+                        updateUserList(true, true);
+                    }
+                }
+            });
+
+            $(".card").on('click', 'a.pick-me', (evt) => {
+                const $target = $(evt.target).closest('a');
+                let email = $target.data('email');
+                if (email) {
+                    viewModel.pickVisible(false);
+                    setTimeout(() => {
+                        $('#Input_UserNameOrEmailAddress').val(email);
+                        $('#Input_UserNameOrEmailAddress').focus();
+                    }, 100);
+                }
+            });
+
+            $(".card").on('click', 'a.new-account', () => {
+                viewModel.pickVisible(false);
+
+                setTimeout(() => {
+                    $('#Input_UserNameOrEmailAddress').val('');
+                    $('#Input_UserNameOrEmailAddress').focus();
+                }, 100);
+            });
+
+            $(".card").on('click', 'a.go-back', () => {
+                viewModel.pickVisible(true);
+            });
+
+            // Update time
+            setInterval(() => {
+                updateUserList(true, true);
+            }, 60 * 1000);
+        });
+    </script>
+}
+
+<div class="d-flex align-items-center mb-4">
+    <a class="me-3 go-back text-primary" style="cursor:pointer;" data-bind="visible: canGoBack">
+        <i class="fa fa-long-arrow-left"></i> 
+    </a>
+    <h4 class="fw-semibold">Login</h4>
+</div>
 
 @if (Model.IsUserNameEnabled)
 {
@@ -60,13 +158,54 @@
             </div>
         </form>
     }
-    else if (Model.Resolution.OptionId == 1)
+    else if (Model.Resolution.OptionId != 1)
     {
-        <div class="alert alert-info d-flex align-items-center" role="alert">
-            Please type your email address
+        <!-- Pick an account -->
+        <div class="pick-one-account" data-bind="visible: pickVisible">
+            <div class="alert alert-info">
+                Please pick one account or use a new acount
+            </div>
+            <ul class="list-unstyled" data-bind="foreach: users">
+                <li class="d-flex mb-4 border-bottom">
+                    <div class="flex-xl-shrink-0">
+                        <i class="far fa-user-circle fa-2x"></i>
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                        <div class="d-flex flex-row justify-content-between mb-0">
+                            <a class="pick-me" style="cursor: pointer; text-decoration: none;" data-bind="attr: {'data-email': email}">
+                                <h6 data-bind="text: email" class="text-dark">
+                                </h6>
+                                <p class="text-muted">
+                                    Last login: <span data-bind="text: lastUpdated"></span>
+                                </p>
+                            </a>
+                            <a class="delete-me text-danger px-2" style="cursor:pointer;" data-bind="attr: {'data-email': email}">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+            <ul class="list-unstyled">
+                <li class="d-flex mb-4">
+                    <div class="flex-xl-shrink-0">
+                        <i class="fas fa-plus-circle fa-2x"></i>
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                        <a class="h6 new-account pe-5" style="cursor: pointer">
+                            New account
+                        </a>
+                    </div>
+                </li>
+            </ul>
         </div>
 
-        <form method="post">
+        <form method="post" data-bind="visible: formVisible">
+
+            <div class="alert alert-info d-flex align-items-center" role="alert">
+                Please type your email address
+            </div>
+
             <input asp-for="Input.IsUsingEmailAddress" type="hidden" value="true" autocomplete="off" />
 
             <abp-input asp-for="Input.UserNameOrEmailAddress" auto-focus="true" type="email"
@@ -109,15 +248,54 @@
             </div>
         </form>
     }
-
 }
 else
 {
-    <div class="alert alert-info d-flex align-items-center" role="alert">
-        Please type your email address
+    <!-- Pick an account -->
+    <div class="pick-one-account" data-bind="visible: pickVisible">
+        <div class="alert alert-info">
+            Please pick one account or use a new acount
+        </div>
+        <ul class="list-unstyled" data-bind="foreach: users">
+            <li class="d-flex mb-4 border-bottom">
+                <div class="flex-xl-shrink-0">
+                    <i class="far fa-user-circle fa-2x"></i>
+                </div>
+                <div class="flex-grow-1 ms-3">
+                    <div class="d-flex flex-row justify-content-between mb-0">
+                            <a class="pick-me" style="cursor: pointer; text-decoration: none;" data-bind="attr: {'data-email': email}">
+                            <h6 data-bind="text: email" class="text-dark">
+                            </h6>
+                            <p class="text-muted">
+                                Last login: <span data-bind="text: lastUpdated"></span>
+                            </p>
+                        </a>
+                        <a class="delete-me text-danger px-2" style="cursor:pointer;" data-bind="attr: {'data-email': email}">
+                            <i class="fas fa-trash"></i>
+                        </a>
+                    </div>
+                </div>
+            </li>
+        </ul>
+        <ul class="list-unstyled">
+            <li class="d-flex mb-4">
+                <div class="flex-xl-shrink-0">
+                    <i class="fas fa-plus-circle fa-2x"></i>
+                </div>
+                <div class="flex-grow-1 ms-3">
+                    <a class="h6 new-account pe-5" style="cursor: pointer">
+                        New account
+                    </a>
+                </div>
+            </li>
+        </ul>
     </div>
 
-    <form method="post">
+
+    <form method="post" data-bind="visible: formVisible">
+        <div class="alert alert-info d-flex align-items-center" role="alert">
+            Please type your email address
+        </div>
         <input asp-for="Input.IsUsingEmailAddress" type="hidden" value="true" autocomplete="off" />
 
         <abp-input asp-for="Input.UserNameOrEmailAddress" auto-focus="true" type="email"
@@ -132,7 +310,6 @@ else
         </div>
     </form>
 }
-
 
 <!-- todo: Add a condition -->
 <div class="d-flex flex-column align-items-start mt-5 mb-3">
