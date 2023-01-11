@@ -1,8 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
+using PolpAbp.Framework.Authorization.Users.Events;
 using System.ComponentModel.DataAnnotations;
 using Volo.Abp.Account;
 using Volo.Abp.Auditing;
+using Volo.Abp.EventBus.Local;
 using Volo.Abp.Identity;
+using Volo.Abp.MultiTenancy;
 using Volo.Abp.Validation;
 
 namespace PolpAbp.Presentation.Account.Web.Pages.Account
@@ -35,6 +38,15 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
         [DisableAuditing]
         public string? ConfirmPassword { get; set; }
 
+
+        private readonly ILocalEventBus _localEventBus;
+        
+        public ResetPasswordModel(ILocalEventBus localEventBus) : base()
+        {
+            _localEventBus = localEventBus;
+        }
+
+
         public virtual Task<IActionResult> OnGetAsync()
         {
             return Task.FromResult<IActionResult>(Page());
@@ -54,6 +66,13 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                         Password = Password
                     }
                 );
+
+                await _localEventBus.PublishAsync(new PasswordChangedEvent
+                {
+                    TenantId = CurrentTenant.Id,
+                    UserId = UserId,
+                    NewPassword = Password
+                });
             }
             catch (AbpIdentityResultException e)
             {
