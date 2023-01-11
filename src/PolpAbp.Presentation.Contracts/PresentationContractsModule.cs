@@ -23,7 +23,7 @@ namespace PolpAbp.Presentation.Contracts
                 // Extend account resource.
                 options.Resources
                     .Get<AccountResource>()
-                    .AddVirtualJson("/Localization/Resources");
+                    .AddVirtualJson("/Localization/PolpAbp/Presentation");
             });
         }
     }
