@@ -4,6 +4,14 @@
     Layout = ThemeManager.CurrentTheme.GetAccountLayout();
 }
 
+@section scripts {
+    @await RenderSectionAsync("scripts", false)
+}
+
+@section docReady {
+    @await RenderSectionAsync("docReady", false)
+}
+
 <div class="abp-account-container">
     @RenderBody()
 </div>
