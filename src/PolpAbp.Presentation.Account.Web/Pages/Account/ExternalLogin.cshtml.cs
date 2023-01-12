@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using PolpAbp.Presentation.Account.Pages.Account;
 
 namespace PolpAbp.Presentation.Account.Web.Pages.Account
@@ -29,10 +28,10 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                 var p = Configuration[$@"PolpAbp:ExternalLogin:{z.AuthenticationScheme}:LoginPage"];
                 if (!string.IsNullOrEmpty(p))
                 {
-                    SsoProviders.Add(new ExternalProviderModel(z) 
+                    SsoProviders.Add(new ExternalProviderModel(z)
                     {
-                        LoginPage = p
-                    });
+                        LoginPage= p
+                    }); 
                 }
             }
 

@@ -88,7 +88,7 @@ public abstract class PolpAbpExternalAuthPageModel : AbpPageModel
         // todo: Remove some 
         return schemes
             .Where(x => x.DisplayName != null)
-            .Select(x => new ExternalProviderModel(x.DisplayName, x.Name))
+            .Select(x => new ExternalProviderModel(x.DisplayName!, x.Name))
             .ToList();
     }
 
@@ -125,7 +125,7 @@ public abstract class PolpAbpExternalAuthPageModel : AbpPageModel
     {
         if (exception is ILocalizeErrorMessage || exception is IHasErrorCode)
         {
-            return ExceptionToErrorInfoConverter.Convert(exception, false).Message;
+            return ExceptionToErrorInfoConverter.Convert(exception).Message;
         }
 
         return exception.Message;
@@ -135,7 +135,7 @@ public abstract class PolpAbpExternalAuthPageModel : AbpPageModel
     {
         public string DisplayName { get; set; }
         public string AuthenticationScheme { get; set; }
-        public string LoginPage { get; set; }
+        public string? LoginPage { get; set; }
 
         public ExternalProviderModel(string name, string scheme)
         {
