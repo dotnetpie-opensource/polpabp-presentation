@@ -21,6 +21,6 @@
 
     <p>@L["ResendActivationLink_Success"]</p>
 
-    <a abp-button="Primary" asp-page="./Login" asp-all-route-data="@(new Dictionary<string, string> {{"returnUrl", Model.ReturnUrl}, {"returnUrlHash", Model.ReturnUrlHash}})">&larr; @L["BackToLogin"]</a>
+    <a abp-button="Primary" asp-page="./Login" asp-all-route-data="@(new Dictionary<string, string> {{"returnUrl", Model.ReturnUrl ?? string.Empty}, {"returnUrlHash", Model.ReturnUrlHash ?? string.Empty}})">&larr; @L["BackToLogin"]</a>
 
 </form>

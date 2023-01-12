@@ -105,7 +105,7 @@ public abstract class PolpAbpAccountPageModel : AbpPageModel
     {
         if (exception is ILocalizeErrorMessage || exception is IHasErrorCode)
         {
-            return ExceptionToErrorInfoConverter.Convert(exception, false).Message;
+            return ExceptionToErrorInfoConverter.Convert(exception).Message;
         }
 
         return exception.Message;
