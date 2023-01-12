@@ -31,7 +31,7 @@ namespace PolpAbp.Presentation.Account
         }
 
         // Clean all cookie
-        public static void ClearCookies(this HttpResponse response, string domain)
+        public static void ClearTenantCookie(this HttpResponse response, string domain)
         {
             var options = new CookieOptions
             {
