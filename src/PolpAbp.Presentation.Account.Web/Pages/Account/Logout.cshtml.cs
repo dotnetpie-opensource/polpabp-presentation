@@ -33,7 +33,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                 return RedirectSafely(ReturnUrl, ReturnUrlHash);
             }
 
-            return RedirectToPage("./LoggedOut");
+            return RedirectToPage("./LogoutSuccess");
         }
 
         public virtual Task<IActionResult> OnPostAsync()
