@@ -1,4 +1,5 @@
 ﻿using PolpAbp.Framework;
+using PolpAbp.Framework.Mvc;
 using PolpAbp.Presentation.Contracts;
 using Volo.Abp.Account;
 using Volo.Abp.Account.Localization;
@@ -29,6 +30,7 @@ namespace PolpAbp.Presentation.Account.Web
         typeof(AbpAspNetCoreMvcUiMultiTenancyModule),
         typeof(PolpAbpFrameworkDomainModule),
         typeof(PolpAbpFrameworkApplicationContractsModule),
+        typeof(PolpAbpFrameworkMvcModule),
         typeof(PresentationContractsModule),
         typeof(PresentationAccountCommonModule)
     )]

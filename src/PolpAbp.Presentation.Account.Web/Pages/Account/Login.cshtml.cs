@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using PolpAbp.Framework.Mvc.Cookies;
 using System.ComponentModel.DataAnnotations;
 using System.Web;
 using Volo.Abp.Data;
@@ -17,8 +18,12 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
         [BindProperty]
         public PostResolution Resolution { get; set; }
 
-        public LoginModel() : base()
+        private readonly IAppCookieManager _cookieManager;
+
+        public LoginModel(IAppCookieManager cookieManager) : base()
         {
+            _cookieManager = cookieManager;
+
             Input = new LoginInputModel();
             Resolution = new PostResolution();
         }
@@ -142,7 +147,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
             else if (action == "ResetTenant")
             {
                 // Remove tenant cookies
-                Response.SetTenantCookieValue(String.Empty);
+                _cookieManager.SetTenantCookieValue(Response, string.Empty);
 
                 // Need to reload the page.
                 return RedirectToPage("./FindUser", new

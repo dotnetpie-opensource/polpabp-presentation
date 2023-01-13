@@ -4,6 +4,7 @@ using AspNetCore.ReCaptcha;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using PolpAbp.Framework.Identity;
+using PolpAbp.Framework.Mvc.Cookies;
 using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap.TagHelpers.Form;
 using Volo.Abp.Data;
 using Volo.Abp.Identity;
@@ -38,18 +39,21 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
         protected readonly IIdentityUserRepositoryExt IdentityUserRepositoryExt;
         protected readonly ITenantRepository TenantRepository;
         protected readonly IReCaptchaService RecaptchaService;
+        protected readonly IAppCookieManager CookieManager;
 
         public string NormalizedTenantOrEmailAddress => HttpUtility.UrlDecode(TenantOrEmailAddress ?? string.Empty);
 
         public FindUserModel(IDataFilter dataFilter,
             IIdentityUserRepositoryExt identityUserRepositoryExt,
             ITenantRepository tenantRepository,
-            IReCaptchaService reCaptchaService) : base()
+            IReCaptchaService reCaptchaService,
+            IAppCookieManager cookieManager) : base()
         {
             DataFilter = dataFilter;
             IdentityUserRepositoryExt = identityUserRepositoryExt;
             TenantRepository = tenantRepository;
             RecaptchaService = reCaptchaService;
+            CookieManager = cookieManager;
 
             Input = new PostInput();
             Selection = new PostSelect();
@@ -162,7 +166,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                 if (Selection != null && Selection.Id.HasValue)
                 {
                     // Set up the tenant and move on.
-                    Response.SetTenantCookieValue(Selection.Id.Value.ToString());
+                    CookieManager.SetTenantCookieValue(Response, Selection.Id.Value.ToString());
 
                     if (!string.IsNullOrEmpty(ReturnUrl))
                     {

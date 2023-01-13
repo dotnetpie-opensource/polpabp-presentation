@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
+using PolpAbp.Framework.Mvc.Cookies;
 using System.ComponentModel.DataAnnotations;
-using System.Web;
 using Volo.Abp;
 using Volo.Abp.Account.Settings;
 using Volo.Abp.Auditing;
@@ -18,8 +18,12 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
         [BindProperty]
         public PostInput Input { get; set; }
 
-        public LocalLoginModel() : base()
+        protected readonly IAppCookieManager CookieManager;
+
+        public LocalLoginModel(IAppCookieManager cookieManager) : base()
         {
+            CookieManager = cookieManager;
+
             Input = new PostInput();
         }
 
@@ -155,7 +159,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
             else if (action == "ResetTenant")
             {
                 // Remove tenant cookies
-                Response.SetTenantCookieValue(String.Empty);
+                CookieManager.SetTenantCookieValue(Response, string.Empty);
 
                 // Need to reload the page.
                 return RedirectToPage("./Login", new

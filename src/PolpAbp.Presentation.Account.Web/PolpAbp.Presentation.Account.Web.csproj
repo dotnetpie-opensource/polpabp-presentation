@@ -31,6 +31,7 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\..\..\fwt\src\PolpAbp.Framework.Application.Contracts\PolpAbp.Framework.Application.Contracts.csproj" />
 	  <ProjectReference Include="..\..\..\fwt\src\PolpAbp.Framework.Domain\PolpAbp.Framework.Domain.csproj" />
+	  <ProjectReference Include="..\..\..\fwt\src\PolpAbp.Framework.Mvc\PolpAbp.Framework.Mvc.csproj" />
 	  <ProjectReference Include="..\PolpAbp.Presentation.Contracts\PolpAbp.Presentation.Contracts.csproj" />
 	  <ProjectReference Include="..\PolpAbp.Presentation.Account.Common\PolpAbp.Presentation.Account.Common.csproj">
 	    <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
