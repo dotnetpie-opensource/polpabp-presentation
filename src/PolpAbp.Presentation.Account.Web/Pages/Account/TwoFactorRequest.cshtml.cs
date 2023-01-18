@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using PolpAbp.Framework;
 using PolpAbp.Framework.Emailing.Account;
+using PolpAbp.Framework.Globalization;
 using Volo.Abp.Sms;
 
 namespace PolpAbp.Presentation.Account.Web.Pages.Account
@@ -19,6 +20,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 
         protected readonly IFrameworkAccountEmailer AccountEmailer;
         protected readonly ISmsSender SmsSender;
+        protected readonly IPhoneNumberService PhoneNumberService;
 
         protected string SmsSenderName
         {
@@ -29,10 +31,12 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
         }
 
         public TwoFactorRequestModel(IFrameworkAccountEmailer accountEmailer,
-            ISmsSender smsSender) : base()
+            ISmsSender smsSender,
+            IPhoneNumberService phoneNumberService) : base()
         {
             AccountEmailer = accountEmailer;
             SmsSender = smsSender;
+            PhoneNumberService = phoneNumberService;
 
             RememberMe = false;
             TwoFactorCodeProviders = new List<TwoFactorProvider>();
@@ -87,10 +91,25 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                     // todo: Check if the organization configuration.
                     // todo: Settings
                     // var allowedCountry =
-                    var msg = new SmsMessage(user.PhoneNumber, body);
-                    msg.Properties.Add("CountryCode", 236);
-                    // todo: Send via phone
+                    var phoneNumberDetail = PhoneNumberService.Parse(user.PhoneNumber);
+                    if (!phoneNumberDetail.IsValid)
+                    {
+                        Alerts.Danger("The given number is not valid. Please choose a different way for getting the code.");
+                        return Page();
+                    }
+                    
+                    var msg = new SmsMessage(phoneNumberDetail.E164PhoneNumber, body);
+                    // Set up the originator.
+                    msg.Properties.Add("CountryCode", phoneNumberDetail.CountryAlpha);
                     await SmsSender.SendAsync(msg);
+
+                    var errorCodeStr = msg.Properties.GetOrDefault("ErrorCode");
+                    int.TryParse(errorCodeStr.ToString(), out int errorCode);
+                    if (errorCode != 0)
+                    {
+                        Alerts.Danger("The system cannot send the text message to the given number. Please choose a different way for getting the code.");
+                        return Page();
+                    }
 
                     Alerts.Success(L["TwoFactorCode_SentSuccess"].Value);
 
