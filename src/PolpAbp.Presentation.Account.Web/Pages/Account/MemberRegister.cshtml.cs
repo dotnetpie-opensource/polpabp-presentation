@@ -173,15 +173,13 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 
         protected override async Task ReadInPasswordComplexityAsync()
         {
-            // Read the global settings first.
-            var defaultSetting = new PasswordComplexitySetting();
-            Configuration.GetSection("PolpAbp:Account:PasswordComplexity").Bind(defaultSetting);
+            await base.ReadInPasswordComplexityAsync();
 
-            PwdComplexity.RequireDigit = await SettingProvider.GetAsync<bool>(FrameworkSettings.AccountPassComplexityRequireDigit, defaultSetting.RequireDigit);
-            PwdComplexity.RequireLowercase = await SettingProvider.GetAsync<bool>(FrameworkSettings.AccountPassComplexityRequireLowercase, defaultSetting.RequireLowercase);
-            PwdComplexity.RequireUppercase = await SettingProvider.GetAsync<bool>(FrameworkSettings.AccountPassComplexityRequireUppercase, defaultSetting.RequireUppercase);
-            PwdComplexity.RequireNonAlphanumeric = await SettingProvider.GetAsync<bool>(FrameworkSettings.AccountPassComplexityRequireNonAlphanumeric, defaultSetting.RequireNonAlphanumeric);
-            PwdComplexity.RequiredLength = await SettingProvider.GetAsync<int>(FrameworkSettings.AccountPassComplexityRequiredLength, defaultSetting.RequiredLength);
+            PwdComplexity.RequireDigit = await SettingProvider.GetAsync<bool>(FrameworkSettings.AccountPassComplexityRequireDigit, PwdComplexity.RequireDigit);
+            PwdComplexity.RequireLowercase = await SettingProvider.GetAsync<bool>(FrameworkSettings.AccountPassComplexityRequireLowercase, PwdComplexity.RequireLowercase);
+            PwdComplexity.RequireUppercase = await SettingProvider.GetAsync<bool>(FrameworkSettings.AccountPassComplexityRequireUppercase, PwdComplexity.RequireUppercase);
+            PwdComplexity.RequireNonAlphanumeric = await SettingProvider.GetAsync<bool>(FrameworkSettings.AccountPassComplexityRequireNonAlphanumeric, PwdComplexity.RequireNonAlphanumeric);
+            PwdComplexity.RequiredLength = await SettingProvider.GetAsync<int>(FrameworkSettings.AccountPassComplexityRequiredLength, PwdComplexity.RequiredLength);
         }
 
         public class PostInput : IHasConfirmPassword
