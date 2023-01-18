@@ -29,6 +29,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\..\..\fwt\src\PolpAbp.Framework.AbpExtensions\PolpAbp.Framework.AbpExtensions.csproj" />
 	  <ProjectReference Include="..\..\..\fwt\src\PolpAbp.Framework.Application.Contracts\PolpAbp.Framework.Application.Contracts.csproj" />
 	  <ProjectReference Include="..\..\..\fwt\src\PolpAbp.Framework.Domain\PolpAbp.Framework.Domain.csproj" />
 	  <ProjectReference Include="..\..\..\fwt\src\PolpAbp.Framework.Mvc\PolpAbp.Framework.Mvc.csproj" />

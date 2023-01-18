@@ -17,6 +17,16 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 
         public virtual async Task<IActionResult> OnGetAsync()
         {
+            var mainPage = Configuration["PolpAbp:Account:MainEntry"];
+            if (!mainPage.Contains("MainApp"))
+            {
+                return RedirectToPage(mainPage, new
+                {
+                    returnUrl = ReturnUrl,
+                    returnUrlHash = ReturnUrlHash
+                });
+            }
+
             var userInfo = await UserManager.GetUserAsync(User);
 
             // todo: Use automapper?

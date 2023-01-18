@@ -129,6 +129,17 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                         return Page();
                     }
 
+                    // The point where we have to check if the user 
+                    // should update his/her password.
+                    if (user.ShouldChangePasswordOnNextLogin())
+                    {
+                        return RedirectToPage("./UpdatePassword", new
+                        {
+                            returnUrl = ReturnUrl,
+                            returnUrlHash = ReturnUrlHash
+                        });
+                    }
+
                     // todo: Make MainApp configurable ...
                     return RedirectToPage("./MainApp", new
                     {

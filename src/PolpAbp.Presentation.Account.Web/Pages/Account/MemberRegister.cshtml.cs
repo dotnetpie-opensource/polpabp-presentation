@@ -65,13 +65,13 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
             {
                 try
                 {
-
-                    // Tenant not set this moment.
-                    ValidateModel();
-
                     // trim
                     Input.EmailAddress = Input!.EmailAddress!.Trim();
                     Input.Password = Input!.Password!.Trim();
+                    Input.ConfirmPassword = Input!.ConfirmPassword!.Trim();
+
+                    // Tenant not set this moment.
+                    ValidateModel();
 
                     // Check if this email is available or not
                     var userInfo = await UserManager.FindByEmailAsync(Input.EmailAddress);

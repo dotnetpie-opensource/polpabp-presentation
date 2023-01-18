@@ -9,6 +9,8 @@ namespace PolpAbp.Presentation.Account
     {
         private readonly string _redirectUrl;
 
+        // We may use DI. However, for the performance person, 
+        // we let the caller to provide the input.
         public OnlyAnonymousAttribute(string redirectUrl = "/Account/MainApp") {
             _redirectUrl = redirectUrl;
         }
