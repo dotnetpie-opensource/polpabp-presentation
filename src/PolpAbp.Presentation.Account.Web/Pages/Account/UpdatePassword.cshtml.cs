@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using PolpAbp.Framework.Authorization.Users.Events;
+using PolpAbp.Framework.Security;
 using PolpAbp.Framework.Settings;
 using System.ComponentModel.DataAnnotations;
 using Volo.Abp.Auditing;
@@ -41,36 +42,47 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 
             if (action == "Input")
             {
-                // trim
-                Input.Password = Input!.Password!.Trim();
-                Input.ConfirmPassword = Input!.ConfirmPassword!.Trim();
-
-                ValidateModel();
-
-                var userInfo = await UserManager.GetUserAsync(User);
-
-                (await UserManager.RemovePasswordAsync(userInfo)).CheckErrors();
-                (await UserManager.AddPasswordAsync(userInfo, Input.Password)).CheckErrors();
-
-                userInfo.RemoveShouldChangePasswordOnNextLogin();
-                await UserManager.UpdateAsync(userInfo);
-
-                await _localEventBus.PublishAsync(new PasswordChangedEvent
+                try
                 {
-                    TenantId = userInfo.TenantId,
-                    UserId = userInfo.Id,
-                    NewPassword = Input.Password
-                });
+                    // trim
+                    Input.Password = Input!.Password!.Trim();
+                    Input.ConfirmPassword = Input!.ConfirmPassword!.Trim();
 
-                Alerts.Info("Your password has been updated successfully.");
+                    ValidateModel();
 
-                var mainPage = Configuration["PolpAbp:Account:MainEntry"];
-                // Following the same logic from the local login.
-                return RedirectToPage(mainPage, new
+                    var userInfo = await UserManager.GetUserAsync(User);
+
+                    (await UserManager.RemovePasswordAsync(userInfo)).CheckErrors();
+                    (await UserManager.AddPasswordAsync(userInfo, Input.Password)).CheckErrors();
+
+                    userInfo.RemoveShouldChangePasswordOnNextLogin();
+                    await UserManager.UpdateAsync(userInfo);
+
+                    await _localEventBus.PublishAsync(new PasswordChangedEvent
+                    {
+                        TenantId = userInfo.TenantId,
+                        UserId = userInfo.Id,
+                        NewPassword = Input.Password
+                    });
+
+                    Alerts.Info("Your password has been updated successfully.");
+
+                    var mainPage = Configuration["PolpAbp:Account:MainEntry"];
+                    // Following the same logic from the local login.
+                    return RedirectToPage(mainPage, new
+                    {
+                        returnUrl = ReturnUrl,
+                        returnUrlHash = ReturnUrlHash
+                    });
+                }
+                catch (AbpValidationException ex)
                 {
-                    returnUrl = ReturnUrl,
-                    returnUrlHash = ReturnUrlHash
-                });
+                    // Handle this error.
+                    foreach (var a in ex.ValidationErrors)
+                    {
+                        Alerts.Add(Volo.Abp.AspNetCore.Mvc.UI.Alerts.AlertType.Danger, a.ErrorMessage);
+                    }
+                }
             }
 
             return Page();
@@ -95,11 +107,14 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 
         protected override async Task ReadInPasswordComplexityAsync()
         {
-            PwdComplexity.RequireDigit = await SettingProvider.GetAsync<bool>(FrameworkSettings.AccountPassComplexityRequireDigit);
-            PwdComplexity.RequireLowercase = await SettingProvider.GetAsync<bool>(FrameworkSettings.AccountPassComplexityRequireLowercase);
-            PwdComplexity.RequireUppercase = await SettingProvider.GetAsync<bool>(FrameworkSettings.AccountPassComplexityRequireUppercase);
-            PwdComplexity.RequireNonAlphanumeric = await SettingProvider.GetAsync<bool>(FrameworkSettings.AccountPassComplexityRequireNonAlphanumeric);
-            PwdComplexity.RequiredLength = await SettingProvider.GetAsync<int>(FrameworkSettings.AccountPassComplexityRequiredLength);
+            var defaultSetting = new PasswordComplexitySetting();
+            Configuration.GetSection("PolpAbp:Account:PasswordComplexity").Bind(defaultSetting);
+
+            PwdComplexity.RequireDigit = await SettingProvider.GetAsync<bool>(FrameworkSettings.AccountPassComplexityRequireDigit, defaultSetting.RequireDigit);
+            PwdComplexity.RequireLowercase = await SettingProvider.GetAsync<bool>(FrameworkSettings.AccountPassComplexityRequireLowercase, defaultSetting.RequireLowercase);
+            PwdComplexity.RequireUppercase = await SettingProvider.GetAsync<bool>(FrameworkSettings.AccountPassComplexityRequireUppercase, defaultSetting.RequireUppercase);
+            PwdComplexity.RequireNonAlphanumeric = await SettingProvider.GetAsync<bool>(FrameworkSettings.AccountPassComplexityRequireNonAlphanumeric, defaultSetting.RequireNonAlphanumeric);
+            PwdComplexity.RequiredLength = await SettingProvider.GetAsync<int>(FrameworkSettings.AccountPassComplexityRequiredLength, defaultSetting.RequiredLength);
         }
 
         public class PostInput : IHasConfirmPassword
