@@ -50,8 +50,8 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                     if (ret.Succeeded)
                     {
 
-                        // todo: Make MainApp configurable ...
-                        return RedirectToPage("./MainApp", new
+                        var mainPage = Configuration["PolpAbp:Account:MainEntry"];
+                        return RedirectToPage(mainPage, new
                         {
                             returnUrl = ReturnUrl,
                             returnUrlHash = ReturnUrlHash

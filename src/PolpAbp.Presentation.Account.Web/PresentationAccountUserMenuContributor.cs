@@ -16,6 +16,7 @@ public class PresentationAccountUserMenuContributor : IMenuContributor
         var uiResource = context.GetLocalizer<AbpUiResource>();
         var accountResource = context.GetLocalizer<AccountResource>();
 
+        // It it okay to use /Account/MainApp here, because it will be redirected to the real entry page.
         context.Menu.AddItem(new ApplicationMenuItem("Account.MainApp", accountResource["MainApp"], url: "~/Account/MainApp", icon: "fa fa-browser", order: 1000));
         context.Menu.AddItem(new ApplicationMenuItem("Account.Logout", uiResource["Logout"], url: "~/Account/Logout", icon: "fa fa-power-off", order: int.MaxValue - 1000));
 
