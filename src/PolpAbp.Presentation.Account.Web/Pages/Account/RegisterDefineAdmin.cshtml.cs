@@ -85,7 +85,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
             await ReadInPasswordComplexityAsync();
         }
 
-        public class PostInput
+        public class PostInput : IHasConfirmPassword
         {
             [Required]
             [EmailAddress]

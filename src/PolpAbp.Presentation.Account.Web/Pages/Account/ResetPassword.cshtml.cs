@@ -1,11 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
 using PolpAbp.Framework.Authorization.Users.Events;
+using PolpAbp.Framework.Settings;
 using System.ComponentModel.DataAnnotations;
 using Volo.Abp.Account;
 using Volo.Abp.Auditing;
 using Volo.Abp.EventBus.Local;
 using Volo.Abp.Identity;
-using Volo.Abp.MultiTenancy;
+using Volo.Abp.Settings;
 using Volo.Abp.Validation;
 
 namespace PolpAbp.Presentation.Account.Web.Pages.Account
@@ -47,13 +48,17 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
         }
 
 
-        public virtual Task<IActionResult> OnGetAsync()
+        public virtual async Task<IActionResult> OnGetAsync()
         {
-            return Task.FromResult<IActionResult>(Page());
+            await LoadSettingsAsync();
+
+            return Page();
         }
 
         public virtual async Task<IActionResult> OnPostAsync()
         {
+            await LoadSettingsAsync();
+
             try
             {
                 ValidateModel();
@@ -84,8 +89,13 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 
                 throw;
             }
-            catch (AbpValidationException e)
+            catch (AbpValidationException ex)
             {
+                // Handle this error.
+                foreach (var a in ex.ValidationErrors)
+                {
+                    Alerts.Add(Volo.Abp.AspNetCore.Mvc.UI.Alerts.AlertType.Danger, a.ErrorMessage);
+                }
                 return Page();
             }
 
@@ -99,13 +109,31 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 
         protected override void ValidateModel()
         {
-            if (!Equals(Password, ConfirmPassword))
+            var passwordValidator = new PasswordValidator(PwdComplexity, L, ModelState);
+            if (passwordValidator.ValidateComplexity(Password))
             {
-                ModelState.AddModelError("ConfirmPassword",
-                    L["'{0}' and '{1}' do not match.", "ConfirmPassword", "Password"]);
+                passwordValidator.ValidateConfirmPassword(Password, ConfirmPassword);
             }
 
             base.ValidateModel();
         }
+
+        protected override async Task LoadSettingsAsync()
+        {
+            await base.LoadSettingsAsync();
+            await ReadInPasswordComplexityAsync();
+        }
+
+        protected override async Task ReadInPasswordComplexityAsync()
+        {
+            await base.ReadInPasswordComplexityAsync();
+
+            PwdComplexity.RequireDigit = await SettingProvider.GetAsync<bool>(FrameworkSettings.AccountPassComplexityRequireDigit, PwdComplexity.RequireDigit);
+            PwdComplexity.RequireLowercase = await SettingProvider.GetAsync<bool>(FrameworkSettings.AccountPassComplexityRequireLowercase, PwdComplexity.RequireLowercase);
+            PwdComplexity.RequireUppercase = await SettingProvider.GetAsync<bool>(FrameworkSettings.AccountPassComplexityRequireUppercase, PwdComplexity.RequireUppercase);
+            PwdComplexity.RequireNonAlphanumeric = await SettingProvider.GetAsync<bool>(FrameworkSettings.AccountPassComplexityRequireNonAlphanumeric, PwdComplexity.RequireNonAlphanumeric);
+            PwdComplexity.RequiredLength = await SettingProvider.GetAsync<int>(FrameworkSettings.AccountPassComplexityRequiredLength, PwdComplexity.RequiredLength);
+        }
+
     }
 }
