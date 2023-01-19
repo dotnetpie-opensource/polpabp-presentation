@@ -6,6 +6,7 @@ using Volo.Abp.Validation;
 namespace PolpAbp.Presentation.Account.Web.Pages.Account
 {
     [OnlyAnonymous]
+    [TenantNotSet]
     public class RegisterModel : RegisterModelBase
     {
         [BindProperty]

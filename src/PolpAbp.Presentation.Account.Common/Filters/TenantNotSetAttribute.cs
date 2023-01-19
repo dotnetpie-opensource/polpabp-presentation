@@ -10,7 +10,7 @@ namespace PolpAbp.Presentation.Account
     {
         private readonly string _redirectUrl;
 
-        public TenantNotSetAttribute(string redirectUrl)
+        public TenantNotSetAttribute(string redirectUrl = "/Account/Login")
         {
             _redirectUrl= redirectUrl;
         }
