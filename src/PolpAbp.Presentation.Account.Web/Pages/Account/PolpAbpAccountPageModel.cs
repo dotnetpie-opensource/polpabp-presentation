@@ -48,7 +48,7 @@ public abstract class PolpAbpAccountPageModel : AbpPageModel
 
     protected PolpAbpAccountPageModel()
     {
-        PwdComplexity = new PasswordComplexitySetting();
+        PwdComplexity = new PasswordComplexitySetting(true);
         LocalizationResourceType = typeof(AccountResource);
         ObjectMapperContext = typeof(PresentationAccountWebModule);
     }
