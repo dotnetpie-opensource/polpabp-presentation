@@ -1,4 +1,5 @@
 ﻿using PolpAbp.Framework;
+using PolpAbp.Framework.AbpExtensions.Identity;
 using PolpAbp.Framework.Mvc;
 using PolpAbp.Presentation.Contracts;
 using Volo.Abp.Account;
@@ -31,7 +32,7 @@ namespace PolpAbp.Presentation.Account.Web
         typeof(PolpAbpFrameworkDomainModule),
         typeof(PolpAbpFrameworkApplicationContractsModule),
         typeof(PolpAbpFrameworkMvcModule),
-        typeof(PolpAbpFrameworkAbpExtensionsModule),
+        typeof(PolpAbpFrameworkAbpExtensionsIdentityModule),
         typeof(PresentationContractsModule),
         typeof(PresentationAccountCommonModule)
     )]
