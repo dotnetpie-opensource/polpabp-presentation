@@ -1,12 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 using PolpAbp.Framework.Authorization.Users.Events;
-using PolpAbp.Framework.Settings;
 using System.ComponentModel.DataAnnotations;
 using Volo.Abp.Account;
 using Volo.Abp.Auditing;
 using Volo.Abp.EventBus.Local;
 using Volo.Abp.Identity;
-using Volo.Abp.Settings;
 using Volo.Abp.Validation;
 
 namespace PolpAbp.Presentation.Account.Web.Pages.Account
@@ -123,17 +121,5 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
             await base.LoadSettingsAsync();
             await ReadInPasswordComplexityAsync();
         }
-
-        protected override async Task ReadInPasswordComplexityAsync()
-        {
-            await base.ReadInPasswordComplexityAsync();
-
-            PwdComplexity.RequireDigit = await SettingProvider.GetAsync<bool>(FrameworkSettings.AccountPassComplexityRequireDigit, PwdComplexity.RequireDigit);
-            PwdComplexity.RequireLowercase = await SettingProvider.GetAsync<bool>(FrameworkSettings.AccountPassComplexityRequireLowercase, PwdComplexity.RequireLowercase);
-            PwdComplexity.RequireUppercase = await SettingProvider.GetAsync<bool>(FrameworkSettings.AccountPassComplexityRequireUppercase, PwdComplexity.RequireUppercase);
-            PwdComplexity.RequireNonAlphanumeric = await SettingProvider.GetAsync<bool>(FrameworkSettings.AccountPassComplexityRequireNonAlphanumeric, PwdComplexity.RequireNonAlphanumeric);
-            PwdComplexity.RequiredLength = await SettingProvider.GetAsync<int>(FrameworkSettings.AccountPassComplexityRequiredLength, PwdComplexity.RequiredLength);
-        }
-
     }
 }

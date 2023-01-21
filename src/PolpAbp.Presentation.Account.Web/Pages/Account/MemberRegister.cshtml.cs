@@ -8,6 +8,7 @@ using System.Web;
 using Volo.Abp.Account;
 using Volo.Abp.Auditing;
 using Volo.Abp.Identity;
+using Volo.Abp.Identity.Settings;
 using Volo.Abp.Settings;
 using Volo.Abp.Validation;
 
@@ -169,17 +170,6 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
             // Load
             RegistrationType = (MemberRegistrationEnum)(await SettingProvider.GetAsync<int>(FrameworkSettings.RegistrationApprovalType, 0));
             IsNewRegistrationNotyEnabled = await SettingProvider.GetAsync<bool>(FrameworkSettings.IsNewRegistrationNotyEnabled, false);
-        }
-
-        protected override async Task ReadInPasswordComplexityAsync()
-        {
-            await base.ReadInPasswordComplexityAsync();
-
-            PwdComplexity.RequireDigit = await SettingProvider.GetAsync<bool>(FrameworkSettings.AccountPassComplexityRequireDigit, PwdComplexity.RequireDigit);
-            PwdComplexity.RequireLowercase = await SettingProvider.GetAsync<bool>(FrameworkSettings.AccountPassComplexityRequireLowercase, PwdComplexity.RequireLowercase);
-            PwdComplexity.RequireUppercase = await SettingProvider.GetAsync<bool>(FrameworkSettings.AccountPassComplexityRequireUppercase, PwdComplexity.RequireUppercase);
-            PwdComplexity.RequireNonAlphanumeric = await SettingProvider.GetAsync<bool>(FrameworkSettings.AccountPassComplexityRequireNonAlphanumeric, PwdComplexity.RequireNonAlphanumeric);
-            PwdComplexity.RequiredLength = await SettingProvider.GetAsync<int>(FrameworkSettings.AccountPassComplexityRequiredLength, PwdComplexity.RequiredLength);
         }
 
         public class PostInput : IHasConfirmPassword

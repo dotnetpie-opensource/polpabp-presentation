@@ -9,6 +9,8 @@ using Volo.Abp.AspNetCore.ExceptionHandling;
 using Volo.Abp.AspNetCore.Mvc.UI.RazorPages;
 using Volo.Abp.ExceptionHandling;
 using Volo.Abp.Identity;
+using Volo.Abp.Identity.Settings;
+using Volo.Abp.Settings;
 using IdentityUser = Volo.Abp.Identity.IdentityUser;
 
 namespace PolpAbp.Presentation.Account.Web.Pages.Account;
@@ -48,7 +50,7 @@ public abstract class PolpAbpAccountPageModel : AbpPageModel
 
     protected PolpAbpAccountPageModel()
     {
-        PwdComplexity = new PasswordComplexitySetting(true);
+        PwdComplexity = new PasswordComplexitySetting();
         LocalizationResourceType = typeof(AccountResource);
         ObjectMapperContext = typeof(PresentationAccountWebModule);
     }
@@ -77,10 +79,14 @@ public abstract class PolpAbpAccountPageModel : AbpPageModel
     }
 
     // Helpers for validating passwords 
-    protected virtual Task ReadInPasswordComplexityAsync()
+    protected async Task ReadInPasswordComplexityAsync()
     {
-        Configuration.GetSection("PolpAbp:Account:PasswordComplexity").Bind(PwdComplexity);
-        return Task.CompletedTask;
+        PwdComplexity.RequireDigit = await SettingProvider.GetAsync<bool>(IdentitySettingNames.Password.RequireDigit);
+        PwdComplexity.RequireLowercase = await SettingProvider.GetAsync<bool>(IdentitySettingNames.Password.RequireLowercase);
+        PwdComplexity.RequireUppercase = await SettingProvider.GetAsync<bool>(IdentitySettingNames.Password.RequireUppercase);
+        PwdComplexity.RequireNonAlphanumeric = await SettingProvider.GetAsync<bool>(IdentitySettingNames.Password.RequireNonAlphanumeric);
+        PwdComplexity.RequiredLength = await SettingProvider.GetAsync<int>(IdentitySettingNames.Password.RequiredLength);
+        PwdComplexity.RequiredUniqueChars = await SettingProvider.GetAsync<int>(IdentitySettingNames.Password.RequiredUniqueChars);
     }
 
     protected virtual void CheckCurrentTenant(Guid? tenantId)
