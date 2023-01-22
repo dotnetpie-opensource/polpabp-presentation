@@ -24,7 +24,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
         {
             await base.LoadSettingsAsync();
             // Use host ...
-            IsUserNameEnabled = await SettingProvider.IsTrueAsync(FrameworkSettings.IsUserNameEnabled);
+            IsUserNameEnabled = await SettingProvider.IsTrueAsync(FrameworkSettings.Account.IsUserNameEnabled);
         }
       
     }

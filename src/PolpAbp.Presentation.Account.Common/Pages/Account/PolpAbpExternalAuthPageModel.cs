@@ -65,8 +65,8 @@ public abstract class PolpAbpExternalAuthPageModel : AbpPageModel
 
     protected virtual async Task LoadSettingsAsync()
     {
-        IsExternalAuthEnabled = await SettingProvider.GetAsync<bool>(FrameworkSettings.IsSsoEnabled, false);
-        var a = await SettingProvider.GetOrNullAsync(FrameworkSettings.SsoProviders);
+        IsExternalAuthEnabled = await SettingProvider.GetAsync<bool>(FrameworkSettings.Account.Sso.IsEnabled);
+        var a = await SettingProvider.GetOrNullAsync(FrameworkSettings.Account.Sso.Providers);
         if (string.IsNullOrEmpty(a))
         {
             AllowedProviderName = new string[] { };
@@ -77,8 +77,8 @@ public abstract class PolpAbpExternalAuthPageModel : AbpPageModel
         }
 
         // Load
-        RegistrationType = (MemberRegistrationEnum)(await SettingProvider.GetAsync<int>(FrameworkSettings.RegistrationApprovalType, 0));
-        IsNewRegistrationNotyEnabled = await SettingProvider.GetAsync<bool>(FrameworkSettings.IsNewRegistrationNotyEnabled, false);
+        RegistrationType = (MemberRegistrationEnum)(await SettingProvider.GetAsync<int>(FrameworkSettings.Account.RegistrationApprovalType));
+        IsNewRegistrationNotyEnabled = await SettingProvider.GetAsync<bool>(FrameworkSettings.Account.IsNewRegistrationNotyEnabled);
     }
 
     protected virtual async Task<List<ExternalProviderModel>> GetAllExternalProviders()

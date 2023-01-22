@@ -168,8 +168,8 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
             await ReadInPasswordComplexityAsync();
 
             // Load
-            RegistrationType = (MemberRegistrationEnum)(await SettingProvider.GetAsync<int>(FrameworkSettings.RegistrationApprovalType, 0));
-            IsNewRegistrationNotyEnabled = await SettingProvider.GetAsync<bool>(FrameworkSettings.IsNewRegistrationNotyEnabled, false);
+            RegistrationType = (MemberRegistrationEnum)(await SettingProvider.GetAsync<int>(FrameworkSettings.Account.RegistrationApprovalType));
+            IsNewRegistrationNotyEnabled = await SettingProvider.GetAsync<bool>(FrameworkSettings.Account.IsNewRegistrationNotyEnabled);
         }
 
         public class PostInput : IHasConfirmPassword
