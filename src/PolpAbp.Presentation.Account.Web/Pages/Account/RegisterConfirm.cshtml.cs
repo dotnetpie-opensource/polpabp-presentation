@@ -39,14 +39,6 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
         {
             await LoadSettingsAsync();
 
-            // Shortcut
-            if (IsRegistrationDisabled)
-            {
-                Alerts.Warning("Registration is not available now. Please try it later!");
-                return Page();
-            }
-
-
             if (action == "Input")
             {
                 if (IsRecaptchaEnabled)

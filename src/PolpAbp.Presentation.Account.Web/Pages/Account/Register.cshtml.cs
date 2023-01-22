@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
 using System.ComponentModel.DataAnnotations;
+using Volo.Abp.Account.Settings;
+using Volo.Abp.Settings;
 using Volo.Abp.Validation;
 
 namespace PolpAbp.Presentation.Account.Web.Pages.Account
@@ -15,6 +17,8 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
         [BindProperty(SupportsGet = true)]
         public bool IsExternalLogin { get; set; }
 
+        public bool IsRegistrationEnabled { get; set; }
+
         public RegisterModel() : base()
         {
             Input = new PostInput();
@@ -24,6 +28,11 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
         public virtual async Task<IActionResult> OnGetAsync()
         {
             await LoadSettingsAsync();
+            // Shortcut
+            if (!IsRegistrationEnabled)
+            {
+                Alerts.Warning("Registration is not available now. Please try it later!");
+            }
 
             Input.TenantName = TempData.Peek(nameof(PostInput.TenantName))?.ToString() ?? string.Empty;
             // Render page 
@@ -35,7 +44,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
             await LoadSettingsAsync();
 
             // Shortcut
-            if (IsRegistrationDisabled)
+            if (!IsRegistrationEnabled)
             {
                 Alerts.Warning("Registration is not available now. Please try it later!");
                 return Page();
@@ -70,6 +79,13 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
             }
 
             return Page();
+        }
+
+        protected override async Task LoadSettingsAsync()
+        {
+            await base.LoadSettingsAsync();
+
+            IsRegistrationEnabled = await SettingProvider.GetAsync<bool>(AccountSettingNames.IsSelfRegistrationEnabled);
         }
 
         public class PostInput
