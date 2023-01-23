@@ -10,6 +10,13 @@ namespace PolpAbp.Presentation.Account
 {
     public class TenantPrerequisiteAttribute : Attribute, IAuthorizationFilter
     {
+        private readonly string _redirectUrl;
+
+        public TenantPrerequisiteAttribute(string redirectUrl = "/Account/FindUser")
+        {
+            _redirectUrl = redirectUrl;
+        }   
+
         public void OnAuthorization(AuthorizationFilterContext context)
         {
             var currentTenant = context.HttpContext.RequestServices.GetService(typeof(ICurrentTenant)) as ICurrentTenant;
@@ -19,7 +26,7 @@ namespace PolpAbp.Presentation.Account
             {
                 // Encode 
                 var retUrl = context.HttpContext.Request.GetEncodedUrl();
-                var dstUrl = QueryHelpers.AddQueryString("/Account/FindUser", "ReturnUrl", retUrl);
+                var dstUrl = QueryHelpers.AddQueryString(_redirectUrl, "ReturnUrl", retUrl);
                 context.Result = new RedirectResult(dstUrl);
             }
 
