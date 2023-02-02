@@ -14,7 +14,7 @@
     ViewBag.Title = "Single Login Entry Point";
     ViewBag.Description = "Redirects you to use the right login method, " +
     "either the pair of your user name/email and password, or your SSO providers.";
-    ViewBag.ShowResetButton = true;
+    ViewBag.HideTenancyView = true;
 
     var reActivationLink = Url.Page("./ResendActivationLink", new
     {
@@ -118,11 +118,15 @@
     </script>
 }
 
-<div class="d-flex align-items-center mb-4">
+<div class="d-flex align-items-center mb-2">
     <a class="me-3 go-back text-primary" style="cursor:pointer;" data-bind="visible: canGoBack">
         <i class="fa fa-long-arrow-left"></i> 
     </a>
     <h4 class="fw-semibold">Login</h4>
+</div>
+<div class="mb-4 ms-2">
+    @L["AreYouANewUser"]
+    <a href="@Url.Page("./Register")">@L["Register"]</a>
 </div>
 
 @if (Model.IsUserNameEnabled)
@@ -311,18 +315,3 @@ else
         </div>
     </form>
 }
-
-<!-- todo: Add a condition -->
-<div class="d-flex flex-column align-items-start mt-5 mb-3">
-    <h6>Helpful links</h6>
-    <ul>
-        <!-- todo: Add a link for the member registration -->
-        <li>
-            <a class="btn btn-link fst-italic" href="@reActivationLink">@L["ResendActivationLink"]</a>
-        </li>
-        <li>
-            <!--TODO: Guard-->
-            <a class="btn btn-link fst-italic" href="@Url.Page("./ExternalLogin")">SSO Login</a>
-        </li>
-    </ul>
-</div>

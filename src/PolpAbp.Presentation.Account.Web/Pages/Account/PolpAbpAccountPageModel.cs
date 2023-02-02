@@ -1,15 +1,18 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using PolpAbp.Framework.Identity;
 using PolpAbp.Framework.Security;
 using Volo.Abp;
 using Volo.Abp.Account;
 using Volo.Abp.Account.Localization;
 using Volo.Abp.AspNetCore.ExceptionHandling;
 using Volo.Abp.AspNetCore.Mvc.UI.RazorPages;
+using Volo.Abp.Data;
 using Volo.Abp.ExceptionHandling;
 using Volo.Abp.Identity;
 using Volo.Abp.Identity.Settings;
+using Volo.Abp.MultiTenancy;
 using Volo.Abp.Settings;
 using IdentityUser = Volo.Abp.Identity.IdentityUser;
 
@@ -33,6 +36,8 @@ public abstract class PolpAbpAccountPageModel : AbpPageModel
     protected IdentitySecurityLogManager IdentitySecurityLogManager => LazyServiceProvider.LazyGetRequiredService<IdentitySecurityLogManager>();
     protected IOptions<IdentityOptions> IdentityOptions => LazyServiceProvider.LazyGetRequiredService<IOptions<IdentityOptions>>();
     protected IExceptionToErrorInfoConverter ExceptionToErrorInfoConverter => LazyServiceProvider.LazyGetRequiredService<IExceptionToErrorInfoConverter>();
+    protected IDataFilter DataFilter => LazyServiceProvider.LazyGetRequiredService<IDataFilter>();
+    protected IIdentityUserRepositoryExt IdentityUserRepositoryExt => LazyServiceProvider.LazyGetRequiredService<IIdentityUserRepositoryExt>();
 
     protected IConfiguration Configuration => LazyServiceProvider.LazyGetRequiredService<IConfiguration>();
 
@@ -123,5 +128,15 @@ public abstract class PolpAbpAccountPageModel : AbpPageModel
         }
 
         return exception.Message;
+    }
+
+    protected async Task<List<IdentityUser>> FindByEmailBeyondTenantAsync(string email)
+    {
+        using (DataFilter.Disable<IMultiTenant>())
+        {
+            // Find lookup the user in the ID
+            var user = await IdentityUserRepositoryExt.FindUsersByEmailAsync(email);
+            return user;
+        }
     }
 }

@@ -32,6 +32,16 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
             // Load settings
             await LoadSettingsAsync();
 
+            if (!IsEmailGloballyUnique && !CurrentTenant.IsAvailable)
+            {
+                // Find user.
+                return RedirectToPage("./FindUser", new
+                {
+                    returnUrl = ReturnUrl,
+                    returnUrlHash = ReturnUrlHash
+                });
+            }
+
             if (!string.IsNullOrEmpty(NormalizedUserName))
             {
                 Input.UserNameOrEmailAddress = NormalizedUserName;
@@ -59,7 +69,12 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 
                     IdentityUser? user = null;
 
-                    if (IsUserNameEnabled)
+                    if (IsEmailGloballyUnique)
+                    {
+                        var anyUsers = await FindByEmailBeyondTenantAsync(Input.UserNameOrEmailAddress);
+                        user = anyUsers.FirstOrDefault();
+                    }
+                    else if (IsUserNameEnabled)
                     {
                         if (Input.IsUsingEmailAddress)
                         {
@@ -122,6 +137,15 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                     }
                     else
                     {
+                        _cookieManager.SetTenantCookieValue(Response, string.Empty);
+
+                        Alerts.Danger(L["InvalidUserNameOrPassword"]);
+
+                        if (IsEmailGloballyUnique)
+                        {
+                            return Page();
+                        }
+
                         return RedirectToPage("./FindUser", new
                         {
                             returnUrl = ReturnUrl,
@@ -143,18 +167,6 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                 // Re-render the page.
                 return Page();
             }
-            else if (action == "ResetTenant")
-            {
-                // Remove tenant cookies
-                _cookieManager.SetTenantCookieValue(Response, string.Empty);
-
-                // Need to reload the page.
-                return RedirectToPage("./FindUser", new
-                {
-                    returnUrl = ReturnUrl,
-                    returnUrlHash = ReturnUrlHash
-                });
-            }
 
             return Page();
         }
@@ -163,8 +175,14 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
         {
             public bool IsUsingEmailAddress { get; set; }
             [Required]
+            [MinLength(1)]
             [DynamicStringLength(typeof(IdentityUserConsts), nameof(IdentityUserConsts.MaxEmailLength))]
-            public string? UserNameOrEmailAddress { get; set; }
+            public string UserNameOrEmailAddress { get; set; }
+
+            public LoginInputModel()
+            {
+                UserNameOrEmailAddress = string.Empty;
+            }
         }
 
         public class PostResolution
