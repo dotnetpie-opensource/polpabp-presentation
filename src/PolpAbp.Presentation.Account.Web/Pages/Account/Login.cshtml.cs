@@ -8,7 +8,6 @@ using Volo.Abp.Validation;
 
 namespace PolpAbp.Presentation.Account.Web.Pages.Account
 {
-    [TenantPrerequisite]
     [OnlyAnonymous]
     public class LoginModel : LoginModelBase
     {

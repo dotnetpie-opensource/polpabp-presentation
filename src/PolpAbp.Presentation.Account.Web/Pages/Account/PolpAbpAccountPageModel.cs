@@ -48,6 +48,15 @@ public abstract class PolpAbpAccountPageModel : AbpPageModel
         }
     }
 
+    protected bool IsEmailGloballyUnique
+    {
+        get
+        {
+            // todo: Do we need to introduce the module-specific settings?
+            return Configuration.GetValue<bool>("PolpAbp:Framework:IsEmailGloballyUnique");
+        }
+    }
+
     protected PolpAbpAccountPageModel()
     {
         PwdComplexity = new PasswordComplexitySetting();
@@ -67,7 +76,6 @@ public abstract class PolpAbpAccountPageModel : AbpPageModel
     /// <returns></returns>
     protected virtual Task ReadInRecaptchaEnabledAsync()
     {
-        IsRecaptchaEnabled = Configuration.GetValue<bool>("PolpAbp:Framework:RecaptchaEnabled");
         return Task.CompletedTask;
     }
 
