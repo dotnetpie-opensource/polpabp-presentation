@@ -35,9 +35,9 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                 });
             }
 
-            if (!string.IsNullOrEmpty(NormalizedUserName))
+            if (!string.IsNullOrEmpty(NormalizedEmailAddress))
             {
-                Input.UserNameOrEmailAddress = NormalizedUserName;
+                Input.EmailAddress = NormalizedEmailAddress;
             }
 
             return Page();
@@ -58,12 +58,12 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 
                     if (IsEmailGloballyUnique)
                     {
-                        var anyUsers = await FindByEmailBeyondTenantAsync(Input.UserNameOrEmailAddress);
+                        var anyUsers = await FindByEmailBeyondTenantAsync(Input.EmailAddress);
                         user = anyUsers.FirstOrDefault();
                     }
                     else 
                     {
-                        user = await UserManager.FindByEmailAsync(Input.UserNameOrEmailAddress);
+                        user = await UserManager.FindByEmailAsync(Input.EmailAddress);
                     }
 
                     if (user != null)
@@ -126,11 +126,11 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
             [Required]
             [MinLength(1)]
             [DynamicStringLength(typeof(IdentityUserConsts), nameof(IdentityUserConsts.MaxEmailLength))]
-            public string UserNameOrEmailAddress { get; set; }
+            public string EmailAddress { get; set; }
 
             public InputModel()
             {
-                UserNameOrEmailAddress = string.Empty;
+                EmailAddress = string.Empty;
             }
         }
     }

@@ -7,7 +7,6 @@ using Volo.Abp.Validation;
 
 namespace PolpAbp.Presentation.Account.Web.Pages.Account
 {
-    [TenantPrerequisite]
     [OnlyAnonymous]
     public class ResendActivationLinkModel : LoginModelBase
     {
@@ -28,14 +27,21 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
             // Load settings
             await LoadSettingsAsync();
 
-            if (!string.IsNullOrEmpty(NormalizedUserName))
+            if (!IsEmailGloballyUnique && !CurrentTenant.IsAvailable)
             {
-                Input.UserNameOrEmailAddress = NormalizedUserName;
+                Alerts.Danger("Please locate your organization first!");
+
+                // Find user.
+                return RedirectToPage("./FindUser", new
+                {
+                    returnUrl = ReturnUrl,
+                    returnUrlHash = ReturnUrlHash
+                });
             }
-            else if (!string.IsNullOrEmpty(NormalizedEmailAddress))
+
+            if (!string.IsNullOrEmpty(NormalizedEmailAddress))
             {
-                Input.UserNameOrEmailAddress = NormalizedEmailAddress;
-                Input.IsUsingEmailAddress = true;
+                Input.EmailAddress = NormalizedEmailAddress;
             }
 
             return Page();
@@ -54,13 +60,14 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 
                     IdentityUser? user = null;
 
-                    if (Input.IsUsingEmailAddress)
+                    if (IsEmailGloballyUnique)
                     {
-                        user = await UserManager.FindByEmailAsync(Input.UserNameOrEmailAddress);
+                        var anyUsers = await FindByEmailBeyondTenantAsync(Input.EmailAddress);
+                        user = anyUsers.FirstOrDefault();
                     }
                     else
                     {
-                        user = await UserManager.FindByNameAsync(Input.UserNameOrEmailAddress);
+                        user = await UserManager.FindByEmailAsync(Input.EmailAddress);
                     }
 
                     if (user != null && !user.EmailConfirmed)
@@ -107,11 +114,15 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 
         public class InputModel
         {
-            public bool IsUsingEmailAddress { get; set; }
-
             [Required]
+            [MinLength(1)]
             [DynamicStringLength(typeof(IdentityUserConsts), nameof(IdentityUserConsts.MaxEmailLength))]
-            public string? UserNameOrEmailAddress { get; set; }
+            public string EmailAddress { get; set; }
+
+            public InputModel()
+            {
+                EmailAddress = string.Empty;
+            }
         }
     }
 }
