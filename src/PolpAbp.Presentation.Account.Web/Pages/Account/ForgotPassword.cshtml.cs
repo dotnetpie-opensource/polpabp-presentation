@@ -7,7 +7,6 @@ using Volo.Abp.Validation;
 
 namespace PolpAbp.Presentation.Account.Web.Pages.Account
 {
-    [TenantPrerequisite]
     [OnlyAnonymous]
     public class ForgotPasswordModel : LoginModelBase
     {
@@ -24,14 +23,21 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
             // Load settings
             await LoadSettingsAsync();
 
+            if (!IsEmailGloballyUnique && !CurrentTenant.IsAvailable)
+            {
+                Alerts.Danger("Please locate your organization first!");
+
+                // Find user.
+                return RedirectToPage("./FindUser", new
+                {
+                    returnUrl = ReturnUrl,
+                    returnUrlHash = ReturnUrlHash
+                });
+            }
+
             if (!string.IsNullOrEmpty(NormalizedUserName))
             {
                 Input.UserNameOrEmailAddress = NormalizedUserName;
-            }
-            else if (!string.IsNullOrEmpty(NormalizedEmailAddress))
-            {
-                Input.UserNameOrEmailAddress = NormalizedEmailAddress;
-                Input.IsUsingEmailAddress = true;
             }
 
             return Page();
@@ -50,13 +56,14 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 
                     IdentityUser? user = null;
 
-                    if (Input.IsUsingEmailAddress)
+                    if (IsEmailGloballyUnique)
+                    {
+                        var anyUsers = await FindByEmailBeyondTenantAsync(Input.UserNameOrEmailAddress);
+                        user = anyUsers.FirstOrDefault();
+                    }
+                    else 
                     {
                         user = await UserManager.FindByEmailAsync(Input.UserNameOrEmailAddress);
-                    }
-                    else
-                    {
-                        user = await UserManager.FindByNameAsync(Input.UserNameOrEmailAddress);
                     }
 
                     if (user != null)
@@ -116,11 +123,15 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 
         public class InputModel
         {
-            public bool IsUsingEmailAddress { get; set; }
-
             [Required]
+            [MinLength(1)]
             [DynamicStringLength(typeof(IdentityUserConsts), nameof(IdentityUserConsts.MaxEmailLength))]
-            public string? UserNameOrEmailAddress { get; set; }
+            public string UserNameOrEmailAddress { get; set; }
+
+            public InputModel()
+            {
+                UserNameOrEmailAddress = string.Empty;
+            }
         }
     }
 }
