@@ -28,7 +28,7 @@
     @{
         foreach (var s in Model.SsoProviders)
         {
-            <a class="btn btn-primary btn-lg" href="@Url.Page(s.LoginPage)">
+            <a class="btn btn-primary" href="@Url.Page(s.LoginPage)">
                 @s.DisplayName
                 <span class="spinner-box"></span>
             </a>
