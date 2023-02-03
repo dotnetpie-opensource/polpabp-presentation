@@ -35,22 +35,17 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
         protected const string CachedEmailAddressKey = "FindUserEmailAddress";
 
         // DI
-        protected readonly IDataFilter DataFilter;
-        protected readonly IIdentityUserRepositoryExt IdentityUserRepositoryExt;
         protected readonly ITenantRepository TenantRepository;
         protected readonly IReCaptchaService RecaptchaService;
         protected readonly IAppCookieManager CookieManager;
 
         public string NormalizedTenantOrEmailAddress => HttpUtility.UrlDecode(TenantOrEmailAddress ?? string.Empty);
 
-        public FindUserModel(IDataFilter dataFilter,
-            IIdentityUserRepositoryExt identityUserRepositoryExt,
+        public FindUserModel(
             ITenantRepository tenantRepository,
             IReCaptchaService reCaptchaService,
             IAppCookieManager cookieManager) : base()
         {
-            DataFilter = dataFilter;
-            IdentityUserRepositoryExt = identityUserRepositoryExt;
             TenantRepository = tenantRepository;
             RecaptchaService = reCaptchaService;
             CookieManager = cookieManager;
@@ -233,17 +228,6 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
             else
             {
                 await AttemptBuildTenantsByNameAync(tenantOrEmail);
-            }
-        }
-
-
-        protected async Task<List<IdentityUser>> FindByEmailBeyondTenantAsync(string email)
-        {
-            using (DataFilter.Disable<IMultiTenant>())
-            {
-                // Find lookup the user in the ID
-                var user = await IdentityUserRepositoryExt.FindUsersByEmailAsync(email);
-                return user;
             }
         }
 
