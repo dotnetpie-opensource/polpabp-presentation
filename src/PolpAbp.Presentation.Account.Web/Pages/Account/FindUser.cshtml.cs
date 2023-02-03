@@ -1,14 +1,10 @@
-using System.ComponentModel.DataAnnotations;
-using System.Web;
 using AspNetCore.ReCaptcha;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using PolpAbp.Framework.Identity;
 using PolpAbp.Framework.Mvc.Cookies;
+using System.ComponentModel.DataAnnotations;
+using System.Web;
 using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap.TagHelpers.Form;
-using Volo.Abp.Data;
-using Volo.Abp.Identity;
-using Volo.Abp.MultiTenancy;
 using Volo.Abp.TenantManagement;
 using Volo.Abp.Validation;
 
@@ -19,7 +15,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
     {
 
         [BindProperty(SupportsGet = true)]
-        public string? TenantOrEmailAddress { get; set; }
+        public string? TenantName { get; set; }
 
         [BindProperty]
         public PostInput Input { get; set; }
@@ -32,14 +28,12 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 
         public List<SelectListItem> TenantList { get; set; }
 
-        protected const string CachedEmailAddressKey = "FindUserEmailAddress";
-
         // DI
         protected readonly ITenantRepository TenantRepository;
         protected readonly IReCaptchaService RecaptchaService;
         protected readonly IAppCookieManager CookieManager;
 
-        public string NormalizedTenantOrEmailAddress => HttpUtility.UrlDecode(TenantOrEmailAddress ?? string.Empty);
+        public string NormalizedTenantName => HttpUtility.UrlDecode(TenantName ?? string.Empty);
 
         public FindUserModel(
             ITenantRepository tenantRepository,
@@ -63,9 +57,9 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 
             // If the query parameter carries some info, this step of locating the tenant 
             // may be skipped.
-            if (!string.IsNullOrEmpty(NormalizedTenantOrEmailAddress))
+            if (!string.IsNullOrEmpty(NormalizedTenantName))
             {
-                await AttemptBuildTenantsAync(NormalizedTenantOrEmailAddress);
+                await AttemptBuildTenantsByNameAync(NormalizedTenantName);
             }
             // Render page 
             return Page();
@@ -95,34 +89,12 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                     // Tenant not set this moment.
                     ValidateModel();
 
-                    // Return all tenants
-                    if (Input.IsUsingEmailAddress)
-                    {
-                        await AttemptBuildTenantsByEmailAync(Input.TenantOrEmailAddress!);
-                        if (TenantList.Count > 0)
-                        {
-                            TempData[CachedEmailAddressKey] = Input.TenantOrEmailAddress;
-                        }
-                        else
-                        {
-                            // Clean up the entry
-                            var _ = TempData[CachedEmailAddressKey];
+                    await AttemptBuildTenantsByNameAync(Input.TenantName!);
 
-                            // TODO: localization
-                            Alerts.Danger("Invalid email address.");
-                        }
-                    }
-                    else
+                    if (TenantList.Count == 0)
                     {
-                        await AttemptBuildTenantsByNameAync(Input.TenantOrEmailAddress!);
-                        // Clean up the entry
-                        var _ = TempData[CachedEmailAddressKey];
-
-                        if (TenantList.Count == 0)
-                        {
-                            // TODO: localization
-                            Alerts.Danger("Invalid organization.");
-                        }
+                        // TODO: localization
+                        Alerts.Danger("Invalid organization.");
                     }
 
                     /*
@@ -141,7 +113,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                             return RedirectToPage("./Login");
                         }
                     } */
-                } 
+                }
                 catch (AbpValidationException ex)
                 {
                     // Handle this error.
@@ -150,11 +122,6 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                         Alerts.Add(Volo.Abp.AspNetCore.Mvc.UI.Alerts.AlertType.Danger, a.ErrorMessage);
                     }
                 }
-            }
-            else if (action == "Resolution")
-            {
-                // Re-render the page.
-                return Page();
             }
             else if (action == "Selection")
             {
@@ -168,29 +135,17 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                         // Be smart
                         if (ReturnUrl.ToLower().EndsWith("/account/login"))
                         {
-                            return RedirectToPage("./Login", new
-                            {
-                                EmailAddress = HttpUtility.UrlEncode(TempData[CachedEmailAddressKey]?.ToString() ?? string.Empty)
-                            });
+                            return RedirectToPage("./Login");
                         }
 
                         return Redirect(ReturnUrl);
                     }
                     else
                     {
-                        if (TempData.Peek(CachedEmailAddressKey) != null)
-                        {
-                            return RedirectToPage("./Login", new
-                            {
-                                EmailAddress = HttpUtility.UrlEncode(TempData[CachedEmailAddressKey]?.ToString() ?? string.Empty)
-                            });
-                        }
-                        // To Login by default.
                         return RedirectToPage("./Login");
                     }
                 }
             }
-
 
             return Page();
         }
@@ -208,28 +163,6 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
             TenantList = tenants.Select(a => new SelectListItem { Value = a.Id.ToString(), Text = a.Name }).ToList();
         }
 
-        protected async Task AttemptBuildTenantsByEmailAync(string email)
-        {
-            var tenants = new List<Tenant>();
-
-            var users = await FindByEmailBeyondTenantAsync(email);
-            var ids = users.Select(a => a.TenantId);
-            await FindByTenantIdsAsync(ids, tenants);
-
-            TenantList = tenants.Select(a => new SelectListItem { Value = a.Id.ToString(), Text = a.Name }).ToList();
-        }
-
-        protected async Task AttemptBuildTenantsAync(string tenantOrEmail)
-        {
-            if (ValidationHelper.IsValidEmailAddress(tenantOrEmail))
-            {
-                await AttemptBuildTenantsByEmailAync(tenantOrEmail);
-            } 
-            else
-            {
-                await AttemptBuildTenantsByNameAync(tenantOrEmail);
-            }
-        }
 
         protected async Task FindByTenantIdsAsync(IEnumerable<Guid?> ids, List<Tenant> tenants)
         {
@@ -251,9 +184,9 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 
         public class PostInput
         {
-            public bool IsUsingEmailAddress { get; set; }
             [Required]
-            public string? TenantOrEmailAddress { get; set; }
+            [MinLength(1)]
+            public string? TenantName { get; set; }
         }
 
         public class PostSelect

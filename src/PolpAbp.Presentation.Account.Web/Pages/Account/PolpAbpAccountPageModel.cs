@@ -134,8 +134,17 @@ public abstract class PolpAbpAccountPageModel : AbpPageModel
     {
         using (DataFilter.Disable<IMultiTenant>())
         {
-            // Find lookup the user in the ID
             var user = await IdentityUserRepositoryExt.FindUsersByEmailAsync(email);
+            return user;
+        }
+    }
+
+    protected async Task<IdentityUser> FindByIdBeyondTenantAsync(Guid id)
+    {
+        using (DataFilter.Disable<IMultiTenant>())
+        {
+            // Find lookup the user in the ID
+            var user = await IdentityUserRepositoryExt.FindAsync(id);
             return user;
         }
     }

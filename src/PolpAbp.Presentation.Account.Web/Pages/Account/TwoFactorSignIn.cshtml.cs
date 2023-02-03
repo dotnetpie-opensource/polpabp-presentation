@@ -7,7 +7,7 @@ using Volo.Abp.Validation;
 namespace PolpAbp.Presentation.Account.Web.Pages.Account
 {
     [OnlyAnonymous]
-    [TenantPrerequisite]
+    [TenantPrerequisite("/Account/Login")]
     public class TwoFactorSignInModel : LoginModelBase
     {
         [BindProperty(SupportsGet = true)]

@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using PolpAbp.Framework.Authorization.Users.Events;
+using PolpAbp.Framework.Mvc.Cookies;
 using System.ComponentModel.DataAnnotations;
 using Volo.Abp.Account;
 using Volo.Abp.Auditing;
@@ -10,7 +11,6 @@ using Volo.Abp.Validation;
 namespace PolpAbp.Presentation.Account.Web.Pages.Account
 {
     [OnlyAnonymous]
-    [TenantPrerequisite]
     public class ResetPasswordModel : PolpAbpAccountPageModel
     {
         [Required]
@@ -39,16 +39,29 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 
 
         private readonly ILocalEventBus _localEventBus;
-        
-        public ResetPasswordModel(ILocalEventBus localEventBus) : base()
+        private readonly IAppCookieManager _cookieManager;
+
+        public ResetPasswordModel(ILocalEventBus localEventBus,
+            IAppCookieManager appCookieManager) : base()
         {
             _localEventBus = localEventBus;
+            _cookieManager = appCookieManager;
         }
 
 
         public virtual async Task<IActionResult> OnGetAsync()
         {
             await LoadSettingsAsync();
+
+            // Find out the user 
+            var user = await FindByIdBeyondTenantAsync(UserId);
+            if (user == null)
+            {
+                Alerts.Danger("Error link or user account.");
+                return RedirectToPage("./Login");
+            }
+
+            _cookieManager.SetTenantCookieValue(Response, user.TenantId!.Value.ToString());
 
             return Page();
         }
