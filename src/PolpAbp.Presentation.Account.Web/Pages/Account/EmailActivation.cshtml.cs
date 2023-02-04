@@ -58,16 +58,24 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                     var user = await UserManager.GetByIdAsync(UserId);
                     if (user != null)
                     {
-                        if (user.EmailConfirmed)
+                        if (user.EmailConfirmed && user.IsActive)
                         {
                             State = ActivationState.Already;
                         }
                         else
                         {
-                            // TODO: Activation
-                            try
+                            // The following call is supposed to verify if the token is valid or not. 
+                            var confirmRet = await UserManager.ConfirmEmailAsync(user, ConfirmationCode);
+                            if (confirmRet.Succeeded)
                             {
-                                await UserManager.ConfirmEmailAsync(user, ConfirmationCode);
+                                user.SetEmailConfirmed(true);
+
+                                // On purpose, we check active after confirming the email ...
+                                if (!user.IsActive)
+                                {
+                                    user.SetIsActive(true);
+                                }
+                                await UserManager.UpdateAsync(user);
                                 State = ActivationState.Success;
 
                                 // It's ok if the following runs into some error.
@@ -77,7 +85,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                                     TenantId = tenant.Id
                                 });
                             }
-                            catch (Exception ex)
+                            else
                             {
                                 State = ActivationState.Failure;
                             }
