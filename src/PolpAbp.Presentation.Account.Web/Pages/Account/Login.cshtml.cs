@@ -92,6 +92,8 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 
                     if (user != null)
                     {
+                        _cookieManager.SetTenantCookieValue(Response, user.TenantId!.Value.ToString());
+
                         if (!user.IsExternal)
                         {
                             return RedirectToPage("./LocalLogin", new
