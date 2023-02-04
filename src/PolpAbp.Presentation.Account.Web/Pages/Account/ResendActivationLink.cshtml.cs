@@ -104,7 +104,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
             // For security reason, we will redirect the user to another page regardless 
             // whether the user exits or not.
             return RedirectToPage(
-                "./PasswordResetLinkSent",
+                "./ResendActivationLinkSuccess",
                 new
                 {
                     returnUrl = ReturnUrl,
