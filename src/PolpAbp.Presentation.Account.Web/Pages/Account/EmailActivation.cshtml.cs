@@ -68,14 +68,12 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                             var confirmRet = await UserManager.ConfirmEmailAsync(user, ConfirmationCode);
                             if (confirmRet.Succeeded)
                             {
-                                user.SetEmailConfirmed(true);
-
                                 // On purpose, we check active after confirming the email ...
                                 if (!user.IsActive)
                                 {
                                     user.SetIsActive(true);
+                                    await UserManager.UpdateAsync(user);
                                 }
-                                await UserManager.UpdateAsync(user);
                                 State = ActivationState.Success;
 
                                 // It's ok if the following runs into some error.
