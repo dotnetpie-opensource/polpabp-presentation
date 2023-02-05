@@ -1,10 +1,10 @@
-﻿using System.Security.Claims;
-using Microsoft.AspNetCore.Authentication;
+﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using PolpAbp.Framework;
 using PolpAbp.Framework.Emailing.Account;
 using PolpAbp.Framework.Globalization;
+using System.Security.Claims;
 using Volo.Abp.Sms;
 
 namespace PolpAbp.Presentation.Account.Web.Pages.Account
@@ -20,7 +20,6 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 
         protected readonly IFrameworkAccountEmailer AccountEmailer;
         protected readonly ISmsSender SmsSender;
-        protected readonly IPhoneNumberService PhoneNumberService;
 
         protected string SmsSenderName
         {
@@ -36,7 +35,6 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
         {
             AccountEmailer = accountEmailer;
             SmsSender = smsSender;
-            PhoneNumberService = phoneNumberService;
 
             RememberMe = false;
             TwoFactorCodeProviders = new List<TwoFactorProvider>();
@@ -87,20 +85,14 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 
                     var body = L["TwoFactorCode_Sms", SmsSenderName, token];
                     TempData["PolpAbp.Account.TwoFactorCode.Provider"] = TokenOptions.DefaultPhoneProvider;
-
+                    
+                    // Note that the underlying sms sender will be responsible
+                    // for checking if the phone number is good or not.
+                    //
                     // todo: Check if the organization configuration.
                     // todo: Settings
                     // var allowedCountry =
-                    var phoneNumberDetail = PhoneNumberService.Parse(user.PhoneNumber);
-                    if (!phoneNumberDetail.IsValid)
-                    {
-                        Alerts.Danger("The given number is not valid. Please choose a different way for getting the code.");
-                        return Page();
-                    }
-                    
-                    var msg = new SmsMessage(phoneNumberDetail.E164PhoneNumber, body);
-                    // Set up the originator.
-                    msg.Properties.Add("CountryCode", phoneNumberDetail.CountryAlpha);
+                    var msg = new SmsMessage(user.PhoneNumber, body);
                     await SmsSender.SendAsync(msg);
 
                     var errorCodeStr = msg.Properties.GetOrDefault("ErrorCode");
