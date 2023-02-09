@@ -17,11 +17,23 @@
     Two Factor Login
 </h4>
 
-<p>
+<div class="alert alert-info">
     Please type the code you just received.
-</p>
+</div>
+
 <form method="post">
-    <abp-input asp-for="Input.Code" auto-focus="true" />
+
+    <div class="mb-3" id="password-wrapper">
+        <label asp-for="Input.Code" class="form-label"></label>
+        <div class="input-group">
+            <input asp-for="Input.Code" class="form-control" data-auto-focus="true" autocomplete="off" />
+            <button type="button" class="toggle-password btn btn-outline-secondary">
+                <i class="toggle-icon fa fa-eye"></i>
+            </button>
+        </div>
+        <span asp-validation-for="Input.Code" class="text-danger"></span>
+    </div>
+
     <abp-input asp-for="Input.RememberMe" />
     <abp-input asp-for="Input.RememberClient" />
     <abp-input asp-for="Input.IsRecoveryCode" />
