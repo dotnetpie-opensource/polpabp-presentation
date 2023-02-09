@@ -36,7 +36,8 @@
 
     <abp-input asp-for="Input.RememberMe" />
     <abp-input asp-for="Input.RememberClient" />
-    <abp-input asp-for="Input.IsRecoveryCode" />
+    <!--todo Fix this-->
+    <abp-input asp-for="Input.IsRecoveryCode" type="hidden" />
     <div class="d-grid gap-2">
         <abp-button type="submit" button-type="Primary" name="Action" value="Input" class="mt-3">
             @L["Submit"]

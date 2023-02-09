@@ -6,6 +6,9 @@
     "DisplayName:AdminEmailAddress": "Administrator email address",
     "Description:AdminEmailAddress": "The email address of the intended administrator.",
     "DisplayName:TenantOrEmailAddress": "Your email address or your organization name",
+    "Description:TenantOrEmailAddress": "Your email address or your organization name",
+    "DisplayName:RememberClient": "Remember this device",
+    "Description:RememberClient": "If possible, you will not be asked for the 2FA on this device.",
     "LoggedOutText": "You have been signed out!",
     "MainApp": "Application Page"
   }
