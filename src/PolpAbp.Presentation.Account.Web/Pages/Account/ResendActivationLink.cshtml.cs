@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using PolpAbp.Framework.Emailing.Account;
+using PolpAbp.Framework.Mvc.Interceptors;
 using System.ComponentModel.DataAnnotations;
 using Volo.Abp;
 using Volo.Abp.Identity;
@@ -14,10 +15,14 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
         public InputModel Input { get; set; }
 
         protected readonly IFrameworkAccountEmailer AccountEmailer;
+        protected readonly IEmailingInterceptor EmailingInterceptor;
 
-        public ResendActivationLinkModel(IFrameworkAccountEmailer frameworkAccountEmailer) : base()
+        public ResendActivationLinkModel(
+            IFrameworkAccountEmailer frameworkAccountEmailer,
+            IEmailingInterceptor emailingInterceptor) : base()
         {
             AccountEmailer = frameworkAccountEmailer;
+            EmailingInterceptor = emailingInterceptor;
 
             Input = new InputModel();
         }
@@ -73,7 +78,8 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                     if (user != null && !user.EmailConfirmed)
                     {
                         // Send it instantly, because the user is waiting for it.
-                        await AccountEmailer.SendEmailActivationLinkAsync(user.Id);
+                        var cc = await EmailingInterceptor.GetActivationLinkEmailCcAsync(user.Id);
+                        await AccountEmailer.SendEmailActivationLinkAsync(user.Id, cc);
                     }
                 }
                 catch (AbpValidationException ex)

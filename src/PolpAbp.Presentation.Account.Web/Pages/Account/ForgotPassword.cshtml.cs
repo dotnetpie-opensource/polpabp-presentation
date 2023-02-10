@@ -1,7 +1,8 @@
-using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
+using PolpAbp.Framework.Emailing.Account;
+using PolpAbp.Framework.Mvc.Interceptors;
+using System.ComponentModel.DataAnnotations;
 using Volo.Abp;
-using Volo.Abp.Account;
 using Volo.Abp.Identity;
 using Volo.Abp.Validation;
 
@@ -13,8 +14,16 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
         [BindProperty]
         public InputModel Input { get; set; }
 
-        public ForgotPasswordModel() : base()
+        protected readonly IEmailingInterceptor EmailingInterceptor;
+        protected readonly IFrameworkAccountEmailer FrameworkAccountEmailer;
+
+        public ForgotPasswordModel(
+            IEmailingInterceptor emailingInterceptor,
+            IFrameworkAccountEmailer frameworkAccountEmailer) : base()
         {
+            EmailingInterceptor= emailingInterceptor;
+            FrameworkAccountEmailer = frameworkAccountEmailer;
+
             Input = new InputModel();
         }
 
@@ -70,16 +79,15 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                     {
                         // todo: Should we use the background ??
                         // In that case, the email may not be sent instantly.
-                        await AccountAppService.SendPasswordResetCodeAsync(
-                            new SendPasswordResetCodeDto
-                            {
-                                Email = user.Email,
-                                AppName = "MVC", //TODO: Const!
-                                ReturnUrl = ReturnUrl,
-                                ReturnUrlHash = ReturnUrlHash
-                            }
-                        );
-
+                        var cc = await EmailingInterceptor.GetForgotPasswordEmailCcAsync(user.Id);
+                        var resetToken = await UserManager.GeneratePasswordResetTokenAsync(user);
+                        await FrameworkAccountEmailer.SendPasswordResetLinkWithCcAsync(user.TenantId!.Value,
+                            user.Id,
+                            resetToken,
+                            "MVC", // appname
+                            cc,
+                            ReturnUrl,
+                            ReturnUrlHash);
                     }
                 }
                 catch (UserFriendlyException e)
