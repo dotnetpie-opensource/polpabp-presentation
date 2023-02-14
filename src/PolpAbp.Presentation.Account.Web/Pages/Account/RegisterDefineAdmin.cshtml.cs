@@ -8,6 +8,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 {
     [OnlyAnonymous]
     [TenantNotSet]
+    [DisableAuditing]
     public class RegisterDefineAdminModel : RegisterModelBase
     {
         [BindProperty]

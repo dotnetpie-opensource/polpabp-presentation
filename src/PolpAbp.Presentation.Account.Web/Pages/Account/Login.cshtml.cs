@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using PolpAbp.Framework.Mvc.Cookies;
 using System.ComponentModel.DataAnnotations;
 using System.Web;
+using Volo.Abp.Auditing;
 using Volo.Abp.Data;
 using Volo.Abp.Identity;
 using Volo.Abp.Validation;
@@ -9,6 +10,7 @@ using Volo.Abp.Validation;
 namespace PolpAbp.Presentation.Account.Web.Pages.Account
 {
     [OnlyAnonymous]
+    [DisableAuditing]
     public class LoginModel : LoginModelBase
     {
         [BindProperty]

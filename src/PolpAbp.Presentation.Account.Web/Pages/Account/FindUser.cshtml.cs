@@ -5,12 +5,14 @@ using PolpAbp.Framework.Mvc.Cookies;
 using System.ComponentModel.DataAnnotations;
 using System.Web;
 using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap.TagHelpers.Form;
+using Volo.Abp.Auditing;
 using Volo.Abp.TenantManagement;
 using Volo.Abp.Validation;
 
 namespace PolpAbp.Presentation.Account.Web.Pages.Account
 {
     [OnlyAnonymous]
+    [DisableAuditing]
     public class FindUserModel : PolpAbpAccountPageModel
     {
 

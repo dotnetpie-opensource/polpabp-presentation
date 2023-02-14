@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
 using System.ComponentModel.DataAnnotations;
 using Volo.Abp.Account.Settings;
+using Volo.Abp.Auditing;
 using Volo.Abp.Settings;
 using Volo.Abp.Validation;
 
@@ -9,6 +10,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 {
     [OnlyAnonymous]
     [TenantNotSet]
+    [DisableAuditing]
     public class RegisterModel : RegisterModelBase
     {
         [BindProperty]
