@@ -81,13 +81,15 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                         // In that case, the email may not be sent instantly.
                         var cc = await EmailingInterceptor.GetForgotPasswordEmailCcAsync(user.Id);
                         var resetToken = await UserManager.GeneratePasswordResetTokenAsync(user);
-                        await FrameworkAccountEmailer.SendPasswordResetLinkWithCcAsync(user.TenantId!.Value,
+                        await FrameworkAccountEmailer.SendPasswordResetLinkWithCcAsync(
+                            user.TenantId!.Value,
                             user.Id,
+                            user.Email,
                             resetToken,
                             "MVC", // appname
-                            cc,
-                            ReturnUrl,
-                            ReturnUrlHash);
+                            cc :cc,
+                            returnUrl: ReturnUrl,
+                            returnUrlHash: ReturnUrlHash);
                     }
                 }
                 catch (UserFriendlyException e)
