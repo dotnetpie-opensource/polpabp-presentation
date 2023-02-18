@@ -22,7 +22,7 @@ namespace PolpAbp.Presentation.Account
                 if (context.HttpContext.User.Identity.IsAuthenticated)
                 {
                     var query = context.HttpContext.Request.QueryString;
-                    context.Result = new RedirectResult(_redirectUrl + query??"");
+                    context.Result = new RedirectResult(_redirectUrl + query ?? "");
                 }
             }
         }
