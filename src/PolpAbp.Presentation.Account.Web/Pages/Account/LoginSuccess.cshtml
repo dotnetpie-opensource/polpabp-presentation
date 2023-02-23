@@ -13,6 +13,23 @@
     ViewBag.Description = "Displays the success message after you have logged into the system.";
 }
 
+@section docReady {
+    <script type="text/javascript">
+    function postCordovaMessage() {
+        /* Send an action = 'close' JSON object to Cordova via postMessage API */
+        var message = { action: 'close' };
+        if (!webkit.messageHandlers.cordova_iab) {
+            console.warn('Cordova IAB postMessage API not found!');
+            // throw 'Cordova IAB postMessage API not found!';
+        } else {
+            console.log('Message sent!');
+            webkit.messageHandlers.cordova_iab.postMessage(JSON.stringify(message));
+        }
+    }
+    </script>
+
+}
+
 <h4 class="mb-4 fw-semibold">
     Authentication Success
 </h4>
@@ -20,3 +37,5 @@
 <p>
     You have been authenticated. Please close this page to continue!
 </p>
+
+<a abp-button="Primary" onclick="postCordovaMessage()">Close</a>
