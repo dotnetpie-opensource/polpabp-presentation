@@ -7,9 +7,19 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
     [Authorize]
     public class LoginSuccessModel : PolpAbpAccountPageModel
     {
-        public virtual Task<IActionResult> OnGetAsync()
+        public bool IsCordovaEnabled { get; set; }
+
+        public virtual async Task<IActionResult> OnGetAsync()
         {
-            return Task.FromResult<IActionResult>(Page());
+            await LoadSettingsAsync();
+            return Page();
+        }
+
+        protected override async Task LoadSettingsAsync()
+        {
+            await base.LoadSettingsAsync();
+
+            IsCordovaEnabled = Configuration.GetValue<bool>("PolpAbp:Framework:IsCordovaEnabled");
         }
     }
 }
