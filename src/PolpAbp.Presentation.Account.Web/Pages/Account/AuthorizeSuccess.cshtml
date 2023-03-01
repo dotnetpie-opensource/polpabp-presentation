@@ -6,17 +6,21 @@
 @using Volo.Abp.AspNetCore.Mvc.UI.MultiTenancy.Localization
 @using Volo.Abp.Settings
 @using AspNetCore.ReCaptcha
-@model PolpAbp.Presentation.Account.Web.Pages.Account.LoginSuccessModel
+@model PolpAbp.Presentation.Account.Web.Pages.Account.AuthorizeSuccessModel
 @inject IHtmlLocalizer<AccountResource> L
 @{
-    ViewBag.Title = "Login Success Result";
-    ViewBag.Description = "Displays the success message after you have logged into the system.";
+    ViewBag.Title = "Authorization Success Result";
+    ViewBag.Description = "Displays the success message after the authorization code has been granted.";
 }
 
 @section docReady {
-    <script type="text/javascript">function postCordovaMessage() {
+    <script type="text/javascript">
+        function postCordovaMessage() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const code = urlParams.get('code');
+            const scope = urlParams.get('scope');
             /* Send an action = 'close' JSON object to Cordova via postMessage API */
-            var message = { action: 'close' };
+            var message = { action: 'close', code: code, scope: scope };
             if (!webkit || !webkit.messageHandlers || !webkit.messageHandlers.cordova_iab) {
                 console.warn('Cordova IAB postMessage API not found!');
                 // throw 'Cordova IAB postMessage API not found!';
@@ -29,7 +33,7 @@
 }
 
 <h4 class="mb-4 fw-semibold">
-    Authentication Success
+    Authorization Success
 </h4>
 
 <p>
