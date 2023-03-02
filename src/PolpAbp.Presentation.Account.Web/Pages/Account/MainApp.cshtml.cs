@@ -17,6 +17,8 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 
         public virtual async Task<IActionResult> OnGetAsync()
         {
+            await LoadSettingsAsync();
+
             var mainPage = Configuration["PolpAbp:Account:MainEntry"];
             if (!mainPage.Contains("MainApp"))
             {
@@ -27,6 +29,13 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                 });
             }
 
+            await BuildOutputModelsAsync();
+
+            return Page();
+        }
+
+        protected async Task BuildOutputModelsAsync()
+        {
             var userInfo = await UserManager.GetUserAsync(User);
 
             // todo: Use automapper?
@@ -34,8 +43,6 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
             UserAccountInfo.Name = userInfo.Name;
             UserAccountInfo.Surname = userInfo.Surname;
             UserAccountInfo.Email = userInfo.Email;
-
-            return Page();
         }
 
         public class UserAccountOutputDto
