@@ -37,6 +37,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
         [DisableAuditing]
         public string? ConfirmPassword { get; set; }
 
+        public const string ResetPasswordTokenPurpose = "ResetPassword";
 
         private readonly ILocalEventBus _localEventBus;
         private readonly IAppCookieManager _cookieManager;
@@ -59,6 +60,13 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
             {
                 Alerts.Danger("Error link or user account.");
                 return RedirectToPage("./Login");
+            }
+
+            var verified = await UserManager.VerifyUserTokenAsync(user, UserManager.Options.Tokens.PasswordResetTokenProvider, 
+                ResetPasswordTokenPurpose, ResetToken);
+            if (!verified)
+            {
+                Alerts.Danger("You are using an expired password reset link. You may request a new one with the help links.");
             }
 
             _cookieManager.SetTenantCookieValue(Response, user.TenantId!.Value.ToString());
