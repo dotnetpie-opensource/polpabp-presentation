@@ -28,6 +28,10 @@ namespace PolpAbp.Presentation.Account.Web
         typeof(AbpIdentityAspNetCoreModule),
         typeof(AbpAspNetCoreMvcUiThemeSharedModule),
         typeof(AbpAspNetCoreMvcUiMultiTenancyModule),
+        // Overriden some features 
+        typeof(PolpAbpFrameworkAbpExtensionsSmsModule),
+        typeof(PolpAbpFrameworkAbpExtensionsEmalingModule),
+        // Framework 
         typeof(PolpAbpFrameworkDomainModule),
         typeof(PolpAbpFrameworkApplicationContractsModule),
         typeof(PolpAbpFrameworkMvcModule),

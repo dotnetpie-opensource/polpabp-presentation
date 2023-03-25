@@ -19,7 +19,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
         public List<TwoFactorProvider> TwoFactorCodeProviders { get; set; }
 
         protected readonly IFrameworkAccountEmailer AccountEmailer;
-        protected readonly ISmsSender SmsSender;
+        protected readonly IAmbientSmsSender SmsSender;
 
         protected string SmsSenderName
         {
@@ -30,7 +30,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
         }
 
         public TwoFactorRequestModel(IFrameworkAccountEmailer accountEmailer,
-            ISmsSender smsSender,
+            IAmbientSmsSender smsSender,
             IPhoneNumberService phoneNumberService) : base()
         {
             AccountEmailer = accountEmailer;
