@@ -96,6 +96,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
             [Required]
             [DynamicStringLength(typeof(IdentityUserConsts), nameof(IdentityUserConsts.MaxPasswordLength))]
             [DataType(DataType.Password)]
+            [Compare("Password", ErrorMessage = "Password does NOT match!")]
             [DisableAuditing]
             public string? ConfirmPassword { get; set; }
 

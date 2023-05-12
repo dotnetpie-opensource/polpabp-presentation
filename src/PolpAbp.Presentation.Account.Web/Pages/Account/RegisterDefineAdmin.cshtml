@@ -21,15 +21,24 @@
     <div aria-valuemax="100" aria-valuemin="0" aria-valuenow="50" class="progress-bar progress-bar-striped progress-bar-animated bg-danger" role="progressbar" style="width: 66%"></div>
 </div>
 
-<form method="post" class="py-4">
+<form method="post" class="py-4" spellcheck="false">
     <h5 class="mb-4">
-        <span class="badge bg-dark me-1">2/3</span> 
+        <span class="badge bg-dark me-1">2/3</span>
         Next, please provide the administrator information
     </h5>
 
     <abp-input asp-for="Input.AdminEmailAddress" auto-focus="true" autocomplete="email" />
 
-    <abp-input asp-for="Input.Password" value="@Model.Input.Password" autocomplete="new-password" />
+    <div class="mb-3" id="password-wrapper">
+        <label for="Input_Password" class="form-label">@L["DisplayName:Password"]</label>
+        <div class="input-group">
+            <input class="form-control" id="Input_Password" type="password" autocomplete="new-password" asp-for="Input.Password" />
+            <button type="button" class="toggle-password btn btn-outline-secondary">
+                <i class="toggle-icon far fa-eye"></i>
+            </button>
+        </div>
+        <span asp-validation-for="Input.Password" class="text-danger"></span>
+    </div>
 
     <abp-input asp-for="Input.ConfirmPassword" value="@Model.Input.ConfirmPassword" autocomplete="off" auto-focus />
 
