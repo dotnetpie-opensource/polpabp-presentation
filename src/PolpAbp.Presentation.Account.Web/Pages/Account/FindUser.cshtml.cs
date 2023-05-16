@@ -156,11 +156,18 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
         {
             var tenants = new List<Tenant>();
 
-            var x = await TenantRepository.FindByNameAsync(name, false);
+            var x = await TenantRepository.FindByNameAsync(name);
             if (x != null)
             {
                 tenants.Add(x);
             }
+
+            /*
+            var x = await TenantRepository.GetListAsync(filter: name, includeDetails: false);
+            foreach(var y in x)
+            { 
+                tenants.Add(y);
+            }*/
 
             TenantList = tenants.Select(a => new SelectListItem { Value = a.Id.ToString(), Text = a.Name }).ToList();
         }
