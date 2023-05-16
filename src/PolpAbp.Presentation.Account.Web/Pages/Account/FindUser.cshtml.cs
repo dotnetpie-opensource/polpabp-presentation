@@ -99,22 +99,27 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                         Alerts.Danger("Invalid organization.");
                     }
 
-                    /*
+                    // Skip the selection if not needed.
                     if (TenantList.Count == 1)
                     {
                         // Set up the tenant and move on.
-                        Response.SetTenantCookieValue(TenantList.First().Value);
+                        CookieManager.SetTenantCookieValue(Response, TenantList.First().Value);
 
                         if (!string.IsNullOrEmpty(ReturnUrl))
                         {
+                            // Be smart
+                            if (ReturnUrl.ToLower().EndsWith("/account/login"))
+                            {
+                                return RedirectToPage("./Login");
+                            }
+
                             return Redirect(ReturnUrl);
                         }
                         else
                         {
-                            // To Login 
                             return RedirectToPage("./Login");
                         }
-                    } */
+                    }
                 }
                 catch (AbpValidationException ex)
                 {
@@ -156,18 +161,15 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
         {
             var tenants = new List<Tenant>();
 
-            var x = await TenantRepository.FindByNameAsync(name);
-            if (x != null)
-            {
-                tenants.Add(x);
-            }
-
-            /*
             var x = await TenantRepository.GetListAsync(filter: name, includeDetails: false);
-            foreach(var y in x)
-            { 
-                tenants.Add(y);
-            }*/
+            // We do not expose other tenant names
+            if (x.Count <= 3)
+            {
+                foreach (var y in x)
+                {
+                    tenants.Add(y);
+                }
+            }
 
             TenantList = tenants.Select(a => new SelectListItem { Value = a.Id.ToString(), Text = a.Name }).ToList();
         }
