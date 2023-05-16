@@ -10,6 +10,8 @@
     "DisplayName:RememberClient": "Remember this device",
     "Description:RememberClient": "If possible, you will not be asked for the 2FA on this device.",
     "LoggedOutText": "You have been signed out!",
-    "MainApp": "Application Page"
+    "MainApp": "Application Page",
+    "Login:EmailConfirmationRequired": "In order to log into the system, you must first confirm your email address.",
+    "Login:AdminApprovalPending": "Your account is pending approval by your organization's admin. Please check back later."
   }
 }

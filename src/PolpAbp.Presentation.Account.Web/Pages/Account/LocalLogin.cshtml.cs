@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using PolpAbp.Framework.Mvc.Cookies;
+using PolpAbp.Framework.Settings;
 using System.ComponentModel.DataAnnotations;
 using Volo.Abp;
 using Volo.Abp.Account.Settings;
@@ -18,6 +19,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
         [BindProperty]
         public PostInput Input { get; set; }
 
+        protected MemberRegistrationEnum RegistrationApprovalType = MemberRegistrationEnum.RequireEmailActivation;
         protected readonly IAppCookieManager CookieManager;
 
         public LocalLoginModel(IAppCookieManager cookieManager) : base()
@@ -80,6 +82,21 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                             returnUrl = ReturnUrl,
                             returnUrlHash = ReturnUrlHash
                         });
+                    }
+
+                    // Check if the user is allowed to login or not 
+                    if (user.IsActive == false)
+                    {
+                        if (RegistrationApprovalType == MemberRegistrationEnum.RequireEmailActivation)
+                        {
+                            Alerts.Warning(L["Login:EmailConfirmationRequired"]);
+                            return Page();
+                        }
+                        else if (RegistrationApprovalType == MemberRegistrationEnum.RequireAdminApprovel)
+                        {
+                            Alerts.Warning(L["Login:AdminApprovalPending"]);
+                            return Page();
+                        }
                     }
 
                     // todo: Login 
@@ -191,6 +208,12 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
             {
                 throw new UserFriendlyException(L["LocalLoginDisabledMessage"]);
             }
+        }
+
+        protected override async Task LoadSettingsAsync()
+        {
+            await base.LoadSettingsAsync();
+            RegistrationApprovalType = (MemberRegistrationEnum)(await SettingProvider.GetAsync<int>(FrameworkSettings.Account.RegistrationApprovalType));
         }
 
         public class PostInput
