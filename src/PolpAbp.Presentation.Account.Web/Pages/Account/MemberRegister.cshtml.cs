@@ -98,6 +98,11 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                     var user = await UserManager.GetByIdAsync(userDto.Id);
                     user.Name = Input.FirstName;
                     user.Surname = Input.LastName;
+                    // The above registration will init IsActive to be true,
+                    // We have to reverse the behavior.
+                    // The following logic will decide whether the new member
+                    // will be active or not.
+                    user.SetIsActive(false);
                     await UserManager.UpdateAsync(user);
 
                     if (RegistrationType == MemberRegistrationEnum.AutoActive)

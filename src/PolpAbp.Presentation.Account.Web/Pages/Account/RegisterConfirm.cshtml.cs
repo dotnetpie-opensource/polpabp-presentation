@@ -98,6 +98,9 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                     .WithProperty("AdminPassword", Input.Password));
 
                 admin = await UserManager.FindByEmailAsync(Input.AdminEmailAddress);
+                // The admin has to confirm the email before being active.
+                admin.SetIsActive(false);
+                await UserManager.UpdateAsync(admin);
             }
             // Send out a confirmation email, regardless the current tenant.
             // Send it instantly, because the user is waiting for it.
