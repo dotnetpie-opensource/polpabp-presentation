@@ -12,6 +12,9 @@
     "LoggedOutText": "You have been signed out!",
     "MainApp": "Application Page",
     "Login:EmailConfirmationRequired": "In order to log into the system, you must first confirm your email address.",
-    "Login:AdminApprovalPending": "Your account is pending approval by your organization's admin. Please check back later."
+    "Login:AdminApprovalPending": "Your account is pending approval by your organization's admin. Please check back later.",
+    "Login:AccountAlreadyActive": "Your account has been activated. You can now log in to your account.",
+    "Login:TenantIsRequired": "The system is unable to identify your organization. Please enter your organization information to continue.",
+    "Page:HelpfulLinks": "Helpful Links" 
   }
 }

@@ -34,7 +34,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 
             if (!IsEmailGloballyUnique && !CurrentTenant.IsAvailable)
             {
-                Alerts.Danger("Please locate your organization first!");
+                Alerts.Danger(L["Login:TenantIsRequired"]);
 
                 // Find user.
                 return RedirectToPage("./FindUser", new
@@ -73,6 +73,12 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                     else
                     {
                         user = await UserManager.FindByEmailAsync(Input.EmailAddress);
+                    }
+
+                    if (user != null && user.IsActive)
+                    {
+                        Alerts.Warning(L["Login:AccountAlreadyActive"]);
+                        return Page();
                     }
 
                     if (user != null && !user.EmailConfirmed)
