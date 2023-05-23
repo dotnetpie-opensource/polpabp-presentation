@@ -7,6 +7,7 @@
     "Description:AdminEmailAddress": "The email address of the intended administrator.",
     "DisplayName:TenantOrEmailAddress": "Your email address or your organization name",
     "LoggedOutText": "You have been signed out!",
-    "MainApp": "Application Page"
+    "MainApp": "Application Page",
+    "MemberRegister": "Organization member registration"
   }
 }

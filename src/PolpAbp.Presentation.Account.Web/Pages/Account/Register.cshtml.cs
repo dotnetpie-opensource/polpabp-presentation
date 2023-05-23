@@ -1,5 +1,7 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
+using PolpAbp.Framework.Mvc.Cookies;
 using System.ComponentModel.DataAnnotations;
 using Volo.Abp.Account.Settings;
 using Volo.Abp.Auditing;
@@ -9,7 +11,6 @@ using Volo.Abp.Validation;
 namespace PolpAbp.Presentation.Account.Web.Pages.Account
 {
     [OnlyAnonymous]
-    [TenantNotSet]
     [DisableAuditing]
     public class RegisterModel : RegisterModelBase
     {
@@ -21,9 +22,12 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 
         public bool IsRegistrationEnabled { get; set; }
 
-        public RegisterModel() : base()
+        protected readonly IAppCookieManager CookieManager;
+
+        public RegisterModel(IAppCookieManager cookieManager) : base()
         {
             Input = new PostInput();
+            CookieManager = cookieManager;
         }
 
 
@@ -35,6 +39,9 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
             {
                 Alerts.Warning("Registration is not available now. Please try it later!");
             }
+
+            // Clean up the cookie
+            CookieManager.SetTenantCookieValue(Response, string.Empty);
 
             Input.TenantName = TempData.Peek(nameof(PostInput.TenantName))?.ToString() ?? string.Empty;
             // Render page 

@@ -13,9 +13,14 @@
     ViewBag.Description = "Becomes a member of your organization.";
 }
 
-<h4 class="mb-4 fw-semibold">
+<h4 class="mb-2 fw-semibold">
     Register For Your Organization
 </h4>
+<div class="mb-4 ms-2">
+    @L["AlreadyRegistered"]
+    <a href="@Url.Page("./Login")">@L["Login"]</a>
+</div>
+
 
 <div class="alert alert-info d-flex align-items-center" role="alert">
     To become a member of your organization, please provide the following information.
