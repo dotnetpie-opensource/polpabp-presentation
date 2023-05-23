@@ -106,8 +106,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                                 UserName = a,
                                 EmailAddress = b,
                                 returnUrl = ReturnUrl,
-                                returnUrlHash = ReturnUrlHash,
-                                test = "s s"
+                                returnUrlHash = ReturnUrlHash
                             });
                         }
                         else
