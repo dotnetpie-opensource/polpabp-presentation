@@ -13,9 +13,9 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
         [BindProperty(SupportsGet = true)]
         public string? EmailAddress { get; set; }
 
-        public string NormalizedUserName => HttpUtility.UrlDecode(UserName ?? string.Empty);
+        public string NormalizedUserName => UserName ?? string.Empty;
 
-        public string NormalizedEmailAddress => HttpUtility.UrlDecode(EmailAddress ?? string.Empty);
+        public string NormalizedEmailAddress => EmailAddress ?? string.Empty;
 
         public bool IsUserNameEnabled { get; set; }
 

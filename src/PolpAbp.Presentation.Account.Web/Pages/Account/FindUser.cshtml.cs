@@ -35,7 +35,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
         protected readonly IReCaptchaService RecaptchaService;
         protected readonly IAppCookieManager CookieManager;
 
-        public string NormalizedTenantName => HttpUtility.UrlDecode(TenantName ?? string.Empty);
+        public string NormalizedTenantName => TenantName ?? string.Empty;
 
         public FindUserModel(
             ITenantRepository tenantRepository,

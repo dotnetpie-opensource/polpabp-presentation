@@ -82,7 +82,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                         Alerts.Warning("Please log into your account.");
                         return RedirectToPage("./Login", new
                         {
-                            email = HttpUtility.UrlEncode(userInfo.Email)
+                            email = userInfo.Email
                         });
                     }
 

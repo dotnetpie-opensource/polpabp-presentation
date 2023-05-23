@@ -98,13 +98,16 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 
                         if (!user.IsExternal)
                         {
+                            var a = Input.IsUsingEmailAddress ? string.Empty : user.UserName;
+                            var b = Input.IsUsingEmailAddress ? user.Email : string.Empty;
                             return RedirectToPage("./LocalLogin", new
                             {
                                 // todo: Maybe use Id
-                                UserName = Input.IsUsingEmailAddress ? string.Empty : HttpUtility.UrlEncode(user.UserName),
-                                EmailAddress = Input.IsUsingEmailAddress ? HttpUtility.UrlEncode(user.Email) : string.Empty,
+                                UserName = a,
+                                EmailAddress = b,
                                 returnUrl = ReturnUrl,
-                                returnUrlHash = ReturnUrlHash
+                                returnUrlHash = ReturnUrlHash,
+                                test = "s s"
                             });
                         }
                         else
@@ -119,8 +122,8 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                                     return RedirectToPage(ssoUrl, new
                                     {
                                         // todo: Maybe use Id
-                                        UserName = Input.IsUsingEmailAddress ? string.Empty : HttpUtility.UrlEncode(user.UserName),
-                                        EmailAddress = Input.IsUsingEmailAddress ? HttpUtility.UrlEncode(user.Email) : string.Empty,
+                                        UserName = Input.IsUsingEmailAddress ? string.Empty : user.UserName,
+                                        EmailAddress = Input.IsUsingEmailAddress ? user.Email : string.Empty,
                                         returnUrl = ReturnUrl,
                                         returnUrlHash = ReturnUrlHash
                                     });
@@ -131,8 +134,8 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                             return RedirectToPage("./ExternalLogin", new
                             {
                                 // todo: Maybe use Id
-                                UserName = Input.IsUsingEmailAddress ? string.Empty : HttpUtility.UrlEncode(user.UserName),
-                                EmailAddress = Input.IsUsingEmailAddress ? HttpUtility.UrlEncode(user.Email) : string.Empty,
+                                UserName = Input.IsUsingEmailAddress ? string.Empty : user.UserName,
+                                EmailAddress = Input.IsUsingEmailAddress ? user.Email : string.Empty,
                                 returnUrl = ReturnUrl,
                                 returnUrlHash = ReturnUrlHash
                             });
