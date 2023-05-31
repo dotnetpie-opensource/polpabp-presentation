@@ -15,14 +15,14 @@
 
     var reActivationLink = Url.Page("./ResendActivationLink", new
     {
-        UserName = Model.Input.IsUsingEmailAddress ? string.Empty : HttpUtility.UrlEncode(Model.Input.UserNameOrEmailAddress),
-        EmailAddress = Model.Input.IsUsingEmailAddress ? HttpUtility.UrlEncode(Model.Input.UserNameOrEmailAddress) : string.Empty
+        UserName = Model.Input.IsUsingEmailAddress ? string.Empty : Model.Input.UserNameOrEmailAddress,
+        EmailAddress = Model.Input.IsUsingEmailAddress ? Model.Input.UserNameOrEmailAddress : string.Empty
     });
 
     var forgotPwdLink = Url.Page("./ForgotPassword", new
     {
-        UserName = Model.Input.IsUsingEmailAddress ? string.Empty : HttpUtility.UrlEncode(Model.Input.UserNameOrEmailAddress),
-        EmailAddress = Model.Input.IsUsingEmailAddress ? HttpUtility.UrlEncode(Model.Input.UserNameOrEmailAddress) : string.Empty,
+        UserName = Model.Input.IsUsingEmailAddress ? string.Empty : Model.Input.UserNameOrEmailAddress,
+        EmailAddress = Model.Input.IsUsingEmailAddress ? Model.Input.UserNameOrEmailAddress : string.Empty,
         returnUrl = Model.ReturnUrl,
         returnUrlHash = Model.ReturnUrlHash
     });
