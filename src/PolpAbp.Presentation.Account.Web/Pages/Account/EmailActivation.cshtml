@@ -12,6 +12,10 @@
 @{
     ViewBag.Title = "Account Activation Result";
     ViewBag.Description = "Displays the activation result after you clicks the account activation link from your email.";
+
+    var reActivationLink = Url.Page("./ResendActivationLink", new {
+        EmailAddress = Model.EmailAddress ?? string.Empty
+    });
 }
 
 <h4 class="mb-4 fw-semibold">
@@ -29,7 +33,7 @@
             Email
         </dt>
         <dd class="col-sm-9">
-            @Model.EmailName
+            @Model.MaskedEmailAddress
         </dd>
 
         <dt class="col-sm-3">
@@ -46,6 +50,15 @@ else if (Model.State == EmailActivationModel.ActivationState.Already)
     <h5>Your account is ready.</h5>
 
     <p>Please follow the button below to login.</p>
+}
+else if (Model.State == EmailActivationModel.ActivationState.InvalidToken)
+{
+    <div class="alert alert-danger" role="alert">
+        <h4>Oops! Something went wrong.</h4>
+        <p>The link you used is invalid or expired.</p>
+        <p>Please click the button below to request a new link.</p>
+        <a class="btn btn-link" href="@reActivationLink">@L["ResendActivationLink"]</a>
+    </div>
 }
 else
 {

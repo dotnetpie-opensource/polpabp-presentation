@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using PolpAbp.Presentation.Account.Web.Etos;
+using PolpAbp.Framework;
 using System.ComponentModel.DataAnnotations;
 using Volo.Abp.EventBus.Distributed;
 using Volo.Abp.MultiTenancy;
@@ -28,7 +29,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 
         public string? TenantName { get; set; }
 
-        public string? EmailName { get; set; }
+        public string? MaskedEmailAddress { get; set; }
 
         public ActivationState State { get; set; }
 
@@ -58,6 +59,9 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                     var user = await UserManager.GetByIdAsync(UserId);
                     if (user != null)
                     {
+                        EmailAddress = user.Email;
+                        MaskedEmailAddress = EmailAddress.MaskEmailAddress();
+
                         if (user.EmailConfirmed && user.IsActive)
                         {
                             State = ActivationState.Already;
@@ -83,6 +87,10 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                                     TenantId = tenant.Id
                                 });
                             }
+                            else if (confirmRet.Errors.Any(a => a.Code.ToLower().Contains("invalidtoken")))
+                            {
+                                State = ActivationState.InvalidToken;
+                            }
                             else
                             {
                                 State = ActivationState.Failure;
@@ -100,7 +108,8 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
             Undefined = 0,
             Already = 1,
             Success = 2,
-            Failure = 3
+            InvalidToken = 10,
+            Failure = 100
         }
 
     }
