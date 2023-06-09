@@ -1,8 +1,10 @@
 using AspNetCore.ReCaptcha;
 using Microsoft.AspNetCore.Mvc;
+using PolpAbp.Framework.DistributedEvents.Account;
 using System.ComponentModel.DataAnnotations;
 using Volo.Abp.Auditing;
 using Volo.Abp.Data;
+using Volo.Abp.EventBus.Distributed;
 using Volo.Abp.Identity;
 using Volo.Abp.Validation;
 
@@ -105,6 +107,15 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
             // Send out a confirmation email, regardless the current tenant.
             // Send it instantly, because the user is waiting for it.
             await AccountEmailer.SendEmailActivationLinkAsync(admin!.Id);
+
+            // The default name is "Admin", and there is no "surName".
+            await DistributedEventBus.PublishAsync(new UserCreatedEto
+            {
+                TenantId = tenant.Id,
+                Id = admin!.Id,
+                Name = "Admin",
+                Surname = "" // We do not have org name yet.
+            });
         }
 
         protected override async Task LoadSettingsAsync()
@@ -112,6 +123,13 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
             await base.LoadSettingsAsync();
             // Use host ...
             await ReadInRecaptchaEnabledAsync();
+        }
+
+        protected override Task ReadInRecaptchaEnabledAsync()
+        {
+            // Read in the recaptcha from the configuration 
+            IsRecaptchaEnabled = Configuration.GetValue<bool>("PolpAbp:Framework:RecaptchaEnabled");
+            return Task.CompletedTask;
         }
 
         public class PostInput

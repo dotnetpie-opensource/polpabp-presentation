@@ -36,6 +36,7 @@ namespace PolpAbp.Presentation.Account.Web
         typeof(PolpAbpFrameworkApplicationContractsModule),
         typeof(PolpAbpFrameworkMvcModule),
         typeof(PolpAbpFrameworkAbpExtensionsIdentityModule),
+        typeof(PolpAbpFrameworkEventsModule),
         typeof(PresentationContractsModule),
         typeof(PresentationAccountCommonModule)
     )]

@@ -9,6 +9,7 @@ using Volo.Abp.Account.Localization;
 using Volo.Abp.AspNetCore.ExceptionHandling;
 using Volo.Abp.AspNetCore.Mvc.UI.RazorPages;
 using Volo.Abp.Data;
+using Volo.Abp.EventBus.Distributed;
 using Volo.Abp.ExceptionHandling;
 using Volo.Abp.Identity;
 using Volo.Abp.Identity.Settings;
@@ -40,6 +41,7 @@ public abstract class PolpAbpAccountPageModel : AbpPageModel
     protected IIdentityUserRepositoryExt IdentityUserRepositoryExt => LazyServiceProvider.LazyGetRequiredService<IIdentityUserRepositoryExt>();
 
     protected IConfiguration Configuration => LazyServiceProvider.LazyGetRequiredService<IConfiguration>();
+    protected IDistributedEventBus DistributedEventBus => LazyServiceProvider.LazyGetRequiredService<IDistributedEventBus>();
 
     /// <summary>
     /// Currently the behavior is determined by design, regardless the tenant.
