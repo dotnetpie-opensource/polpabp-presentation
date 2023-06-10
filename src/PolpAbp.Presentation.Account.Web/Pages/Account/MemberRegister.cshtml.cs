@@ -179,7 +179,11 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 
         protected override async Task ReadInRecaptchaEnabledAsync()
         {
-            IsRecaptchaEnabled = await SettingProvider.GetAsync<bool>(FrameworkSettings.Security.UseCaptchaOnRegistration);
+            await base.ReadInRecaptchaEnabledAsync();
+            if (IsRecaptchaEnabled)
+            {
+                IsRecaptchaEnabled = await SettingProvider.GetAsync<bool>(FrameworkSettings.Security.UseCaptchaOnRegistration);
+            }
         }
 
         public class PostInput : IHasConfirmPassword

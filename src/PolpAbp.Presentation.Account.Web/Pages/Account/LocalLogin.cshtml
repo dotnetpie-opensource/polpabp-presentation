@@ -80,6 +80,13 @@
         </abp-column>
     </abp-row>
 
+    @if (Model.IsRecaptchaEnabled)
+    {
+        <div class="mb-3">
+            @Html.ReCaptcha()
+        </div>
+    }
+
     <div class="d-grid gap-2">
         <abp-button type="submit" button-type="Primary" name="Action" value="Input">
             @L["Continue"]

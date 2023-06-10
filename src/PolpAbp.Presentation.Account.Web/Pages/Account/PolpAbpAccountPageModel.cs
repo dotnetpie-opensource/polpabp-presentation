@@ -83,6 +83,7 @@ public abstract class PolpAbpAccountPageModel : AbpPageModel
     /// <returns></returns>
     protected virtual Task ReadInRecaptchaEnabledAsync()
     {
+        IsRecaptchaEnabled = Configuration.GetValue<bool>("PolpAbp:Framework:RecaptchaEnabled");
         return Task.CompletedTask;
     }
 

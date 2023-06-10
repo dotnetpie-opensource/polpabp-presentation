@@ -125,13 +125,6 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
             await ReadInRecaptchaEnabledAsync();
         }
 
-        protected override Task ReadInRecaptchaEnabledAsync()
-        {
-            // Read in the recaptcha from the configuration 
-            IsRecaptchaEnabled = Configuration.GetValue<bool>("PolpAbp:Framework:RecaptchaEnabled");
-            return Task.CompletedTask;
-        }
-
         public class PostInput
         {
             [Required]

@@ -1,3 +1,4 @@
+using AspNetCore.ReCaptcha;
 using Microsoft.AspNetCore.Mvc;
 using PolpAbp.Framework.Mvc.Cookies;
 using PolpAbp.Framework.Settings;
@@ -21,12 +22,14 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 
         protected MemberRegistrationEnum RegistrationApprovalType = MemberRegistrationEnum.RequireEmailActivation;
         protected readonly IAppCookieManager CookieManager;
+        protected readonly IReCaptchaService RecaptchaService;
 
-        public LocalLoginModel(IAppCookieManager cookieManager) : base()
+        public LocalLoginModel(IAppCookieManager cookieManager, IReCaptchaService recaptchaService) : base()
         {
             CookieManager = cookieManager;
 
             Input = new PostInput();
+            RecaptchaService = recaptchaService;    
         }
 
         public virtual async Task<IActionResult> OnGetAsync()
@@ -58,6 +61,19 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                 {
                     // On purpose use it here to allow the other actions.
                     await CheckLocalLoginAsync();
+
+                    if (IsRecaptchaEnabled)
+                    {
+                        var recaptchaValue = ParseRecaptchResponse();
+                        var isGood = await RecaptchaService.VerifyAsync(recaptchaValue);
+                        if (!isGood)
+                        {
+                            // TODO: localization
+                            Alerts.Danger("Please verify that you are not a robot.");
+
+                            return Page();
+                        }
+                    }
 
                     ValidateModel();
 

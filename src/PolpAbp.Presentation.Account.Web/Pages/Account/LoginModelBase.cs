@@ -26,8 +26,18 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
             // Use host ...
             IsUserNameEnabled = await SettingProvider.IsTrueAsync(FrameworkSettings.Account.IsUserNameEnabled);
             // Recaptcha 
-            IsRecaptchaEnabled = await SettingProvider.GetAsync<bool>(FrameworkSettings.Security.UseCaptchaOnLogin);
+            await ReadInRecaptchaEnabledAsync();
         }
-      
+
+        protected override async Task ReadInRecaptchaEnabledAsync()
+        {
+            await base.ReadInRecaptchaEnabledAsync();
+
+            if (IsRecaptchaEnabled)
+            {
+                IsRecaptchaEnabled = await SettingProvider.GetAsync<bool>(FrameworkSettings.Security.UseCaptchaOnLogin);
+            }
+        }
+
     }
 }
