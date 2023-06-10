@@ -177,6 +177,11 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
             IsNewRegistrationNotyEnabled = await SettingProvider.GetAsync<bool>(FrameworkSettings.Account.IsNewRegistrationNotyEnabled);
         }
 
+        protected override async Task ReadInRecaptchaEnabledAsync()
+        {
+            IsRecaptchaEnabled = await SettingProvider.GetAsync<bool>(FrameworkSettings.Security.UseCaptchaOnRegistration);
+        }
+
         public class PostInput : IHasConfirmPassword
         {
             // Admin information below

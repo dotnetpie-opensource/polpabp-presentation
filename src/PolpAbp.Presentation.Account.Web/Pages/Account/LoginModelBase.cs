@@ -25,6 +25,8 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
             await base.LoadSettingsAsync();
             // Use host ...
             IsUserNameEnabled = await SettingProvider.IsTrueAsync(FrameworkSettings.Account.IsUserNameEnabled);
+            // Recaptcha 
+            IsRecaptchaEnabled = await SettingProvider.GetAsync<bool>(FrameworkSettings.Security.UseCaptchaOnLogin);
         }
       
     }
