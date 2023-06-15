@@ -35,15 +35,12 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 
         protected readonly ITenantResolveResultAccessor TenantResolveResultAccessor;
         protected readonly ITenantRepository TenantRepository;
-        protected readonly IDistributedEventBus DistributedEventBus;
 
         public EmailActivationModel(ITenantResolveResultAccessor tenantResolveResultAccessor,
-            ITenantRepository tenantRepository,
-            IDistributedEventBus distributedEventBus) : base()
+            ITenantRepository tenantRepository) : base()
         {
             TenantResolveResultAccessor = tenantResolveResultAccessor;
             TenantRepository = tenantRepository;
-            DistributedEventBus = distributedEventBus;
         }
 
         public async virtual Task<IActionResult> OnGet()
