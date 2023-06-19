@@ -1,6 +1,7 @@
 using AspNetCore.ReCaptcha;
 using Microsoft.AspNetCore.Mvc;
 using PolpAbp.Framework.Emailing.Account;
+using PolpAbp.Framework.Identity;
 using PolpAbp.Framework.Security;
 using PolpAbp.Framework.Settings;
 using System.ComponentModel.DataAnnotations;
@@ -27,14 +28,17 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
         protected readonly IReCaptchaService RecaptchaService;
         protected readonly IFrameworkAccountEmailer AccountEmailer;
 
+        protected readonly IRegisteredUserDataSeeder UserDataSeeder;
 
         public MemberRegisterModel(IReCaptchaService reCaptchaService,
-            IFrameworkAccountEmailer accountEmailer) : base()
+            IFrameworkAccountEmailer accountEmailer,
+            IRegisteredUserDataSeeder userDataSeeder) : base()
         {
             Input = new PostInput();
 
             RecaptchaService = reCaptchaService;
             AccountEmailer = accountEmailer;
+            UserDataSeeder = userDataSeeder;
         }
 
         public virtual async Task<IActionResult> OnGetAsync()
@@ -104,6 +108,9 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                     // will be active or not.
                     user.SetIsActive(false);
                     await UserManager.UpdateAsync(user);
+
+                    // Run the data seeder for the user
+                    await UserDataSeeder.SeedAsync(user.Email, user.TenantId);
 
                     if (RegistrationType == MemberRegistrationEnum.AutoActive)
                     {
