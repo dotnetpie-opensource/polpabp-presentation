@@ -1,6 +1,7 @@
 using AspNetCore.ReCaptcha;
 using Microsoft.AspNetCore.Mvc;
 using PolpAbp.Framework.DistributedEvents.Account;
+using PolpAbp.Framework.Identity;
 using System.ComponentModel.DataAnnotations;
 using Volo.Abp.Auditing;
 using Volo.Abp.Data;
@@ -18,10 +19,14 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
         public PostInput Input { get; set; }
 
         protected readonly IReCaptchaService RecaptchaService;
+        protected readonly IRegisteredTenantDataSeeder TenantDataSeeder;
 
-        public RegisterConfirmModel(IReCaptchaService recaptchaService) : base()
+        public RegisterConfirmModel(IReCaptchaService recaptchaService,
+            IRegisteredTenantDataSeeder registeredTenantDataSeeder) : base()
         {
             RecaptchaService = recaptchaService;
+            TenantDataSeeder = registeredTenantDataSeeder;
+
             Input = new PostInput();
         }
 
@@ -104,6 +109,10 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                 admin.SetIsActive(false);
                 await UserManager.UpdateAsync(admin);
             }
+
+            // Tenant seeder
+            await TenantDataSeeder.SeedAsync(tenant.Id);
+
             // Send out a confirmation email, regardless the current tenant.
             // Send it instantly, because the user is waiting for it.
             await AccountEmailer.SendEmailActivationLinkAsync(admin!.Id);
