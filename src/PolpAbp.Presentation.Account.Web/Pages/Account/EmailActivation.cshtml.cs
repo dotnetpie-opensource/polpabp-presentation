@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using Volo.Abp.EventBus.Distributed;
 using Volo.Abp.MultiTenancy;
 using Volo.Abp.TenantManagement;
+using PolpAbp.Framework.DistributedEvents.Account;
 
 namespace PolpAbp.Presentation.Account.Web.Pages.Account
 {
@@ -74,6 +75,14 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                                 {
                                     user.SetIsActive(true);
                                     await UserManager.UpdateAsync(user);
+
+                                    // Raise an event
+                                    await DistributedEventBus.PublishAsync(new AccountStateChangeEto
+                                    {
+                                        TenantId = user.TenantId!.Value,
+                                        AccountId = user.Id,
+                                        ChangeId = AccountStateChangeEnum.ActivatedOnItsOwn
+                                    });
                                 }
                                 State = ActivationState.Success;
 

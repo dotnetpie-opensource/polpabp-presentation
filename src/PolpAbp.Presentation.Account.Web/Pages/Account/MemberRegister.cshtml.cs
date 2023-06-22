@@ -1,5 +1,6 @@
 using AspNetCore.ReCaptcha;
 using Microsoft.AspNetCore.Mvc;
+using PolpAbp.Framework.DistributedEvents.Account;
 using PolpAbp.Framework.Emailing.Account;
 using PolpAbp.Framework.Identity;
 using PolpAbp.Framework.Security;
@@ -112,6 +113,14 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                     // Run the data seeder for the user
                     await UserDataSeeder.SeedAsync(user.Email, user.TenantId);
 
+                    // Raise an event
+                    await DistributedEventBus.PublishAsync(new AccountStateChangeEto
+                    {
+                        TenantId = user.TenantId!.Value,
+                        AccountId = user.Id,
+                        ChangeId = AccountStateChangeEnum.RegisteredOnItsOwn
+                    });
+
                     if (RegistrationType == MemberRegistrationEnum.AutoActive)
                     {
                         // Make the user be active now.
@@ -122,6 +131,14 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                         {
                             await AccountEmailer.SendMemberRegistrationNotyAsync(user!.Id);
                         }
+
+                        // Raise an event
+                        await DistributedEventBus.PublishAsync(new AccountStateChangeEto
+                        {
+                            TenantId = user.TenantId!.Value,
+                            AccountId = user.Id,
+                            ChangeId = AccountStateChangeEnum.ActivatedOnItsOwn
+                        });
 
                         Alerts.Success("Your account is ready for use. Please login!");
                     }
