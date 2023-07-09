@@ -9,17 +9,18 @@
 @model PolpAbp.Presentation.Account.Web.Pages.Account.MemberRegisterSuccessModel
 @inject IHtmlLocalizer<AccountResource> L
 @{
-    ViewBag.Title = "Your Registration Success";
-    ViewBag.Description = "Displays the success message of your registration.";
+    ViewBag.Title = "Join Organization Successfully";
+    ViewBag.Description = "Congratulations! You have successfully joined your organization.";
+    ViewBag.keywords = "join organization,successful,notification";
 }
 
 <h4 class="mb-4 fw-semibold">
-    Registration Success
+    Join Organization Successfully
 </h4>
 
 <form method="post">
 
-    <p>You have successfully registered for your organization.</p>
+    <p>Congratulations! You have successfully joined your organization.</p>
 
     <a abp-button="Primary" asp-page="./Login">&larr; @L["BackToLogin"]</a>
 

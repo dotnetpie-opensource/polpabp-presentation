@@ -9,8 +9,9 @@
 @model PolpAbp.Presentation.Account.Web.Pages.Account.LoginSuccessModel
 @inject IHtmlLocalizer<AccountResource> L
 @{
-    ViewBag.Title = "Login Success Result";
-    ViewBag.Description = "Displays the success message after you have logged into the system.";
+    ViewBag.Title = "Login Success";
+    ViewBag.Description = "Your login was successful.";
+    ViewBag.Keywords = "login success";
 }
 
 @section docReady {
@@ -29,11 +30,11 @@
 }
 
 <h4 class="mb-4 fw-semibold">
-    Authentication Success
+    Login Success
 </h4>
 
 <p>
-    You have been authenticated. Please close this page to continue!
+    Your login was successful. Please close this page to continue!
 </p>
 
 @if (Model.IsCordovaEnabled)

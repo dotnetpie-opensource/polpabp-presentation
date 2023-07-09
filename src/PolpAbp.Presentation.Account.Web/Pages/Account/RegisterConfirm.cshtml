@@ -10,12 +10,13 @@
 @inject IHtmlLocalizer<AccountResource> L
 
 @{
-    ViewBag.Title = "Confirms to Create Organization Account";
-    ViewBag.Description = "Reviews the information of your organization confirm to create your organization account.";
+    ViewBag.Title = "Organization Registration - Review Information and Confirm";
+    ViewBag.Description = "Review the information you have entered to register your organization and confirm to create your account.";
+    ViewBag.Keywords = "organization registration,review information,confirm,create account";
 }
 
 <h4 class="mb-4 fw-semibold">
-    Create your organization
+    Create your organization account
 </h4>
 
 <div class="progress">
@@ -25,7 +26,7 @@
 <form method="post" class="py-4" spellcheck="false">
     <h5 class="mb-4">
         <span class="badge bg-dark me-1">3/3</span>
-        Last, please check the information below and submit it
+        Last, please review the information below and submit it
     </h5>
 
     <input asp-for="Input.TenantName" type="hidden" autocomplete="off" />

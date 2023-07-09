@@ -13,7 +13,9 @@
 @{
     Layout = ThemeManager.CurrentTheme.GetApplicationLayout();
     ViewBag.FluidLayout = false;
-    ViewBag.Title = "Default Entry for Authenticated Users";
+    ViewBag.Title = "Welcome";
+    ViewBag.Description = "You are now logged in and can access the system.";
+    ViewBag.Keywords = "welcome";
 }
 
 
@@ -30,11 +32,11 @@
             <div class="card-body p-5">
                 
                 <h4 class="mb-4 fw-semibold">
-                    @Model.UserAccountInfo.FullName
+                    Welcome, @Model.UserAccountInfo.FullName
                 </h4>
 
                 <p>
-                    You have logged into your system.
+                    You are now logged in and can access the system.
                 </p>
 
                 <a abp-button="Primary" asp-page="./Logout">@L["Logout"]</a>

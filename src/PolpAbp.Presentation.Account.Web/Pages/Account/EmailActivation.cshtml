@@ -11,7 +11,8 @@
 @inject IHtmlLocalizer<AccountResource> L
 @{
     ViewBag.Title = "Account Activation Result";
-    ViewBag.Description = "Displays the activation result after you clicks the account activation link from your email.";
+    ViewBag.Description = "Check your account activation result.";
+    ViewBag.Keywords = "account activation,activation result";
 
     var reActivationLink = Url.Page("./ResendActivationLink", new {
         EmailAddress = Model.EmailAddress ?? string.Empty

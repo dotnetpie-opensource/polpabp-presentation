@@ -9,8 +9,9 @@
 @model PolpAbp.Presentation.Account.Web.Pages.Account.ResendActivationLinkModel
 @inject IHtmlLocalizer<AccountResource> L
 @{
-    ViewBag.Title = "Resends Account Activation Link";
-    ViewBag.Description = "Requests to send out an activation link to your email address.";
+    ViewBag.Title = "Request Account Activation Link Again";
+    ViewBag.Description = "Need to activate your account?";
+    ViewBag.Keywords = "request account activation link,account activation link,activate account";
 }
 
 <h4 class="mb-4 fw-semibold">
@@ -20,7 +21,7 @@
 <p>@L["ResendActivationLink_Information"]</p>
 
 <div class="alert alert-info d-flex align-items-center" role="alert">
-    Please check your information and submit it
+    Please review your information and submit it
 </div>
 
 <form method="post">

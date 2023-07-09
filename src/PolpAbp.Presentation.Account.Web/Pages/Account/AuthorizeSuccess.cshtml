@@ -9,8 +9,9 @@
 @model PolpAbp.Presentation.Account.Web.Pages.Account.AuthorizeSuccessModel
 @inject IHtmlLocalizer<AccountResource> L
 @{
-    ViewBag.Title = "Authorization Success Result";
-    ViewBag.Description = "Displays the success message after the authorization code has been granted.";
+    ViewBag.Title = "Authorization Successful";
+    ViewBag.Description = "You are now logged in and can access the system.";
+    ViewBag.Keywords = "authorization successful";
 }
 
 @section docReady {
@@ -33,11 +34,11 @@
 }
 
 <h4 class="mb-4 fw-semibold">
-    Authorization Success
+    Authorization Successful
 </h4>
 
 <p>
-    You have been authenticated. Please close this page to continue!
+    You are now logged in and can access the system. Please close this page to continue!
 </p>
 
 @if (Model.IsCordovaEnabled)

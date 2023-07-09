@@ -11,9 +11,9 @@
 @inject IHtmlLocalizer<AccountResource> L
 
 @{
-    ViewBag.Title = "Single Login Entry Point";
-    ViewBag.Description = "Redirects you to use the right login method, " +
-    "either the pair of your user name/email and password, or your SSO providers.";
+    ViewBag.Title = "Login";
+    ViewBag.Description = "Sign in with your username and password or use SSO to log in quickly and easily";
+    ViewBag.Keywords = "login, sign in, account, SSO, username, email, password";
     ViewBag.HideTenancyView = true;
 
     var reActivationLink = Url.Page("./ResendActivationLink", new

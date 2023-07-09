@@ -10,17 +10,18 @@
 @inject IHtmlLocalizer<AccountResource> L
 
 @{
-    ViewBag.Title = "Organization Registration Success Message";
-    ViewBag.Description = "Displays the success message after your organization has been created.";
+    ViewBag.Title = "Organization Registration Successful";
+    ViewBag.Description = "Congratulations! Your organization registration has been successful.";
+    ViewBag.Keywords = "organization registration,successful,notification";
 }
 
 <h4 class="mb-4 fw-semibold">
-    Registration Success
+    Organization Registration Successful
 </h4>
 
 <form method="post">
 
-    <p>Your organization has been created. Next please check your email box to activate your organization account.</p>
+    <p>Congratulations! Your organization registration has been successful. Next please check your email box to activate your organization account.</p>
 
     <a abp-button="Primary" asp-page="./Login">&larr; @L["BackToLogin"]</a>
 
