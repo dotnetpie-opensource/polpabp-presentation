@@ -75,7 +75,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                         user = await UserManager.FindByEmailAsync(Input.EmailAddress);
                     }
 
-                    if (user != null && user.IsActive)
+                    if (user != null && user.IsActive && user.EmailConfirmed)
                     {
                         Alerts.Warning(L["Login:AccountAlreadyActive"]);
                         return Page();
