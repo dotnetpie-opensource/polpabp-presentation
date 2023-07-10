@@ -81,7 +81,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                         return Page();
                     }
 
-                    if (user != null && !user.EmailConfirmed)
+                    if (user != null && (!user.EmailConfirmed || !user.IsActive))
                     {
                         // Send it instantly, because the user is waiting for it.
                         var cc = await EmailingInterceptor.GetActivationLinkEmailCcAsync(user.Id);
