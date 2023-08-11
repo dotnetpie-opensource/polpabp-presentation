@@ -7,6 +7,7 @@ using PolpAbp.Framework.Security;
 using PolpAbp.Framework.Settings;
 using System.ComponentModel.DataAnnotations;
 using System.Web;
+using Volo.Abp;
 using Volo.Abp.Account;
 using Volo.Abp.Auditing;
 using Volo.Abp.Identity;
@@ -173,6 +174,10 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                     {
                         Alerts.Add(Volo.Abp.AspNetCore.Mvc.UI.Alerts.AlertType.Danger, a.ErrorMessage);
                     }
+                }
+                catch (UserFriendlyException ex)
+                {
+                    Alerts.Add(Volo.Abp.AspNetCore.Mvc.UI.Alerts.AlertType.Danger, ex.Message);
                 }
             }
 
