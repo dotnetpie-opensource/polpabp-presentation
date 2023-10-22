@@ -1,11 +1,14 @@
 using AspNetCore.ReCaptcha;
 using Microsoft.AspNetCore.Mvc;
+using PolpAbp.Framework.Authorization.Users;
 using PolpAbp.Framework.DistributedEvents.Account;
 using PolpAbp.Framework.Emailing.Account;
+using PolpAbp.Framework.Exceptions.Identity;
 using PolpAbp.Framework.Identity;
 using PolpAbp.Framework.Security;
 using PolpAbp.Framework.Settings;
 using System.ComponentModel.DataAnnotations;
+using System.Data.SqlTypes;
 using System.Web;
 using Volo.Abp;
 using Volo.Abp.Account;
@@ -32,15 +35,21 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 
         protected readonly IRegisteredUserDataSeeder UserDataSeeder;
 
+        protected readonly IUserIdentityOpInterceptor UserIdentityOpInterceptor;
+
         public MemberRegisterModel(IReCaptchaService reCaptchaService,
             IFrameworkAccountEmailer accountEmailer,
-            IRegisteredUserDataSeeder userDataSeeder) : base()
+            IRegisteredUserDataSeeder userDataSeeder,
+            IUserIdentityOpInterceptor userIdentityOpInterceptor
+            ) : base()
         {
             Input = new PostInput();
 
             RecaptchaService = reCaptchaService;
             AccountEmailer = accountEmailer;
             UserDataSeeder = userDataSeeder;
+
+            UserIdentityOpInterceptor = userIdentityOpInterceptor;
         }
 
         public virtual async Task<IActionResult> OnGetAsync()
@@ -90,6 +99,15 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                         {
                             email = userInfo.Email
                         });
+                    }
+
+                    UserIdentityOpInterceptor.Context.OperationId = UserIdentityOpEnum.CreateUser;
+                    await UserIdentityOpInterceptor.BeforeCreateUserAsync();
+                    if (UserIdentityOpInterceptor.Context.ShouldStop)
+                    {
+                        // todo: Also send out an email ???
+                        Alerts.Danger("We're sorry, but registration is not currently available. Please contact your administrator for help.");
+                        return Page();
                     }
 
                     var userDto = await AccountAppService.RegisterAsync(
