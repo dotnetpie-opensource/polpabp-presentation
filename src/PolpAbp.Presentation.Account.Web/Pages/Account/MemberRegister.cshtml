@@ -46,6 +46,8 @@
     </div>
     <abp-input asp-for="Input.ConfirmPassword" autocomplete="off" />
 
+    @await Component.InvokeAsync("PolicyConsent")
+
     @if (Model.IsRecaptchaEnabled)
     {
         <div class="mb-3">

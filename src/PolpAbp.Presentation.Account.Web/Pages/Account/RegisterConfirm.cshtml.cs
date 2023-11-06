@@ -5,7 +5,6 @@ using PolpAbp.Framework.Identity;
 using System.ComponentModel.DataAnnotations;
 using Volo.Abp.Auditing;
 using Volo.Abp.Data;
-using Volo.Abp.EventBus.Distributed;
 using Volo.Abp.Identity;
 using Volo.Abp.Validation;
 
@@ -134,7 +133,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
             await ReadInRecaptchaEnabledAsync();
         }
 
-        public class PostInput
+        public class PostInput 
         {
             [Required]
             [MinLength(4)]
@@ -151,7 +150,6 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
             [DataType(DataType.Password)]
             [DisableAuditing]
             public string? Password { get; set; }
-
         }
     }
 }

@@ -44,6 +44,8 @@
         <dd class="col-12 col-sm-6 ms-3 ms-sm-0">@Model.Input.Password</dd>
      </dl>
 
+     @await Component.InvokeAsync("PolicyConsent")
+
     <hr/>
 
     @if (Model.IsRecaptchaEnabled)
