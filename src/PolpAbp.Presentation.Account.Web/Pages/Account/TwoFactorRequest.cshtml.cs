@@ -83,7 +83,12 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                     var user = await UserManager.FindByIdAsync(userId.ToString());
                     var token = await UserManager.GenerateTwoFactorTokenAsync(user, TokenOptions.DefaultPhoneProvider);
 
-                    var body = L["TwoFactorCode_Sms", SmsSenderName, token];
+                    var b = L["TwoFactorCode_Sms", token];
+                    var bodyStr = b.ToString();
+                    if (!string.IsNullOrEmpty(SmsSenderName))
+                    {
+                        bodyStr = SmsSenderName + ": " + bodyStr;
+                    }
                     TempData["PolpAbp.Account.TwoFactorCode.Provider"] = TokenOptions.DefaultPhoneProvider;
                     
                     // Note that the underlying sms sender will be responsible
@@ -92,7 +97,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                     // todo: Check if the organization configuration.
                     // todo: Settings
                     // var allowedCountry =
-                    var msg = new SmsMessage(user.PhoneNumber, body);
+                    var msg = new SmsMessage(user.PhoneNumber, bodyStr);
                     await SmsSender.SendAsync(msg);
 
                     var errorCodeStr = msg.Properties.GetOrDefault("ErrorCode");
