@@ -10,8 +10,8 @@ using PolpAbp.Framework.DistributedEvents.Account;
 namespace PolpAbp.Presentation.Account.Web.Pages.Account
 {
     // This page runs regardless the tenant.
-    // It will use the 
-    [OnlyAnonymous]
+    // This page runs regardless whether a user is logged into 
+    // the system or not.
     public class EmailActivationModel : LoginModelBase
     {
         [HiddenInput]
