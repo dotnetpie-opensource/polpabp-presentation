@@ -1,24 +1,26 @@
 {
   "culture": "en",
   "texts": {
-    "DisplayName:TenantName": "Organization name",
-    "Description:TenantName": "A unique name to idenity your organization.",
-    "DisplayName:AdminEmailAddress": "Administrator email address",
+    "AlreadyRegistered": "Do you have an account?",
     "Description:AdminEmailAddress": "The email address of the intended administrator.",
-    "DisplayName:TenantOrEmailAddress": "Your email address or your organization name",
-    "Description:TenantOrEmailAddress": "Your email address or your organization name",
-    "DisplayName:RememberClient": "Remember this device",
     "Description:RememberClient": "If possible, you will not be asked for the 2FA on this device.",
+    "Description:TenantName": "A unique name to idenity your organization.",
+    "Description:TenantOrEmailAddress": "Your email address or your organization name",
+    "DisplayName:AdminEmailAddress": "Administrator email address",
+    "DisplayName:FirstName": "First Name",
+    "DisplayName:LastName": "Last Name",
+    "DisplayName:RememberClient": "Remember this device",
+    "DisplayName:TenantName": "Organization name",
+    "DisplayName:TenantOrEmailAddress": "Your email address or your organization name",
     "LoggedOutText": "You have been signed out!",
-    "MainApp": "Application Page",
-    "Login:EmailConfirmationRequired": "In order to log into the system, you must first confirm your email address.",
-    "Login:AdminApprovalPending": "Your account is pending approval by your organization's admin. Please check back later.",
     "Login:AccountAlreadyActive": "Your account has been activated. You can now log in to your account.",
+    "Login:AdminApprovalPending": "Your account is pending approval by your organization's admin. Please check back later.",
+    "Login:EmailConfirmationRequired": "In order to log into the system, you must first confirm your email address.",
     "Login:TenantIsRequired": "Your organization information is missing. Please enter your organization information to continue.",
-    "Page:HelpfulLinks": "Helpful Links",
+    "MainApp": "Application Page",
     "MemberRegister": "Join an existing organization",
-    "OrganizationRegister": "Create your organization",
     "OrganizationDoesNotExist": "Is your organization not registered?",
-    "AlreadyRegistered": "Do you have an account?"
+    "OrganizationRegister": "Create your organization",
+    "Page:HelpfulLinks": "Helpful Links"
   }
 }
