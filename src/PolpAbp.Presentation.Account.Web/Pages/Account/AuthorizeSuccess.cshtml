@@ -41,9 +41,11 @@
     You are now logged in and can access the system. Please close this page to continue!
 </p>
 
-@if (Model.IsCordovaEnabled)
-{
-    <div class="d-grid gap-2">
+<div class="d-grid gap-2">
+    @if (Model.IsCordovaEnabled)
+    {
         <a abp-button="Primary" onclick="postCordovaMessage()">Close</a>
-    </div>
-}
+    }
+    <a abp-button="Warning" asp-page="./Logout">@L["Logout"]</a>
+</div>
+
