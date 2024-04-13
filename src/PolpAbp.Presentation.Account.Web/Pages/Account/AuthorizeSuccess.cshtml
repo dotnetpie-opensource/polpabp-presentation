@@ -29,7 +29,20 @@
                 console.log('Message sent!');
                 webkit.messageHandlers.cordova_iab.postMessage(JSON.stringify(message));
             }
-        }</script>
+
+            deleteAllCookies();
+        }
+        function deleteAllCookies() {
+            const cookies = document.cookie.split(";");
+
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i];
+                const eqPos = cookie.indexOf("=");
+                const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+                document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
+            }
+        }
+    </script>
 
 }
 
@@ -41,11 +54,18 @@
     You are now logged in and can access the system. Please close this page to continue!
 </p>
 
-<div class="d-grid gap-2">
-    @if (Model.IsCordovaEnabled)
-    {
+@if (Model.IsCordovaEnabled)
+{
+    <div class="d-grid gap-2">
         <a abp-button="Primary" onclick="postCordovaMessage()">Close</a>
-    }
-    <a abp-button="Warning" asp-page="./Logout">@L["Logout"]</a>
-</div>
+    </div>
+}
 
+<div class="d-flex flex-column align-items-start mt-5 mb-3">
+    <h6>@L["Page:HelpfulLinks"]</h6>
+    <ul>
+        <li>
+            <a class="btn btn-link fst-italic" href="@Url.Page("./Logout")">@L["Logout"]</a>
+        </li>
+    </ul>
+</div>
