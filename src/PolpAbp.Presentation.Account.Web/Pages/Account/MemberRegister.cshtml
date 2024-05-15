@@ -6,6 +6,8 @@
 @using Volo.Abp.AspNetCore.Mvc.UI.MultiTenancy.Localization
 @using Volo.Abp.Settings
 @using AspNetCore.ReCaptcha
+@using PolpAbp.Presentation.Account.Web.Pages.Account
+
 @model PolpAbp.Presentation.Account.Web.Pages.Account.MemberRegisterModel
 @inject IHtmlLocalizer<AccountResource> L
 @{
@@ -23,9 +25,15 @@
     <a href="@Url.Page("./Login")">@L["Login"]</a>
 </div>
 
+<h5>
+    Create Your Member Account
+</h5>
 
+<p>
+    Provide your information below. 
+</p>
 <div class="alert alert-info d-flex align-items-center" role="alert">
-    To become a member of your organization, please provide the following information.
+    To use your SSO account to join your organization, please scroll down or ... 
 </div>
 
 <form method="post">
@@ -62,6 +70,30 @@
         </abp-button>
     </div>
 </form>
+
+<!-- External Auth Providers -->
+<!--List of providers-->
+@if (Model.SsoProviders.Count > 0)
+{
+    <div class="mt-5">
+
+        <h5>Sign Up with SSO methods</h5>
+
+        <p>
+            You can also join your organization using the SSO methods below.
+        </p>
+
+        <div class="d-grid gap-2 mt-3 mb-3">
+            @foreach (var s in Model.SsoProviders)
+            {
+                <a class="btn btn-warning" href="@Url.Page(s.LoginPage)">
+                    @ExternalAuthProviderHelper.GetPrettySsoSignUpName(s.AuthenticationScheme)
+                    <span class="spinner-box"></span>
+                </a>
+            }
+        </div>
+    </div>
+}
 
 <!-- todo: Add a condition -->
 <div class="d-flex flex-column align-items-start mt-5 mb-3">

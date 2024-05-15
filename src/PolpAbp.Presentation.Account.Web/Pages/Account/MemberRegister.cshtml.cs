@@ -1,4 +1,5 @@
 using AspNetCore.ReCaptcha;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using PolpAbp.Framework.Authorization.Users;
 using PolpAbp.Framework.DistributedEvents.Account;
@@ -17,6 +18,7 @@ using Volo.Abp.Identity;
 using Volo.Abp.Identity.Settings;
 using Volo.Abp.Settings;
 using Volo.Abp.Validation;
+using static PolpAbp.Presentation.Account.Pages.Account.PolpAbpExternalAuthPageModel;
 
 namespace PolpAbp.Presentation.Account.Web.Pages.Account
 {
@@ -26,6 +28,8 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
     {
         [BindProperty]
         public PostInput Input { get; set; }
+
+        public readonly List<ExternalProviderModel> SsoProviders = new List<ExternalProviderModel>();
 
         protected MemberRegistrationEnum RegistrationType = MemberRegistrationEnum.RequireEmailActivation;
         protected bool IsNewRegistrationNotyEnabled = false;
@@ -51,6 +55,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 
             UserIdentityOpInterceptor = userIdentityOpInterceptor;
         }
+
 
         public virtual async Task<IActionResult> OnGetAsync()
         {
@@ -222,6 +227,24 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
             // Load
             RegistrationType = (MemberRegistrationEnum)(await SettingProvider.GetAsync<int>(FrameworkSettings.Account.RegistrationApprovalType));
             IsNewRegistrationNotyEnabled = await SettingProvider.GetAsync<bool>(FrameworkSettings.Account.IsNewRegistrationNotyEnabled);
+
+            await ReadInExternalAuthProviderSettingsAsync();
+            // Build up the login providers 
+            var providers = await GetAllExternalProviders();
+
+            var candidates = providers
+                .Where(x => AllowedProviderName.Any(y => x.DisplayName.Contains(y)));
+            foreach (var z in candidates)
+            {
+                var p = Configuration[$@"PolpAbp:ExternalLogin:{z.AuthenticationScheme}:LoginPage"];
+                if (!string.IsNullOrEmpty(p))
+                {
+                    SsoProviders.Add(new ExternalProviderModel(z)
+                    {
+                        LoginPage = p
+                    });
+                }
+            }
         }
 
         protected override async Task ReadInRecaptchaEnabledAsync()

@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using PolpAbp.Framework.Identity;
 using PolpAbp.Framework.Security;
+using PolpAbp.Framework.Settings;
 using Volo.Abp;
 using Volo.Abp.Account;
 using Volo.Abp.Account.Localization;
@@ -15,6 +17,7 @@ using Volo.Abp.Identity;
 using Volo.Abp.Identity.Settings;
 using Volo.Abp.MultiTenancy;
 using Volo.Abp.Settings;
+using static PolpAbp.Presentation.Account.Pages.Account.PolpAbpExternalAuthPageModel;
 using IdentityUser = Volo.Abp.Identity.IdentityUser;
 
 namespace PolpAbp.Presentation.Account.Web.Pages.Account;
@@ -31,6 +34,9 @@ public abstract class PolpAbpAccountPageModel : AbpPageModel
 
     public PasswordComplexitySetting PwdComplexity { get; private set; }
 
+    public bool IsExternalAuthEnabled = false;
+    protected string[] AllowedProviderName = new string[0] { };
+
     protected IAccountAppService AccountAppService => LazyServiceProvider.LazyGetRequiredService<IAccountAppService>();
     protected SignInManager<IdentityUser> SignInManager => LazyServiceProvider.LazyGetRequiredService<SignInManager<IdentityUser>>();
     protected IdentityUserManager UserManager => LazyServiceProvider.LazyGetRequiredService<IdentityUserManager>();
@@ -42,6 +48,8 @@ public abstract class PolpAbpAccountPageModel : AbpPageModel
 
     protected IConfiguration Configuration => LazyServiceProvider.LazyGetRequiredService<IConfiguration>();
     protected IDistributedEventBus DistributedEventBus => LazyServiceProvider.LazyGetRequiredService<IDistributedEventBus>();
+
+    protected IAuthenticationSchemeProvider SchemeProvider => LazyServiceProvider.LazyGetRequiredService<IAuthenticationSchemeProvider>();
 
     /// <summary>
     /// Currently the behavior is determined by design, regardless the tenant.
@@ -74,6 +82,31 @@ public abstract class PolpAbpAccountPageModel : AbpPageModel
     protected virtual Task LoadSettingsAsync()
     {
         return Task.CompletedTask;
+    }
+
+    protected async Task ReadInExternalAuthProviderSettingsAsync()
+    {
+        IsExternalAuthEnabled = await SettingProvider.GetAsync<bool>(FrameworkSettings.Account.Sso.IsEnabled);
+        var a = await SettingProvider.GetOrNullAsync(FrameworkSettings.Account.Sso.Providers);
+        if (string.IsNullOrEmpty(a))
+        {
+            AllowedProviderName = new string[] { };
+        }
+        else
+        {
+            AllowedProviderName = a.Split(",");
+        }
+    }
+
+    protected virtual async Task<List<ExternalProviderModel>> GetAllExternalProviders()
+    {
+        var schemes = await SchemeProvider.GetAllSchemesAsync();
+
+        // todo: Remove some 
+        return schemes
+            .Where(x => x.DisplayName != null)
+            .Select(x => new ExternalProviderModel(x.DisplayName!, x.Name))
+            .ToList();
     }
 
     /// <summary>
