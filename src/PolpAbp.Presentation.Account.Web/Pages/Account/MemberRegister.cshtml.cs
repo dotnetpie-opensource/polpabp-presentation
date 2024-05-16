@@ -241,7 +241,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                 {
                     SsoProviders.Add(new ExternalProviderModel(z)
                     {
-                        LoginPage = p
+                        RegisterPage = p
                     });
                 }
             }

@@ -119,7 +119,7 @@ else
             <div class="d-grid gap-2">
                 @foreach (var s in Model.SsoProviders)
                 {
-                    <a class="btn btn-primary" href="@Url.Page(s.LoginPage)">
+                    <a class="btn btn-primary" href="@Url.Page(s.RegisterPage)">
                         @ExternalAuthProviderHelper.GetPrettySsoSignUpName(s.AuthenticationScheme)
                         <span class="spinner-box"></span>
                     </a>
