@@ -30,13 +30,13 @@
 
 @if (Model.SsoProviders.Count > 0)
 {
-    <div class="alert alert-info d-flex align-items-center" role="alert">
+    <div class="alert alert-info" role="alert">
         Here you can become a member of your organization with <b>two methods</b>. Choose the one that best suits you.
     </div>
 }
 else
 {
-    <div class="alert alert-info d-flex align-items-center" role="alert">
+    <div class="alert alert-info" role="alert">
         Here you can become a member of your organization by creating your member account.
     </div>
 }
@@ -99,7 +99,7 @@ else
 <!--List of providers-->
 @if (Model.SsoProviders.Count > 0)
 {
-    <div class="card text-bg-primary mb-3">
+    <div class="card border-primary mb-3">
         <div class="card-body">
             <h5 class="card-title">
                 @if (includeNumberLabel)
@@ -119,7 +119,7 @@ else
             <div class="d-grid gap-2">
                 @foreach (var s in Model.SsoProviders)
                 {
-                    <a class="btn btn-light" href="@Url.Page(s.LoginPage)">
+                    <a class="btn btn-primary" href="@Url.Page(s.LoginPage)">
                         @ExternalAuthProviderHelper.GetPrettySsoSignUpName(s.AuthenticationScheme)
                         <span class="spinner-box"></span>
                     </a>
