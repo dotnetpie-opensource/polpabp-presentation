@@ -236,7 +236,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                 .Where(x => AllowedProviderName.Any(y => x.DisplayName.Contains(y)));
             foreach (var z in candidates)
             {
-                var p = Configuration[$@"PolpAbp:ExternalLogin:{z.AuthenticationScheme}:LoginPage"];
+                var p = Configuration[$@"PolpAbp:ExternalLogin:{z.AuthenticationScheme}:RegisterPage"];
                 if (!string.IsNullOrEmpty(p))
                 {
                     SsoProviders.Add(new ExternalProviderModel(z)
