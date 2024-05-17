@@ -5,6 +5,7 @@ using Microsoft.Extensions.Options;
 using PolpAbp.Framework.Identity;
 using PolpAbp.Framework.Security;
 using PolpAbp.Framework.Settings;
+using System.Diagnostics;
 using Volo.Abp;
 using Volo.Abp.Account;
 using Volo.Abp.Account.Localization;
@@ -36,6 +37,7 @@ public abstract class PolpAbpAccountPageModel : AbpPageModel
 
     public bool IsExternalAuthEnabled = false;
     protected string[] AllowedProviderName = new string[0] { };
+    public bool IsExternalAuthEnforced = false;
 
     protected IAccountAppService AccountAppService => LazyServiceProvider.LazyGetRequiredService<IAccountAppService>();
     protected SignInManager<IdentityUser> SignInManager => LazyServiceProvider.LazyGetRequiredService<SignInManager<IdentityUser>>();
@@ -87,6 +89,7 @@ public abstract class PolpAbpAccountPageModel : AbpPageModel
     protected async Task ReadInExternalAuthProviderSettingsAsync()
     {
         IsExternalAuthEnabled = await SettingProvider.GetAsync<bool>(FrameworkSettings.Account.Sso.IsEnabled);
+
         var a = await SettingProvider.GetOrNullAsync(FrameworkSettings.Account.Sso.Providers);
         if (string.IsNullOrEmpty(a))
         {
@@ -95,6 +98,11 @@ public abstract class PolpAbpAccountPageModel : AbpPageModel
         else
         {
             AllowedProviderName = a.Split(",");
+        }
+
+        if (AllowedProviderName.Length > 0)
+        {
+            IsExternalAuthEnforced = await SettingProvider.GetAsync<bool>(FrameworkSettings.Account.Sso.IsEnforced);
         }
     }
 

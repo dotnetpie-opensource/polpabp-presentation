@@ -17,7 +17,10 @@
     ViewBag.Keywords = "join organization";
     ViewBag.ShowResetButton = true;
 
-    var includeNumberLabel = Model.SsoProviders.Count > 0;
+    var hasCreateMemberMethod = !Model.IsExternalAuthEnforced;
+    var hasSsoMethod = Model.SsoProviders.Count > 0;
+
+    var includeNumberLabel = hasCreateMemberMethod && hasSsoMethod;
 }
 
 <h4 class="mb-2 fw-semibold">
@@ -28,76 +31,106 @@
     <a href="@Url.Page("./Login")">@L["Login"]</a>
 </div>
 
-@if (Model.SsoProviders.Count > 0)
+@if (hasCreateMemberMethod && hasSsoMethod)
 {
     <div class="alert alert-info" role="alert">
         Here you can become a member of your organization with <b>two methods</b>. Choose the one that best suits you.
     </div>
 }
-else
+else if (hasCreateMemberMethod)
 {
     <div class="alert alert-info" role="alert">
         Here you can become a member of your organization by creating your member account.
     </div>
 }
-
-<div class="card mb-3">
-    <div class="card-body">
-        <h5 class="card-title">
-            @if (includeNumberLabel)
-            {
-                <span class="me-1">1.</span>
-            }
-            Create Your Member Account
-        </h5>
-        <h6 class="card-subtitle mb-2 text-body-secondary">
-            This method creates a new member profile within your organization.
-        </h6>
-        <p class="card-text">
-            Fill out the simple form below to register as a member in your organization.
-        </p>
-
-        <form method="post">
-
-            <abp-input asp-for="Input.FirstName" autocomplete="given-name" />
-            <abp-input asp-for="Input.LastName" autocomplete="family-name" />
-            <abp-input asp-for="Input.EmailAddress" autocomplete="email" />
-            <div class="mb-3" id="password-wrapper">
-                <label for="Input_Password" class="form-label">@L["DisplayName:Password"]</label>
-                <span> * </span>
-                <div class="input-group">
-                    <input class="form-control" id="Input_Password" type="password" autocomplete="new-password" asp-for="Input.Password" />
-                    <button type="button" class="toggle-password btn btn-outline-secondary">
-                        <i class="toggle-icon far fa-eye"></i>
-                    </button>
-                </div>
-                <span asp-validation-for="Input.Password" class="text-danger"></span>
-            </div>
-            <abp-input asp-for="Input.ConfirmPassword" autocomplete="off" />
-
-            @await Component.InvokeAsync("PolicyConsent")
-
-            @if (Model.IsRecaptchaEnabled)
-            {
-                <div class="mb-3">
-                    @Html.ReCaptcha()
-                </div>
-            }
-
-            <div class="d-grid gap-2">
-                <abp-button type="submit" button-type="Primary" name="Action" value="Input" class="mt-3">
-                    @L["Submit"]
-                    <span class="spinner-box"></span>
-                </abp-button>
-            </div>
-        </form>
-
+else if (hasSsoMethod)
+{
+    <div class="alert alert-info" role="alert">
+        Here you can become a member of your organization by sigining up with your SSO.
     </div>
-</div>
+}
+else
+{
+    <div class="alert alert-info" role="alert">    
+        We apologize, but membership sign-up for this organization is currently unavailable. This might be due to:
+        <ul>
+            <li>Planned Maintenance</li>: Our team may be performing routine maintenance to ensure optimal performance.
+            <li>Limited Membership</li>: The organization may have restricted membership at this time.
+        </ul>
+    </div>
+    <h5>
+        What can you do?
+    </h5>
+    <ul>
+        <li>Contact the Organization: For inquiries about membership availability or to express your interest, please reach out to the organization's administrator directly. 
+            You can find their contact information on the organization's website or within the invitation you received(if applicable).
+        </li>
+    </ul>
+    <p>
+        We appreciate your patience and understanding!
+    </p>
+}
+
+@if (hasCreateMemberMethod)
+{
+    <div class="card mb-3">
+        <div class="card-body">
+            <h5 class="card-title">
+                @if (includeNumberLabel)
+                {
+                    <span class="me-1">1.</span>
+                }
+                Create Your Member Account
+            </h5>
+            <h6 class="card-subtitle mb-2 text-body-secondary">
+                This method creates a new member profile within your organization.
+            </h6>
+            <p class="card-text">
+                Fill out the simple form below to register as a member in your organization.
+            </p>
+
+            <form method="post">
+
+                <abp-input asp-for="Input.FirstName" autocomplete="given-name" />
+                <abp-input asp-for="Input.LastName" autocomplete="family-name" />
+                <abp-input asp-for="Input.EmailAddress" autocomplete="email" />
+                <div class="mb-3" id="password-wrapper">
+                    <label for="Input_Password" class="form-label">@L["DisplayName:Password"]</label>
+                    <span> * </span>
+                    <div class="input-group">
+                        <input class="form-control" id="Input_Password" type="password" autocomplete="new-password" asp-for="Input.Password" />
+                        <button type="button" class="toggle-password btn btn-outline-secondary">
+                            <i class="toggle-icon far fa-eye"></i>
+                        </button>
+                    </div>
+                    <span asp-validation-for="Input.Password" class="text-danger"></span>
+                </div>
+                <abp-input asp-for="Input.ConfirmPassword" autocomplete="off" />
+
+                @await Component.InvokeAsync("PolicyConsent")
+
+                @if (Model.IsRecaptchaEnabled)
+                {
+                    <div class="mb-3">
+                        @Html.ReCaptcha()
+                    </div>
+                }
+
+                <div class="d-grid gap-2">
+                    <abp-button type="submit" button-type="Primary" name="Action" value="Input" class="mt-3">
+                        @L["Submit"]
+                        <span class="spinner-box"></span>
+                    </abp-button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+}
 
 <!-- External Auth Providers -->
 <!--List of providers-->
-@if (Model.SsoProviders.Count > 0)
+@if (hasSsoMethod)
 {
     <div class="card border-primary mb-3">
         <div class="card-body">
