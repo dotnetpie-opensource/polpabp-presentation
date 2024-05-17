@@ -44,6 +44,7 @@ public abstract class PolpAbpExternalAuthPageModel : AbpPageModel
 
     public bool IsExternalAuthEnabled = false;
     protected string[] AllowedProviderName = new string[0] { };
+    protected string[] MicrosoftSSOValidIssuers = new string[0] { };
 
     /// <summary>
     /// Currently the behavior is determined by design, regardless the tenant.
@@ -74,6 +75,11 @@ public abstract class PolpAbpExternalAuthPageModel : AbpPageModel
         else
         {
             AllowedProviderName = a.Split(",");
+        }
+        var b = await SettingProvider.GetOrNullAsync(FrameworkSettings.Account.Sso.Microsoft.ValidIssuers);
+        if (!string.IsNullOrEmpty(b))
+        {
+            MicrosoftSSOValidIssuers = b.Split(",");
         }
 
         // Load
