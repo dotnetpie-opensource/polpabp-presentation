@@ -108,6 +108,10 @@ public abstract class PolpAbpExternalAuthPageModel : AbpPageModel
         return externalLoginInfo.Principal.FindFirstValue("preferred_username") != null;
     }
 
+    protected static bool CanRetrieveFromExternalLogin(ExternalLoginInfo externalLoginInfo, string claimType)
+    {
+        return externalLoginInfo.Principal.FindFirstValue(claimType) != null;
+    }
 
     protected virtual void CheckCurrentTenant(Guid? tenantId)
     {

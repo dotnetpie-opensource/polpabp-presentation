@@ -6,6 +6,7 @@
         {
             return provider switch { 
                  "AzureAd" => "Sign Up with Microsoft",
+                 "Google" => "Sign up with Google",
                  _ => provider
             };
         }
