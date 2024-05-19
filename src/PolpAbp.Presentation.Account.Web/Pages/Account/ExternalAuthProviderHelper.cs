@@ -5,8 +5,8 @@
         public static string GetPrettySsoSignUpName(string provider)
         {
             return provider switch { 
-                 "AzureAd" => "Sign Up with Microsoft",
-                 "Google" => "Sign up with Google",
+                 "AzureAd" => "Join with Microsoft SSO",
+                 "Google" => "Join with Google SSO",
                  _ => provider
             };
         }
