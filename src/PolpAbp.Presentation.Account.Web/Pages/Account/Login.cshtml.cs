@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using PolpAbp.Framework.Extensions;
 using PolpAbp.Framework.Mvc.Cookies;
 using System.ComponentModel.DataAnnotations;
 using System.Web;
@@ -112,7 +113,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                         else
                         {
                             // Figure out the provider name.
-                            var providerName = user.GetProperty<string>("SsoScheme");
+                            var providerName = user.GetProperty<string>(ExternalProperties.UserIdentity.SsoScheme);
                             if (!string.IsNullOrEmpty(providerName))
                             {
                                 var ssoUrl = Configuration[$@"PolpAbp:ExternalLogin:{providerName}:LoginPage"];
