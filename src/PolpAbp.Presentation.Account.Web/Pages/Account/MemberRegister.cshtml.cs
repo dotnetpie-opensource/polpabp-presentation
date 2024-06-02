@@ -6,8 +6,10 @@ using PolpAbp.Framework.DistributedEvents.Account;
 using PolpAbp.Framework.Emailing.Account;
 using PolpAbp.Framework.Exceptions.Identity;
 using PolpAbp.Framework.Identity;
+using PolpAbp.Framework.Identity.Dto;
 using PolpAbp.Framework.Security;
 using PolpAbp.Framework.Settings;
+using PolpAbp.ZeroAdaptors.Authorization.Users;
 using System.ComponentModel.DataAnnotations;
 using System.Data.SqlTypes;
 using System.Web;
@@ -31,29 +33,21 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 
         public readonly List<ExternalProviderModel> SsoProviders = new List<ExternalProviderModel>();
 
+        protected readonly IMemberEnrollmentAppService _memberEnrollmentAppService;
+
         protected MemberRegistrationEnum RegistrationType = MemberRegistrationEnum.RequireEmailActivation;
         protected bool IsNewRegistrationNotyEnabled = false;
 
         protected readonly IReCaptchaService RecaptchaService;
-        protected readonly IFrameworkAccountEmailer AccountEmailer;
-
-        protected readonly IRegisteredUserDataSeeder UserDataSeeder;
-
-        protected readonly IUserIdentityOpInterceptor UserIdentityOpInterceptor;
 
         public MemberRegisterModel(IReCaptchaService reCaptchaService,
-            IFrameworkAccountEmailer accountEmailer,
-            IRegisteredUserDataSeeder userDataSeeder,
-            IUserIdentityOpInterceptor userIdentityOpInterceptor
+            IMemberEnrollmentAppService memberEnrollmentAppService
             ) : base()
         {
             Input = new PostInput();
 
             RecaptchaService = reCaptchaService;
-            AccountEmailer = accountEmailer;
-            UserDataSeeder = userDataSeeder;
-
-            UserIdentityOpInterceptor = userIdentityOpInterceptor;
+            _memberEnrollmentAppService = memberEnrollmentAppService;
         }
 
 
@@ -95,100 +89,64 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                     // Tenant not set this moment.
                     ValidateModel();
 
-                    // Check if this email is available or not
-                    var userInfo = await UserManager.FindByEmailAsync(Input.EmailAddress);
-                    if (userInfo != null)
+                    var createdRet = await _memberEnrollmentAppService.ProcessUserRegistrationAsync("MVC", new MemberEnrollmentInputDto
                     {
-                        Alerts.Warning("Please log into your account.");
-                        return RedirectToPage("./Login", new
-                        {
-                            email = userInfo.Email
-                        });
-                    }
-
-                    UserIdentityOpInterceptor.Context.OperationId = UserIdentityOpEnum.CreateUser;
-                    await UserIdentityOpInterceptor.BeforeCreateUserAsync();
-                    if (UserIdentityOpInterceptor.Context.ShouldStop)
-                    {
-                        // todo: Also send out an email ???
-                        Alerts.Danger("We're sorry, but registration is not currently available. Please contact your administrator for help.");
-                        return Page();
-                    }
-
-                    var userDto = await AccountAppService.RegisterAsync(
-                        new RegisterDto
-                        {
-                            AppName = "MVC",
-                            EmailAddress = Input.EmailAddress,
-                            Password = Input.Password,
-                            UserName = Input.EmailAddress // use Email address
-                        });
-
-                    var user = await UserManager.GetByIdAsync(userDto.Id);
-                    user.Name = Input.FirstName;
-                    user.Surname = Input.LastName;
-                    // The above registration will init IsActive to be true,
-                    // We have to reverse the behavior.
-                    // The following logic will decide whether the new member
-                    // will be active or not.
-                    user.SetIsActive(false);
-                    await UserManager.UpdateAsync(user);
-
-                    // Run the data seeder for the user
-                    await UserDataSeeder.SeedAsync(user.Email, user.TenantId);
-
-                    // Raise an event
-                    await DistributedEventBus.PublishAsync(new AccountStateChangeEto
-                    {
-                        TenantId = user.TenantId!.Value,
-                        AccountId = user.Id,
-                        ChangeId = AccountStateChangeEnum.RegisteredOnItsOwn
+                        EmailAddress = Input.EmailAddress,
+                        Password = Input.Password,
+                        UserName = Input.EmailAddress,
+                        FirstName = Input.FirstName,
+                        LastName = Input.LastName
                     });
 
-                    if (RegistrationType == MemberRegistrationEnum.AutoActive)
+                    if (createdRet.ErrorCode == (int)UserOnboardingErrorEnum.EmailAlreadyUsed)
                     {
-                        // Make the user be active now.
-                        user.SetIsActive(true);
-                        await UserManager.UpdateAsync(user);
+                        var errorDetail = IdentityErrorLikeInterpretor.Translate(UserOnboardingErrorEnum.EmailAlreadyUsed);
 
-                        if (IsNewRegistrationNotyEnabled)
-                        {
-                            await AccountEmailer.SendMemberRegistrationNotyAsync(user!.Id);
-                        }
-
-                        // Raise an event
-                        await DistributedEventBus.PublishAsync(new AccountStateChangeEto
-                        {
-                            TenantId = user.TenantId!.Value,
-                            AccountId = user.Id,
-                            ChangeId = AccountStateChangeEnum.ActivatedOnItsOwn
-                        });
-
-                        Alerts.Success("Your account is ready for use. Please login!");
+                        Alerts.Danger(errorDetail.Description);
                     }
-                    else if (RegistrationType == MemberRegistrationEnum.RequireAdminApprovel)
+                    else if (createdRet.ErrorCode == (int)UserOnboardingErrorEnum.UserNameUsed)
                     {
-                        // todo: Send out an email to the admin for the approval.
-                        await AccountEmailer.SendMemberRegistrationApprovalAsync(user!.Id);
+                        var errorDetail = IdentityErrorLikeInterpretor.Translate(UserOnboardingErrorEnum.UserNameUsed);
 
-                        Alerts.Success("Your account is almost ready. Your registation request has been sent to the administrators of your organization. Please wait for their approval.");
+                        Alerts.Danger(errorDetail.Description);
+                    }
+                    else if (createdRet.ErrorCode == (int)UserOnboardingErrorEnum.PasswordComplexityNotEnough)
+                    {
+                        var errorDetail = IdentityErrorLikeInterpretor.Translate(UserOnboardingErrorEnum.PasswordComplexityNotEnough);
+
+                        Alerts.Danger(errorDetail.Description);
+                    }
+                    else if (createdRet.ErrorCode == (int)UserOnboardingErrorEnum.MemberLicenseShortage)
+                    {
+                        var errorDetail = IdentityErrorLikeInterpretor.Translate(UserOnboardingErrorEnum.MemberLicenseShortage);
+
+                        Alerts.Danger(errorDetail.Description);
+                    }
+                    else if (!createdRet.UserId.HasValue)
+                    {
+                        Alerts.Danger("Something went wrong. Please try it later.");
                     }
                     else
                     {
-                        // todo: Send out an activation email.
-                        // Send out a confirmation email, regardless the current tenant.
-                        // Send it instantly, because the user is waiting for it.
-                        await AccountEmailer.SendEmailActivationLinkAsync(user!.Id);
-
-                        if (IsNewRegistrationNotyEnabled)
+                        Alerts.Success($"Welcome aboard, {Input.FirstName}!  Your account has been created successfully.");
+                        // Success 
+                        if (createdRet.NextActionStatus == UserOnboardingNextActionEnum.WaitAdminApprovel)
                         {
-                            await AccountEmailer.SendMemberRegistrationNotyAsync(user!.Id);
+                            Alerts.Warning("The organization's administrator will review your request shortly. In the meantime, feel free to browse our website and learn more about what we do.");
+                        }
+                        else if (createdRet.NextActionStatus == UserOnboardingNextActionEnum.ActivateEmail)
+                        {
+                            Alerts.Warning("We've just sent a confirmation email to you.  Click the link in the email to activate your account and get started.");
+                        }
+                        else
+                        {
+                            var user = await UserManager.FindByIdAsync(createdRet.UserId!.Value.ToString());
+                            await SignInManager.SignInAsync(user, true);
                         }
 
-                        Alerts.Success("Your account is almost ready. An email has been sent to your email box. Please check your email box to confirm your account.");
+                        return RedirectToPage("./MemberRegisterSuccess");
                     }
 
-                    return RedirectToPage("./MemberRegisterSuccess");
                 }
                 catch (AbpValidationException ex)
                 {
