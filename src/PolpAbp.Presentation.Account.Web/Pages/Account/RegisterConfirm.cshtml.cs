@@ -1,6 +1,5 @@
 using AspNetCore.ReCaptcha;
 using Microsoft.AspNetCore.Mvc;
-using PolpAbp.Framework.DistributedEvents.Account;
 using PolpAbp.Framework.Identity;
 using System.ComponentModel.DataAnnotations;
 using Volo.Abp.Auditing;
@@ -116,14 +115,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
             // Send it instantly, because the user is waiting for it.
             await AccountEmailer.SendEmailActivationLinkAsync(admin!.Id);
 
-            // The default name is "Admin", and there is no "surName".
-            await DistributedEventBus.PublishAsync(new UserCreatedEto
-            {
-                TenantId = tenant.Id,
-                Id = admin!.Id,
-                Name = "Admin",
-                Surname = "" // We do not have org name yet.
-            });
+            // Global events will be raised by the built-in entity events. 
         }
 
         protected override async Task LoadSettingsAsync()
