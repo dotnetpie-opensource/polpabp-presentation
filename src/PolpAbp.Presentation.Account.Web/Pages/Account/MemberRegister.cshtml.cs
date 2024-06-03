@@ -128,7 +128,6 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                     }
                     else
                     {
-                        Alerts.Success($"Welcome aboard, {Input.FirstName}!  Your account has been created successfully.");
                         // Success 
                         if (createdRet.NextActionStatus == UserOnboardingNextActionEnum.WaitAdminApprovel)
                         {

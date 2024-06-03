@@ -15,13 +15,47 @@
 }
 
 <h4 class="mb-4 fw-semibold">
-    Join Organization Successfully
+    Success! You're Now Part of Your Organization
 </h4>
 
-<form method="post">
+<div class="alert alert-success d-flex align-items-center" role="alert">
+    <div>
+        Welcome to @Model.TenantName! You've successfully joined your organization.
+    </div>
+</div>
 
-    <p>Congratulations! You have successfully joined your organization.</p>
 
-    <a abp-button="Primary" asp-page="./Login">&larr; @L["BackToLogin"]</a>
+@if (Model.IsAuthenticated)
+{
 
-</form>
+    <p>
+        Your membership is now active.  We're excited to have you on board.
+        Click the button below to jump right into the main application.
+    </p>
+
+    <div class="d-grid gap-2">
+        <a abp-button="Primary" asp-page="/Account/MainApp">Go to Main Application</a>
+    </div>
+}
+else
+{
+
+    <p>
+        Your membership application has been submitted successfully. However, before you can jump into the application, there's one last step:
+    </p>
+    <ul>
+        <li>
+            <b>For admin approval</b>: If membership requires approval from your organization's administrator, you'll receive a notification once your access is granted.
+            In the meantime,  feel free to browse our website.
+        </li>
+        <li>
+            <b>For account activation</b>:
+            If you signed up using an email address, you'll receive a confirmation email with a link to activate your account.
+            Once you activate it, you'll be ready to log in and get started!
+        </li>
+    </ul>
+
+    <div class="d-grid gap-2">
+        <a abp-button="Primary" asp-page="./Login">Login</a>
+    </div>
+}
