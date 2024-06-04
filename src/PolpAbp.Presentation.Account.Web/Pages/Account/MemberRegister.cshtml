@@ -26,28 +26,29 @@
 <h4 class="mb-2 fw-semibold">
     Join Your Organization
 </h4>
-<div class="mb-4 ms-2">
-    @L["AlreadyRegistered"]
-    <a href="@Url.Page("./Login")">@L["Login"]</a>
-</div>
+<a class="d-block mb-4" href="@Url.Page("./SelectOrganization")">
+    <i class="fas fa-arrow-left"></i>
+    Back
+</a>
+
 
 @if (hasCreateMemberMethod && hasSsoMethod)
 {
-    <div class="alert alert-info" role="alert">
+    <p>
         Here you can become a member of your organization with <b>two methods</b>. Choose the one that best suits you.
-    </div>
+    </p>
 }
 else if (hasCreateMemberMethod)
 {
-    <div class="alert alert-info" role="alert">
+    <p>
         Here you can become a member of your organization by creating your member account.
-    </div>
+    </p>
 }
 else if (hasSsoMethod)
 {
-    <div class="alert alert-info" role="alert">
+    <p>
         Here you can become a member of your organization by sigining up with your SSO.
-    </div>
+    </p>
 }
 else
 {
@@ -73,20 +74,18 @@ else
 
 @if (hasCreateMemberMethod)
 {
-    <div class="card mb-3">
-        <div class="card-body">
-            <h5 class="card-title">
-                @if (includeNumberLabel)
-                {
-                    <span class="me-1">1.</span>
-                }
-                Create Your Member Account
-            </h5>
-            <h6 class="card-subtitle mb-2 text-body-secondary">
-                This method creates a new member profile within your organization.
-            </h6>
-            <a abp-button="Primary" asp-page="/Account/CreateMember">Start to Create Account</a>            
-        </div>
+    <div class="mb-3">
+    <h5>
+        @if (includeNumberLabel)
+        {
+            <span class="me-1">1.</span>
+        }
+        Create Your Member Account
+    </h5>
+    <h6 class="text-body-secondary">
+        This method creates a new member profile within your organization.
+    </h6>
+    <a abp-button="Primary" asp-page="/Account/CreateMember">Start to Create Member Account</a>
     </div>
 }
 
@@ -94,42 +93,38 @@ else
 <!--List of providers-->
 @if (hasSsoMethod)
 {
-    <div class="card border-primary mb-3">
-        <div class="card-body">
-            <h5 class="card-title">
-                @if (includeNumberLabel)
-                {
-                    <span class="me-1">2.</span>
-                }
-                Join with Single Sign-On (SSO)
-            </h5>
-            <h6 class="card-subtitle mb-2 text-body-secondary">
-                Already have a single sign-on account configured by your organization? Use it to join your organization in seconds!
-            </h6>
-            <p class="card-text">
-                Leverage your existing SSO account to join your organization in seconds.
-                No separate password needed – a secure and convenient way to become a member.
-            </p>
+    <div class="mb-3">
+        <h5>
+            @if (includeNumberLabel)
+            {
+                <span class="me-1">2.</span>
+            }
+            Join with Single Sign-On (SSO)
+        </h5>
+        <h6 class="text-body-secondary">
+            Already have a single sign-on account configured by your organization? Use it to join your organization in seconds!
+        </h6>
+        <p>
+            Leverage your existing SSO account to join your organization in seconds.
+            No separate password needed – a secure and convenient way to become a member.
+        </p>
 
-            <div class="d-grid gap-2">
-                @foreach (var s in Model.SsoProviders)
-                {
-                    <a class="btn btn-primary" href="@Url.Page(s.RegisterPage)">
-                        @ExternalAuthProviderHelper.GetPrettySsoSignUpName(s.AuthenticationScheme)
-                        <span class="spinner-box"></span>
-                    </a>
-                }
-            </div>
+        <div class="d-grid gap-2">
+            @foreach (var s in Model.SsoProviders)
+            {
+                <a class="btn btn-primary" href="@Url.Page(s.RegisterPage)">
+                    @ExternalAuthProviderHelper.GetPrettySsoSignUpName(s.AuthenticationScheme)
+                    <span class="spinner-box"></span>
+                </a>
+            }
         </div>
     </div>
 }
 
-<!-- todo: Add a condition -->
-<div class="d-flex flex-column align-items-start mt-5 mb-3">
-    <h6>Helpful links</h6>
-    <ul>
-        <li>
-            Already a member? Please <a class="btn btn-link fst-italic" href="@Url.Page("./Login")">@L["Login"]</a>
-        </li>
-    </ul>
+<div class="mt-4 p-3 text-secondary">
+    <h5>Already have an account?</h5>
+    <p>Sign in using your preferred method below:</p>
+    <div class="d-flex flex-column align-items-start">
+        <a class="btn btn-link" href="@Url.Page("/Account/Login")">Sign in (Username/Password)</a>
+    </div>
 </div>
