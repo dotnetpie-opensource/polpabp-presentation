@@ -12,7 +12,7 @@ namespace PolpAbp.Presentation.Account
     {
         private readonly string _redirectUrl;
 
-        public TenantPrerequisiteAttribute(string redirectUrl = "/Account/FindUser")
+        public TenantPrerequisiteAttribute(string redirectUrl = "/Account/SelectOrganization")
         {
             _redirectUrl = redirectUrl;
         }   

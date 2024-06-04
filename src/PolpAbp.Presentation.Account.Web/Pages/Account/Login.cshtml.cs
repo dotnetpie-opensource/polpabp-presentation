@@ -38,7 +38,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
             if (!IsEmailGloballyUnique && !CurrentTenant.IsAvailable)
             {
                 // Find user.
-                return RedirectToPage("./FindUser", new
+                return RedirectToPage("./SelectOrganization", new
                 {
                     returnUrl = ReturnUrl,
                     returnUrlHash = ReturnUrlHash
@@ -153,7 +153,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                             return Page();
                         }
 
-                        return RedirectToPage("./FindUser", new
+                        return RedirectToPage("./SelectOrganization", new
                         {
                             returnUrl = ReturnUrl,
                             returnUrlHash = ReturnUrlHash

@@ -37,7 +37,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                 Alerts.Danger("Please locate your organization first!");
 
                 // Find user.
-                return RedirectToPage("./FindUser", new
+                return RedirectToPage("./SelectOrganization", new
                 {
                     returnUrl = ReturnUrl,
                     returnUrlHash = ReturnUrlHash

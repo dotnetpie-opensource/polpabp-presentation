@@ -37,7 +37,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                 Alerts.Danger(L["Login:TenantIsRequired"]);
 
                 // Find user.
-                return RedirectToPage("./FindUser", new
+                return RedirectToPage("./SelectOrganization", new
                 {
                     returnUrl = ReturnUrl,
                     returnUrlHash = ReturnUrlHash
