@@ -65,6 +65,7 @@ public abstract class PolpAbpAccountPageModel : AbpPageModel
         }
     }
 
+    [Obsolete("Use it with caution, we may do not require this any more.")]
     protected bool IsEmailGloballyUnique
     {
         get

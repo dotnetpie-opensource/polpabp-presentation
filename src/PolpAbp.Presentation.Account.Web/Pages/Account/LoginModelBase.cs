@@ -17,14 +17,10 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 
         public string NormalizedEmailAddress => EmailAddress ?? string.Empty;
 
-        public bool IsUserNameEnabled { get; set; }
-
 
         protected override async Task LoadSettingsAsync()
         {
             await base.LoadSettingsAsync();
-            // Use host ...
-            IsUserNameEnabled = await SettingProvider.IsTrueAsync(FrameworkSettings.Account.IsUserNameEnabled);
             // Recaptcha 
             await ReadInRecaptchaEnabledAsync();
         }

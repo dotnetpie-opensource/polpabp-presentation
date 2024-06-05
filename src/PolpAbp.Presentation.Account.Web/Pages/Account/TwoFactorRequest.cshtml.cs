@@ -10,7 +10,7 @@ using Volo.Abp.Sms;
 namespace PolpAbp.Presentation.Account.Web.Pages.Account
 {
     [OnlyAnonymous]
-    [TenantPrerequisite("/Account/Login")]
+    [TenantPrerequisite]
     public class TwoFactorRequestModel : LoginModelBase
     {
         [BindProperty(SupportsGet = true)]

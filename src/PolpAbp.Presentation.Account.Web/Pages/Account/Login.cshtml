@@ -4,6 +4,7 @@
 @using Volo.Abp.Account.Localization
 @using Volo.Abp.Account.Settings
 @using Volo.Abp.AspNetCore.Mvc.UI.MultiTenancy.Localization
+@using Volo.Abp.MultiTenancy
 @using Volo.Abp.Settings
 @using AspNetCore.ReCaptcha
 @using System.Web
@@ -14,320 +15,293 @@
     ViewBag.Title = "Login";
     ViewBag.Description = "Sign in with your username and password or use SSO to log in quickly and easily";
     ViewBag.Keywords = "login, sign in, account, SSO, username, email, password";
-    ViewBag.HideTenancyView = true;
+    ViewBag.HideTenancyView = false;
+
 
     var reActivationLink = Url.Page("./ResendActivationLink", new
     {
-        UserName = Model.Input.IsUsingEmailAddress ? string.Empty : Model.Input.UserNameOrEmailAddress,
-        EmailAddress = Model.Input.IsUsingEmailAddress ? Model.Input.UserNameOrEmailAddress : string.Empty
+        UserName = Model.Input.IsUsingUserName ? string.Empty : Model.Input.UserName,
+        EmailAddress = Model.Input.IsUsingUserName ? Model.Input.EmailAddress : string.Empty
     });
 }
 
 @section docReady {
     <script type="text/javascript">
+        const tenantId = '@Model.TenantId?.ToString()';
         const returnUrl = '@(Model.ReturnUrl)';
         const returnUrlHash = '@(Model.ReturnUrlHash)';
-        const initEmail = '@(Model.Input.UserNameOrEmailAddress?.Trim().ToLower())';
+        const initEmail = '@(Model.Input.EmailAddress?.Trim().ToLower())';
+        const initUserName = '@(Model.Input.UserName?.Trim().ToLower())';
         const isRecaptchaVisible = @Model.IsRecaptchaEnabled.ToString().ToLower();
         Lockr.prefix = 'lockr_';
 
         function AppViewModel() {
             var self = this;
 
-            self.pickVisible = ko.observable(false);
+            self.optionsVisible = ko.observable(false);
             self.users = ko.observable([]);
+            self.isUsingUserName = ko.observable(@Model.Input.IsUsingUserName.ToString().ToLower());
+            
             self.formVisible = ko.pureComputed(function () {
-                return !self.pickVisible();
+                return !self.optionsVisible();
             });
-            self.canGoBack = ko.pureComputed(function () {
+            self.hasUserOptions = ko.pureComputed(function () {
                 return self.users().length && self.formVisible();
+            });
+            self.isUsingEmail = ko.pureComputed(function () {
+                return !self.isUsingUserName();
+            });
+            self.hasNoUserOptions = ko.pureComputed(function () {
+                return !self.hasUserOptions();
             });
         }
 
         const viewModel = new AppViewModel();
         ko.applyBindings(viewModel);
 
-        function updateUserList(changeVisible, isInitEmailEmpty) {
+        function refreshUserOptions(initState) {
             let users = Lockr.get('users');
             if (users && users.length) {
-                let accounts = users.map(x => {
+                let a = users.map(x => {
                     return {
                         email: x.email,
+                        userName: x.userName,
+                        tenantId: x.tenantId,
                         lastUpdated: $.timeago(new Date(x.lastUpdated))
                     }
                 });
-                isInitEmailEmpty && changeVisible && viewModel.pickVisible(true);
-                viewModel.users(accounts);
+                viewModel.users(a);
+                if (initState != undefined) {
+                    viewModel.optionsVisible(initState);
+                }
             } else {
                 viewModel.users([]);
-                isInitEmailEmpty && changeVisible && viewModel.pickVisible(false);
-
-                setTimeout(() => {
-                    $('#Input_UserNameOrEmailAddress').focus();
-                }, 100);
+                viewModel.optionsVisible(false);
             }
+        }
+
+        function switchToUserName(username) {
+            viewModel.isUsingUserName(true);
+            setTimeout(() => {
+                if (username) {
+                    $('#Input_UserName').val(username);
+                } else {
+                    const a = $('#Input_UserName').val();
+                    if (a == '__dummy') {
+                        $('#Input_UserName').val('');
+                    }
+                }
+
+                const b = $('#Input_EmailAddress').val();
+                if (!b) {
+                    $('#Input_EmailAddress').val('__dummy@dummy.net');
+                }
+
+                $('#Input_UserName').focus();
+            });
+        }
+
+        function switchToEmailAddress(email) {
+            viewModel.isUsingUserName(false);
+            setTimeout(() => {
+                if (email) {
+                    $('#Input_EmailAddress').val(username);
+                } else {
+                    const a = $('#Input_EmailAddress').val();
+                    if (a == '__dummy@dummy.net') {
+                        $('#Input_EmailAddress').val('');
+                    }
+                }
+
+                const b = $('#Input_UserName').val();
+                if (!b) {
+                    $('#Input_UserName').val('__dummy');
+                }
+
+                $('#Input_EmailAddress').focus();
+            });
         }
 
         $(document).ready(() => {
 
-            updateUserList(true, !isRecaptchaVisible && !initEmail);
-
             $(".card").on('click', 'a.delete-me', (evt) => {
                 const $target = $(evt.target).closest('a');
-                let email = $target.data('email');
+                const email = $target.data('email');
                 if (email) {
                     let users = Lockr.get('users');
                     if (users) {
-                        users = users.filter(a => a.email != email);
+                        users = users.filter(a => !(a.email == email && a.tenantId == tenantId));
                         Lockr.set('users', users);
-                        updateUserList(true, true);
+                        refreshUserOptions(true);
+                    }
+                } else {
+                    const userName = $target.data('username');
+                    if (userName) {
+                        let users = Lockr.get('users');
+                        if (users) {
+                            users = users.filter(a => !(a.userName == userName && a.tenantId == tenantId));
+                            Lockr.set('users', users);
+                            refreshUserOptions(true);
+                        }
                     }
                 }
             });
 
             $(".card").on('click', 'a.pick-me', (evt) => {
                 const $target = $(evt.target).closest('a');
-                let email = $target.data('email');
+                const email = $target.data('email');
                 if (email) {
-                    viewModel.pickVisible(false);
-                    setTimeout(() => {
-                        $('#Input_UserNameOrEmailAddress').val(email);
-                        $('#Input_UserNameOrEmailAddress').focus();
-                    }, 100);
+                    viewModel.optionsVisible(false);
+                    switchToEmailAddress(email);
+                } else {
+                    const userName = $target.data('username');
+                    viewModel.optionsVisible(false);
+                    switchToUserName(userName);
                 }
             });
 
             $(".card").on('click', 'a.new-account', () => {
-                viewModel.pickVisible(false);
-
-                setTimeout(() => {
-                    $('#Input_UserNameOrEmailAddress').val('');
-                    $('#Input_UserNameOrEmailAddress').focus();
-                }, 100);
+                viewModel.optionsVisible(false);
             });
 
             $(".card").on('click', 'a.go-back', () => {
-                viewModel.pickVisible(true);
+                viewModel.optionsVisible(true);
             });
+
+            $('#Input_IsUsingUserName').change(
+                function () {
+                    if (this.checked) {
+                        switchToUserName();
+                    } else {
+                        switchToEmailAddress();
+                    }
+                });
+
+            refreshUserOptions(initEmail || initUserName);
+            if (initEmail) {
+                switchToEmailAddress(initEmail);
+            } else if (initUserName) {
+                switchToUserName(initUserName);
+            } else {
+                switchToEmailAddress('');
+            }
 
             // Update time
             setInterval(() => {
-                updateUserList(true, true);
+                refreshUserOptions(undefined);
             }, 60 * 1000);
         });
     </script>
 }
 
-<div class="d-flex align-items-center mb-2">
-    <a class="me-3 go-back text-primary" style="cursor:pointer;" data-bind="visible: canGoBack">
-        <i class="fa fa-long-arrow-left"></i>
+<h4 class="mb-2 fw-semibold">Login</h4>
+<div data-bind="visible: hasUserOptions">
+    <a class="mb-4 go-back" style="cursor:pointer;">
+        <i class="fa fa-arrow-left"></i>
+        Back
     </a>
-    <h4 class="fw-semibold">Login</h4>
 </div>
-<div class="mb-2 ms-2">
-    @L["AreYouANewUser"]
-    <a href="@Url.Page("./MemberRegister")">@L["MemberRegister"]</a>
-</div>
-<div class="mb-4 ms-2">
-    @L["OrganizationDoesNotExist"]
-    <a href="@Url.Page("./Register")">@L["OrganizationRegister"]</a>
+<div data-bind="visible: hasNoUserOptions">
+    <a class="mb-4" href="@Url.Page("./FindOrganization")">
+        <i class="fas fa-arrow-left"></i>
+        Back
+    </a>
 </div>
 
-@if (Model.IsUserNameEnabled)
-{
-    if (Model.Resolution.OptionId <= 0 || Model.Resolution.OptionId > 2)
-    {
-        <div class="alert alert-info d-flex align-items-center" role="alert">
-            Please choose one way to locate your information
-        </div>
-
-        <form method="post">
-
-            <div class="d-flex flex-wrap">
-                <div class="mb-3 me-3">
-                    <input type="radio" class="btn-check" name="Resolution.OptionId"
-                           id="Resolution-By-Email" value="1" autocomplete="off" checked>
-                    <label class="btn btn-outline-dark" for="Resolution-By-Email">Email Address</label>
-                </div>
-
-                <div class="mb-3">
-                    <input type="radio" class="btn-check" name="Resolution.OptionId"
-                           id="Resolution-By-Name" value="2" autocomplete="off">
-                    <label class="btn btn-outline-dark" for="Resolution-By-Name">User Name</label>
-                </div>
+<!-- Pick an account -->
+<div class="pick-one-account" data-bind="visible: optionsVisible">
+    <p>
+        Please select one account or use a new acount
+    </p>
+    <ul class="list-unstyled" data-bind="foreach: users">
+        <li class="d-flex mb-4 border-bottom" data-bind="if: email">
+            <div class="flex-xl-shrink-0">
+                <i class="far fa-user-circle fa-2x"></i>
             </div>
-
-            <div class="d-grid gap-2">
-                <abp-button type="submit" button-type="Primary" name="Action"
-                            value="Resolution" class="btn-block mt-3">
-                    @L["Continue"]
-                    <span class="spinner-box">
-                    </span>
-                </abp-button>
-            </div>
-        </form>
-    }
-    else if (Model.Resolution.OptionId != 1)
-    {
-        <!-- Pick an account -->
-        <div class="pick-one-account" data-bind="visible: pickVisible">
-            <div class="alert alert-info">
-                Please pick one account or use a new acount
-            </div>
-            <ul class="list-unstyled" data-bind="foreach: users">
-                <li class="d-flex mb-4 border-bottom">
-                    <div class="flex-xl-shrink-0">
-                        <i class="far fa-user-circle fa-2x"></i>
-                    </div>
-                    <div class="flex-grow-1 ms-3">
-                        <div class="d-flex flex-row justify-content-between mb-0">
-                            <a class="pick-me" style="cursor: pointer; text-decoration: none;" data-bind="attr: {'data-email': email}">
-                                <h6 data-bind="text: email" class="text-dark">
-                                </h6>
-                                <p class="text-muted">
-                                    Last login: <span data-bind="text: lastUpdated"></span>
-                                </p>
-                            </a>
-                            <a class="delete-me text-danger px-2" style="cursor:pointer;" data-bind="attr: {'data-email': email}">
-                                <i class="fas fa-trash"></i>
-                            </a>
-                        </div>
-                    </div>
-                </li>
-            </ul>
-            <ul class="list-unstyled">
-                <li class="d-flex mb-4">
-                    <div class="flex-xl-shrink-0">
-                        <i class="fas fa-plus-circle fa-2x"></i>
-                    </div>
-                    <div class="flex-grow-1 ms-3">
-                        <a class="h6 new-account pe-5" style="cursor: pointer">
-                            New account
-                        </a>
-                    </div>
-                </li>
-            </ul>
-        </div>
-
-        <form method="post" data-bind="visible: formVisible">
-
-            <div class="alert alert-info d-flex align-items-center" role="alert">
-                Please type your email address
-            </div>
-
-            <input asp-for="Input.IsUsingEmailAddress" type="hidden" value="true" autocomplete="off" />
-
-            <abp-input asp-for="Input.UserNameOrEmailAddress" auto-focus="true" type="email"
-                       label="@L["DisplayName:Email"].Value" autocomplete="email" />
-
-            <div class="d-grid gap-2">
-                <abp-button type="submit" button-type="Primary" name="Action" value="Input" class="mt-3">
-                    @L["Continue"]
-                    <span class="spinner-box">
-                    </span>
-                </abp-button>
-                <abp-button type="submit" button-type="Secondary" formnovalidate="formnovalidate"
-                            name="Action" value="Cancel" class="mt-3">
-                    @L["Back"]
-                </abp-button>
-            </div>
-        </form>
-    }
-    else
-    {
-        <div class="alert alert-info d-flex align-items-center" role="alert">
-            Please type your user name
-        </div>
-
-        <form method="post">
-            <input asp-for="Input.IsUsingEmailAddress" type="hidden" value="false" autocomplete="off" />
-
-            <abp-input asp-for="Input.UserNameOrEmailAddress" auto-focus="true"
-                       label="@L["DisplayName:UserName"].Value" autocomplete="username" />
-
-            <div class="d-grid gap-2">
-                <abp-button type="submit" button-type="Primary" name="Action" value="Input" class="mt-3">
-                    @L["Continue"]
-                    <span class="spinner-box"></span>
-                </abp-button>
-                <abp-button type="submit" button-type="Secondary" formnovalidate="formnovalidate"
-                            name="Action" value="Cancel" class="mt-3">
-                    @L["Back"]
-                </abp-button>
-            </div>
-        </form>
-    }
-}
-else
-{
-    <!-- Pick an account -->
-    <div class="pick-one-account" data-bind="visible: pickVisible">
-        <div class="alert alert-info">
-            Please pick one account or use a new acount
-        </div>
-        <ul class="list-unstyled" data-bind="foreach: users">
-            <li class="d-flex mb-4 border-bottom">
-                <div class="flex-xl-shrink-0">
-                    <i class="far fa-user-circle fa-2x"></i>
-                </div>
-                <div class="flex-grow-1 ms-3">
-                    <div class="d-flex flex-row justify-content-between mb-0">
-                        <a class="pick-me" style="cursor: pointer; text-decoration: none;" data-bind="attr: {'data-email': email}">
-                            <h6 data-bind="text: email" class="text-dark">
-                            </h6>
-                            <p class="text-muted">
-                                Last login: <span data-bind="text: lastUpdated"></span>
-                            </p>
-                        </a>
-                        <a class="delete-me text-danger px-2" style="cursor:pointer;" data-bind="attr: {'data-email': email}">
-                            <i class="fas fa-trash"></i>
-                        </a>
-                    </div>
-                </div>
-            </li>
-        </ul>
-        <ul class="list-unstyled">
-            <li class="d-flex mb-4">
-                <div class="flex-xl-shrink-0">
-                    <i class="fas fa-plus-circle fa-2x"></i>
-                </div>
-                <div class="flex-grow-1 ms-3">
-                    <a class="h6 new-account pe-5" style="cursor: pointer">
-                        New account
+            <div class="flex-grow-1 ms-3">
+                <div class="d-flex flex-row justify-content-between mb-0">
+                    <a class="pick-me" style="cursor: pointer; text-decoration: none;" data-bind="attr: {'data-email': email}">
+                        <h6 data-bind="text: email" class="text-dark">
+                        </h6>
+                        <p class="text-muted">
+                            Last login: <span data-bind="text: lastUpdated"></span>
+                        </p>
+                    </a>
+                    <a class="delete-me text-danger px-2" style="cursor:pointer;" data-bind="attr: {'data-email': email}">
+                        <i class="fas fa-trash"></i>
                     </a>
                 </div>
-            </li>
-        </ul>
-    </div>
-
-
-    <form method="post" data-bind="visible: formVisible">
-        <div class="alert alert-info d-flex align-items-center" role="alert">
-            Please type your email address
-        </div>
-        <input asp-for="Input.IsUsingEmailAddress" type="hidden" value="true" autocomplete="off" />
-
-        <abp-input asp-for="Input.UserNameOrEmailAddress" auto-focus="true" type="email"
-                   label="@L["DisplayName:Email"].Value" autocomplete="email" />
-
-        <div class="d-grid gap-2">
-            <abp-button type="submit" button-type="Primary" name="Action" value="Input" class="mt-3">
-                @L["Continue"]
-                <span class="spinner-box">
-                </span>
-            </abp-button>
-        </div>
-    </form>
-}
-
-<div class="d-flex flex-column align-items-start mt-5 mb-3">
-    <h6>@L["Page:HelpfulLinks"]</h6>
-    <ul>
-        <li>
-            <a class="btn btn-link fst-italic" href="@Url.Page("./Register")">@L["OrganizationRegister"]</a>
+            </div>
         </li>
-        <li>
-            <a class="btn btn-link fst-italic" href="@Url.Page("./MemberRegister")">@L["MemberRegister"]</a>
+        <li class="d-flex mb-4 border-bottom" data-bind="if: userName">
+            <div class="flex-xl-shrink-0">
+                <i class="far fa-user-circle fa-2x"></i>
+            </div>
+            <div class="flex-grow-1 ms-3">
+                <div class="d-flex flex-row justify-content-between mb-0">
+                    <a class="pick-me" style="cursor: pointer; text-decoration: none;" data-bind="attr: {'data-username': userName}">
+                        <h6 data-bind="text: userName" class="text-dark">
+                        </h6>
+                        <p class="text-muted">
+                            Last login: <span data-bind="text: lastUpdated"></span>
+                        </p>
+                    </a>
+                    <a class="delete-me text-danger px-2" style="cursor:pointer;" data-bind="attr: {'data-username': userName}">
+                        <i class="fas fa-trash"></i>
+                    </a>
+                </div>
+            </div>
+        </li>
+    </ul>
+    <ul class="list-unstyled">
+        <li class="d-flex mb-4">
+            <div class="flex-xl-shrink-0">
+                <i class="fas fa-plus-circle fa-2x"></i>
+            </div>
+            <div class="flex-grow-1 ms-3">
+                <a class="h6 new-account pe-5" style="cursor: pointer">
+                    New account
+                </a>
+            </div>
         </li>
     </ul>
 </div>
+
+
+<form method="post" data-bind="visible: formVisible">
+
+    <p data-bind="visible: isUsingUserName">
+        Please type your username
+    </p>
+
+    <p data-bind="visible: isUsingEmail">
+        Please type your email address
+    </p>
+
+    <div class="mb-3" data-bind="visible: isUsingUserName">
+        <label asp-for="Input.UserName" class="form-label"></label>
+        <input asp-for="Input.UserName" class="form-control" autocomplete="username" />
+        <span asp-validation-for="Input.UserName" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3" data-bind="visible: isUsingEmail">
+        <label asp-for="Input.EmailAddress" class="form-label"></label>
+        <input asp-for="Input.EmailAddress" class="form-control" autocomplete="email" type="email" />
+        <span asp-validation-for="Input.EmailAddress" class="text-danger"></span>
+    </div>
+
+    <div class="form-check mb-3">
+        <input asp-for="Input.IsUsingUserName" class="form-check-input" type="checkbox">
+        <label class="form-check-label" for="Input_IsUsingUserName">
+            Enable Username Search
+        </label>
+    </div>
+
+    <div class="d-grid gap-2">
+        <abp-button type="submit" button-type="Primary" name="Action" value="Input" class="mt-3">
+            @L["Continue"]
+            <span class="spinner-box">
+            </span>
+        </abp-button>
+    </div>
+</form>
