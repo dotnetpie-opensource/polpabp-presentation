@@ -277,6 +277,11 @@
         Let's find your account! Enter your email address and click 'Continue'.
     </p>
 
+    <p>
+        Don't have an account? 
+        No worries, <a href="@Url.Page("/Account/MemberRegister", new { AutoRedirect = true })">Sign up</a> to join your organization.
+    </p>
+
     <div class="mb-3" data-bind="visible: isUsingUserName">
         <label for="Input_UserName" class="form-label">@L["DisplayName:UserName"]<span class="text-danger ms-1">*</span></label>
         <input asp-for="Input.UserName" class="form-control" autocomplete="username" />
