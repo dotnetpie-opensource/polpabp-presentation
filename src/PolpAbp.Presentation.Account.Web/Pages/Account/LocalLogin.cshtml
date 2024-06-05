@@ -34,7 +34,7 @@
     Sign In with Password
 </h4>
 <div data-bind="visible: hasNoUserOptions" class="mb-3">
-    <a href="@Url.Page("./FindOrganization")">
+    <a href="@Url.Page("./Login")">
         <i class="fas fa-arrow-left me-1"></i>
         Back
     </a>
@@ -69,7 +69,7 @@
         <label for="Input_UserNameOrEmailAddress" class="form-label">
             <i class="fas fa-user"></i>
         </label>
-        <input asp-for="Input.UserNameOrEmailAddress" readonly class="form-control-plaintext">
+        <input asp-for="Input.UserNameOrEmailAddress" readonly class="form-control-plaintext form-control">
     </div>
 
     <div class="mb-3" id="password-wrapper">
