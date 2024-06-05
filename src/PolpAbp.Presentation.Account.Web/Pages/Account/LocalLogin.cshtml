@@ -46,13 +46,12 @@
     </div>
 }
 
-<h4 class="mb-2 fw-semibold">
-    Sign In with Password
-</h4>
-<div data-bind="visible: hasNoUserOptions" class="mb-3">
+<h1 class="mb-1 h3">
+    Enter Password
+</h1>
+<div class="mb-4">
     <a href="@Url.Page("./Login")">
-        <i class="fas fa-arrow-left me-1"></i>
-        Back
+        <i class="fas fa-chevron-left me-1"></i>Back
     </a>
 </div>
 
@@ -63,7 +62,7 @@
 
 <form method="post">
     <div class="mb-3" id="password-wrapper">
-        <label asp-for="Input.Password" class="form-label"></label>
+        <label for="Input_Password" class="form-label">@L["DisplayName:Password"]<span class="text-danger ms-1">*</span></label>
         <div class="input-group">
             <input asp-for="Input.Password" class="form-control" data-auto-focus="true" autocomplete="current-password" />
             <button type="button" class="toggle-password btn btn-outline-secondary">
