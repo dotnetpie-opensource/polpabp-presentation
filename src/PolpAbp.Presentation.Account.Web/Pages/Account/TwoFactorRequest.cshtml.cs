@@ -9,8 +9,8 @@ using Volo.Abp.Sms;
 
 namespace PolpAbp.Presentation.Account.Web.Pages.Account
 {
-    [OnlyAnonymous]
-    [TenantPrerequisite]
+    [UnauthenticatedUser]
+    [CurrentTenantRequired]
     public class TwoFactorRequestModel : LoginModelBase
     {
         [BindProperty(SupportsGet = true)]

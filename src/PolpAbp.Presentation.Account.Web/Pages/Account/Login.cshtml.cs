@@ -9,9 +9,9 @@ using Volo.Abp.Validation;
 
 namespace PolpAbp.Presentation.Account.Web.Pages.Account
 {
-    [OnlyAnonymous]
+    [CurrentTenantRequired]
+    [UnauthenticatedUser]
     [DisableAuditing]
-    [TenantPrerequisite]
     public class LoginModel : LoginModelBase
     {
         [BindProperty]

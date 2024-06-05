@@ -6,11 +6,11 @@ using Volo.Abp.MultiTenancy;
 // So we do not need additional namespace in the pages.
 namespace PolpAbp.Presentation.Account
 {
-    public class TenantNotSetAttribute : Attribute, IAuthorizationFilter
+    public class CurrentTenantEmptyAttribute : Attribute, IAuthorizationFilter
     {
         private readonly string _redirectUrl;
 
-        public TenantNotSetAttribute(string redirectUrl = "/Account/Login")
+        public CurrentTenantEmptyAttribute(string redirectUrl = "/Account/Login")
         {
             _redirectUrl= redirectUrl;
         }

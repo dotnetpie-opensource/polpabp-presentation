@@ -5,13 +5,13 @@ using Microsoft.AspNetCore.Mvc.Filters;
 // So we do not need additional namespace in the pages.
 namespace PolpAbp.Presentation.Account
 {
-    public class OnlyAnonymousAttribute : Attribute, IAuthorizationFilter
+    public class UnauthenticatedUserAttribute : Attribute, IAuthorizationFilter
     {
         private readonly string _redirectUrl;
 
         // We may use DI. However, for the performance person, 
         // we let the caller to provide the input.
-        public OnlyAnonymousAttribute(string redirectUrl = "/Account/MainApp") {
+        public UnauthenticatedUserAttribute(string redirectUrl = "/Account/MainApp") {
             _redirectUrl = redirectUrl;
         }
 
@@ -21,8 +21,8 @@ namespace PolpAbp.Presentation.Account
             {
                 if (context.HttpContext.User.Identity.IsAuthenticated)
                 {
-                    var query = context.HttpContext.Request.QueryString;
-                    context.Result = new RedirectResult(_redirectUrl + query ?? "");
+                    var originalQueryString = context.HttpContext.Request.QueryString;
+                    context.Result = new RedirectResult(_redirectUrl + originalQueryString ?? "");
                 }
             }
         }

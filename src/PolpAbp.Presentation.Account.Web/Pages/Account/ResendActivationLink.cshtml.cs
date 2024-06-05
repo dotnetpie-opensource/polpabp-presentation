@@ -8,7 +8,7 @@ using Volo.Abp.Validation;
 
 namespace PolpAbp.Presentation.Account.Web.Pages.Account
 {
-    [OnlyAnonymous]
+    [UnauthenticatedUser]
     public class ResendActivationLinkModel : LoginModelBase
     {
         [BindProperty]

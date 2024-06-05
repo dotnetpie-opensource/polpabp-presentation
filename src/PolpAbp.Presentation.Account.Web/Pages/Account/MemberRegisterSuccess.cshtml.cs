@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace PolpAbp.Presentation.Account.Web.Pages.Account
 {
-    [TenantPrerequisite]
+    [CurrentTenantRequired]
     public class MemberRegisterSuccessModel : PolpAbpAccountPageModel
     {
         public bool IsAuthenticated = false; 

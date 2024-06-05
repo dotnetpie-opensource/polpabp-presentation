@@ -10,24 +10,40 @@
 @model PolpAbp.Presentation.Account.Web.Pages.Account.LocalLoginModel
 @inject IHtmlLocalizer<AccountResource> L
 @{
-    ViewBag.Title = "Login (Username/Password)";
+    ViewBag.Title = "Sign In (Username/Password)";
     ViewBag.Description = "Log in to your account using your username and password.";
     ViewBag.Keywords = "login, sign in, account, username, email, password";
     ViewBag.ShowResetButton = true;
 
     var reActivationLink = Url.Page("./ResendActivationLink", new
     {
-        UserName = Model.Input.IsUsingUserName ? string.Empty : Model.Input.UserNameOrEmailAddress,
-        EmailAddress = Model.Input.IsUsingUserName ? Model.Input.UserNameOrEmailAddress : string.Empty
+        IsUsingUserName = Model.IsUsingUserName,
+        UserName = Model.UserName, 
+        EmailAddress = Model.EmailAddress
     });
 
     var forgotPwdLink = Url.Page("./ForgotPassword", new
     {
-        UserName = Model.Input.IsUsingUserName ? string.Empty : Model.Input.UserNameOrEmailAddress,
-        EmailAddress = Model.Input.IsUsingUserName ? Model.Input.UserNameOrEmailAddress : string.Empty,
-        returnUrl = Model.ReturnUrl,
-        returnUrlHash = Model.ReturnUrlHash
+        IsUsingUserName = Model.IsUsingUserName,
+        UserName = Model.UserName,
+        EmailAddress = Model.EmailAddress
     });
+}
+
+@if (Model.ShowActivationLink)
+{
+    <div class="alert alert-warning">
+        <p>
+            To keep things secure,
+            we need you to activate your account using the link in the welcome email we sent you. Didn't see it? No worries! We can send you a new activation email right away.
+        </p>
+        <p>
+            Click <a href="@reActivationLink">here</a> to request a new activation email.
+        </p>
+        <p>
+            Once you've activated your account, you can come back here and sign in!
+        </p>
+    </div>
 }
 
 <h4 class="mb-2 fw-semibold">
@@ -41,37 +57,11 @@
 </div>
 
 <p>
-    Welcome back!
-    Enter your password to sign in.
+    Great to see you again, <b>@(Model.IsUsingUserName ? Model.NormalizedUserName : Model.NormalizedEmailAddress)</b>.
+    Please enter your password to sign in. <a href="@forgotPwdLink">@L["ForgotPassword"]</a>
 </p>
 
-@if (Model.ShowActivationLink)
-{
-    <div class="alert alert-warning">
-        To keep things secure,
-        we need you to activate your account using the link in the welcome email we sent you. Didn't see it? No worries! We can send you a new activation email right away.
-    </div>
-
-    <p>
-        Click <a href="@reActivationLink">here</a> to request a new activation email.
-    </p>
-
-    <p>
-        Once you've activated your account, you can come back here and sign in!
-    </p>
-}
-
 <form method="post">
-
-    <input asp-for="Input.IsUsingUserName" type="hidden" autocomplete="off" />
-
-    <div class="mb-3">
-        <label for="Input_UserNameOrEmailAddress" class="form-label">
-            <i class="fas fa-user"></i>
-        </label>
-        <input asp-for="Input.UserNameOrEmailAddress" readonly class="form-control-plaintext form-control">
-    </div>
-
     <div class="mb-3" id="password-wrapper">
         <label asp-for="Input.Password" class="form-label"></label>
         <div class="input-group">
@@ -83,14 +73,9 @@
         <span asp-validation-for="Input.Password" class="text-danger"></span>
     </div>
 
-    <abp-row class="mb-3">
-        <abp-column>
-            <abp-input asp-for="Input.RememberMe" />
-        </abp-column>
-        <abp-column class="text-end">
-            <a href="@forgotPwdLink">@L["ForgotPassword"]</a>
-        </abp-column>
-    </abp-row>
+    <div class="mb-3">
+        <abp-input asp-for="Input.RememberMe" />
+    </div>
 
     @if (Model.IsRecaptchaEnabled)
     {
@@ -109,13 +94,3 @@
         </a>
     </div>
 </form>
-
-<!-- todo: Add a condition -->
-<div class="d-flex flex-column align-items-start mt-5 mb-3">
-    <h6>Helpful links</h6>
-    <ul>
-        <li>
-            <a class="btn btn-link fst-italic" href="@reActivationLink">@L["ResendActivationLink"]</a>
-        </li>
-    </ul>
-</div>

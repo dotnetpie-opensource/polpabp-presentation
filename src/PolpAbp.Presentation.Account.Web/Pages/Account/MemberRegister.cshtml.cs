@@ -3,8 +3,8 @@ using static PolpAbp.Presentation.Account.Pages.Account.PolpAbpExternalAuthPageM
 
 namespace PolpAbp.Presentation.Account.Web.Pages.Account
 {
-    [OnlyAnonymous]
-    [TenantPrerequisite]
+    [UnauthenticatedUser]
+    [CurrentTenantRequired]
     public partial class MemberRegisterModel : PolpAbpAccountPageModel
     {
         public readonly List<ExternalProviderModel> SsoProviders = new List<ExternalProviderModel>();

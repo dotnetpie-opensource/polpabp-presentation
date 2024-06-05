@@ -13,10 +13,12 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
         [BindProperty(SupportsGet = true)]
         public string? EmailAddress { get; set; }
 
+        [BindProperty(SupportsGet = true)]
+        public bool IsUsingUserName { get; set; }
+
         public string NormalizedUserName => UserName ?? string.Empty;
 
         public string NormalizedEmailAddress => EmailAddress ?? string.Empty;
-
 
         protected override async Task LoadSettingsAsync()
         {

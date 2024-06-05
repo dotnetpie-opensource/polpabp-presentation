@@ -13,14 +13,13 @@ using Volo.Abp.Validation;
 
 namespace PolpAbp.Presentation.Account.Web.Pages.Account
 {
-    [OnlyAnonymous]
-    [TenantPrerequisite]
+    [CurrentTenantRequired]
+    [UnauthenticatedUser]
+    [UserNameOrEmailRequired]
     public class LocalLoginModel : LoginModelBase
     {
         [BindProperty]
         public PostInput Input { get; set; }
-
-        public bool IsUsingUserName { get; set; }
 
         public bool ShowActivationLink { get; set; }
 
@@ -38,17 +37,6 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
         {
             // Load settings
             await LoadSettingsAsync();
-
-            if (!string.IsNullOrEmpty(NormalizedUserName))
-            {
-                Input.IsUsingUserName = true;
-                Input.UserNameOrEmailAddress = NormalizedUserName;
-            }
-            else if (!string.IsNullOrEmpty(NormalizedEmailAddress))
-            {
-                Input.UserNameOrEmailAddress = NormalizedEmailAddress;
-                Input.IsUsingUserName = false;
-            }
 
             return Page();
         }
@@ -82,13 +70,13 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 
                     IdentityUser? user = null;
 
-                    if (Input.IsUsingUserName)
+                    if (IsUsingUserName)
                     {
-                        user = await UserManager.FindByNameAsync(Input.UserNameOrEmailAddress);
+                        user = await UserManager.FindByNameAsync(NormalizedUserName);
                     }
                     else
                     {
-                        user = await UserManager.FindByEmailAsync(Input.UserNameOrEmailAddress);
+                        user = await UserManager.FindByEmailAsync(NormalizedEmailAddress);
                     }
 
                     if (user == null)
@@ -124,12 +112,15 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                         true
                         );
 
+                    // TODO. 
+
+                    /*
                     await IdentitySecurityLogManager.SaveAsync(new IdentitySecurityLogContext()
                     {
                         Identity = IdentitySecurityLogIdentityConsts.Identity,
                         Action = result.ToIdentitySecurityLogAction(),
-                        UserName = Input.UserNameOrEmailAddress
-                    });
+                        UserName = UserName
+                    }); */
 
                     if (result.RequiresTwoFactor)
                     {
@@ -219,11 +210,6 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 
         public class PostInput
         {
-            public bool IsUsingUserName { get; set; }
-
-            [Required]
-            public string? UserNameOrEmailAddress { get; set; }
-
             [Required]
             [DynamicStringLength(typeof(IdentityUserConsts), nameof(IdentityUserConsts.MaxPasswordLength))]
             [DataType(DataType.Password)]

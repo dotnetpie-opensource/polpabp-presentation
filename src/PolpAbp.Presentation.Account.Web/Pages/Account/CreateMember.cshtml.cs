@@ -14,8 +14,8 @@ using Volo.Abp.Validation;
 
 namespace PolpAbp.Presentation.Account.Web.Pages.Account
 {
-    [OnlyAnonymous]
-    [TenantPrerequisite]
+    [UnauthenticatedUser]
+    [CurrentTenantRequired]
     public class CreateMemberModel : PolpAbpAccountPageModel
     {
         [BindProperty]
