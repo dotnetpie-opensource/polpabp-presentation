@@ -14,20 +14,16 @@
     ViewBag.keywords = "join organization,successful,notification";
 }
 
-<h4 class="mb-4 fw-semibold">
+<h1 class="mb-4 h3">
     Success! You're Now Part of Your Organization
-</h4>
+</h1>
 
 <div class="alert alert-success d-flex align-items-center" role="alert">
-    <div>
-        Welcome to @Model.TenantName! You've successfully joined your organization.
-    </div>
+    Welcome to @Model.TenantName! You've successfully joined your organization.
 </div>
-
 
 @if (Model.IsAuthenticated)
 {
-
     <p>
         Your membership is now active.  We're excited to have you on board.
         Click the button below to jump right into the main application.
@@ -39,9 +35,9 @@
 }
 else
 {
-
     <p>
-        Your membership application has been submitted successfully. However, before you can jump into the application, there's one last step:
+        Your membership application has been submitted successfully. 
+        However, before you can jump into the application, there's one last step:
     </p>
     <ul>
         <li>
@@ -54,8 +50,4 @@ else
             Once you activate it, you'll be ready to log in and get started!
         </li>
     </ul>
-
-    <div class="d-grid gap-2">
-        <a abp-button="Primary" asp-page="/Account/Login">Login</a>
-    </div>
 }
