@@ -30,8 +30,8 @@
         const tenantId = '@Model.TenantId?.ToString()';
         const returnUrl = '@(Model.ReturnUrl)';
         const returnUrlHash = '@(Model.ReturnUrlHash)';
-        const initEmail = '@(Model.Input.EmailAddress?.Trim().ToLower())';
-        const initUserName = '@(Model.Input.UserName?.Trim().ToLower())';
+        const initEmail = '@(Model.Input.EmailAddress)';
+        const initUserName = '@(Model.Input.UserName)';
         const isRecaptchaVisible = @Model.IsRecaptchaEnabled.ToString().ToLower();
         Lockr.prefix = 'lockr_';
 
@@ -130,7 +130,7 @@
                 if (email) {
                     let users = Lockr.get('users');
                     if (users) {
-                        users = users.filter(a => !(a.email == email && a.tenantId == tenantId));
+                        users = users.filter(a => !(a.email.toLowerCase() == email.toLowerCase() && a.tenantId == tenantId));
                         Lockr.set('users', users);
                         refreshUserOptions(true);
                     }
@@ -139,7 +139,7 @@
                     if (userName) {
                         let users = Lockr.get('users');
                         if (users) {
-                            users = users.filter(a => !(a.userName == userName && a.tenantId == tenantId));
+                            users = users.filter(a => !(a.userName.toLowerCase() == userName.toLowerCase() && a.tenantId == tenantId));
                             Lockr.set('users', users);
                             refreshUserOptions(true);
                         }

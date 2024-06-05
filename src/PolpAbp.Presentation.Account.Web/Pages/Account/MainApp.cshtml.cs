@@ -39,10 +39,12 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
             var userInfo = await UserManager.GetUserAsync(User);
 
             // todo: Use automapper?
-            UserAccountInfo.Organization = CurrentTenant.Name;
+            UserAccountInfo.TenantId = userInfo.TenantId;
+            UserAccountInfo.TenantName = CurrentTenant.Name;
             UserAccountInfo.Name = userInfo.Name;
             UserAccountInfo.Surname = userInfo.Surname;
             UserAccountInfo.Email = userInfo.Email;
+            UserAccountInfo.UserName = userInfo.UserName;
         }
 
         public class UserAccountOutputDto
@@ -50,8 +52,10 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
             public string? Name { get; set; }
             public string? Surname { get; set; }
             public string? Email { get; set; }
+            public string? UserName { get; set; }
+            public Guid? TenantId { get; set; }    
 
-            public string? Organization { get; set; }
+            public string? TenantName { get; set; }
 
             public string FullName => UtitlityExtensions.ComposeFullName(Name, Surname);
 
