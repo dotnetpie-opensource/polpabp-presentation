@@ -13,7 +13,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 {
     [OnlyAnonymous]
     [DisableAuditing]
-    public class SelectOrganizationModel : PolpAbpAccountPageModel
+    public class FindOrganizationModel : PolpAbpAccountPageModel
     {
 
         [BindProperty(SupportsGet = true)]
@@ -37,7 +37,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 
         public string NormalizedTenantName => TenantName ?? string.Empty;
 
-        public SelectOrganizationModel(
+        public FindOrganizationModel(
             ITenantRepository tenantRepository,
             IReCaptchaService reCaptchaService,
             IAppCookieManager cookieManager) : base()
