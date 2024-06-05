@@ -23,14 +23,14 @@
     var includeNumberLabel = hasCreateMemberMethod && hasSsoMethod;
 }
 
-<h4 class="mb-2 fw-semibold">
+<h1 class="mb-1 h3">
     Join Your Organization
-</h4>
-<a class="d-block mb-4" href="@Url.Page("./FindOrganization")">
-    <i class="fas fa-arrow-left"></i>
-    Back
-</a>
-
+</h1>
+<div class="mb-4">
+    <a href="@Url.Page("./FindOrganization")">
+        <i class="fas fa-chevron-left"></i>Back
+    </a>
+</div>
 
 @if (hasCreateMemberMethod && hasSsoMethod)
 {
@@ -52,18 +52,19 @@ else if (hasSsoMethod)
 }
 else
 {
-    <div class="alert alert-info" role="alert">    
+    <div class="alert alert-info" role="alert">
         We apologize, but membership sign-up for this organization is currently unavailable. This might be due to:
         <ul>
             <li>Planned Maintenance</li>: Our team may be performing routine maintenance to ensure optimal performance.
             <li>Limited Membership</li>: The organization may have restricted membership at this time.
         </ul>
     </div>
-    <h5>
+    <h2 class="h5">
         What can you do?
-    </h5>
+    </h2>
     <ul>
-        <li>Contact the Organization: For inquiries about membership availability or to express your interest, please reach out to the organization's administrator directly. 
+        <li>
+            Contact the Organization: For inquiries about membership availability or to express your interest, please reach out to the organization's administrator directly.
             You can find their contact information on the organization's website or within the invitation you received(if applicable).
         </li>
     </ul>
@@ -72,20 +73,26 @@ else
     </p>
 }
 
+<p>
+    Already have an account? <a class="btn btn-link" href="@Url.Page("/Account/Login")">Sign in</a>
+</p>
+
 @if (hasCreateMemberMethod)
 {
     <div class="mb-3">
-    <h5>
-        @if (includeNumberLabel)
-        {
-            <span class="me-1">1.</span>
-        }
-        Create Your Member Account
-    </h5>
-    <h6 class="text-body-secondary">
-        This method creates a new member profile within your organization.
-    </h6>
-    <a abp-button="Primary" asp-page="/Account/CreateMember">Start to Create Member Account</a>
+        <h2 class="h5">
+            @if (includeNumberLabel)
+            {
+                <span class="me-1">1.</span>
+            }
+            Create Your Member Account
+        </h2>
+        <p class="text-body-secondary">
+            This method creates a new member profile within your organization.
+        </p>
+        <div class="d-grid gap-2">
+            <a abp-button="Primary" asp-page="/Account/CreateMember">Start to Create Member Account</a>
+        </div>
     </div>
 }
 
@@ -94,17 +101,14 @@ else
 @if (hasSsoMethod)
 {
     <div class="mb-3">
-        <h5>
+        <h2 class="h5">
             @if (includeNumberLabel)
             {
                 <span class="me-1">2.</span>
             }
             Join with Single Sign-On (SSO)
-        </h5>
-        <h6 class="text-body-secondary">
-            Already have a single sign-on account configured by your organization? Use it to join your organization in seconds!
-        </h6>
-        <p>
+        </h2>
+        <p class="text-body-secondary">
             Leverage your existing SSO account to join your organization in seconds.
             No separate password needed – a secure and convenient way to become a member.
         </p>
@@ -120,11 +124,3 @@ else
         </div>
     </div>
 }
-
-<div class="mt-4 p-3 text-secondary">
-    <h5>Already have an account?</h5>
-    <p>Sign in using your preferred method below:</p>
-    <div class="d-flex flex-column align-items-start">
-        <a class="btn btn-link" href="@Url.Page("/Account/Login")">Sign in (Username/Password)</a>
-    </div>
-</div>
