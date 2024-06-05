@@ -90,11 +90,11 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 
                     if (Input.IsUsingUserName)
                     {
-                        user = await UserManager.FindByEmailAsync(Input.EmailAddress);
+                        user = await UserManager.FindByNameAsync(Input.UserName);
                     }
                     else
                     {
-                        user = await UserManager.FindByNameAsync(Input.UserName);
+                        user = await UserManager.FindByEmailAsync(Input.EmailAddress);
                     }
 
                     if (user != null)

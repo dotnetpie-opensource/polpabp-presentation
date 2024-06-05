@@ -17,49 +17,60 @@
 
     var reActivationLink = Url.Page("./ResendActivationLink", new
     {
-        UserName = Model.Input.IsUsingEmailAddress ? string.Empty : Model.Input.UserNameOrEmailAddress,
-        EmailAddress = Model.Input.IsUsingEmailAddress ? Model.Input.UserNameOrEmailAddress : string.Empty
+        UserName = Model.Input.IsUsingUserName ? string.Empty : Model.Input.UserNameOrEmailAddress,
+        EmailAddress = Model.Input.IsUsingUserName ? Model.Input.UserNameOrEmailAddress : string.Empty
     });
 
     var forgotPwdLink = Url.Page("./ForgotPassword", new
     {
-        UserName = Model.Input.IsUsingEmailAddress ? string.Empty : Model.Input.UserNameOrEmailAddress,
-        EmailAddress = Model.Input.IsUsingEmailAddress ? Model.Input.UserNameOrEmailAddress : string.Empty,
+        UserName = Model.Input.IsUsingUserName ? string.Empty : Model.Input.UserNameOrEmailAddress,
+        EmailAddress = Model.Input.IsUsingUserName ? Model.Input.UserNameOrEmailAddress : string.Empty,
         returnUrl = Model.ReturnUrl,
         returnUrlHash = Model.ReturnUrlHash
     });
 }
 
-<h4 class="mb-4 fw-semibold">
-    Login
+<h4 class="mb-2 fw-semibold">
+    Sign In with Password
 </h4>
-
-<div class="alert alert-info d-flex align-items-center" role="alert">
-    <div>
-        Please type your password to continue
-    </div>
+<div data-bind="visible: hasNoUserOptions" class="mb-3">
+    <a href="@Url.Page("./FindOrganization")">
+        <i class="fas fa-arrow-left me-1"></i>
+        Back
+    </a>
 </div>
+
+<p>
+    Welcome back!
+    Enter your password to sign in.
+</p>
+
+@if (Model.ShowActivationLink)
+{
+    <div class="alert alert-warning">
+        To keep things secure,
+        we need you to activate your account using the link in the welcome email we sent you. Didn't see it? No worries! We can send you a new activation email right away.
+    </div>
+
+    <p>
+        Click <a href="@reActivationLink">here</a> to request a new activation email.
+    </p>
+
+    <p>
+        Once you've activated your account, you can come back here and sign in!
+    </p>
+}
 
 <form method="post">
 
-    <input asp-for="Input.IsUsingEmailAddress" type="hidden" autocomplete="off" />
+    <input asp-for="Input.IsUsingUserName" type="hidden" autocomplete="off" />
 
-    @if (Model.Input.IsUsingEmailAddress)
-    {
-        <div class="mb-3">
-            <label class="form-label">@L["DisplayName:EmailAddress"] <span class="text-danger ms-1">*</span> </label>
-            <input asp-for="Input.UserNameOrEmailAddress" class="form-control" autocomplete="email" type="email">
-            <span asp-validation-for="Input.UserNameOrEmailAddress" class="text-danger"></span>
-        </div>
-    }
-    else
-    {
-        <div class="mb-3">
-            <label class="form-label">@L["DisplayName:UserName"] <span class="text-danger ms-1">*</span></label>
-            <input asp-for="Input.UserNameOrEmailAddress" class="form-control" autocomplete="username">
-            <span asp-validation-for="Input.UserNameOrEmailAddress" class="text-danger"></span>
-        </div>
-    }
+    <div class="mb-3">
+        <label for="Input_UserNameOrEmailAddress" class="form-label">
+            <i class="fas fa-user"></i>
+        </label>
+        <input asp-for="Input.UserNameOrEmailAddress" readonly class="form-control-plaintext">
+    </div>
 
     <div class="mb-3" id="password-wrapper">
         <label asp-for="Input.Password" class="form-label"></label>
@@ -71,7 +82,6 @@
         </div>
         <span asp-validation-for="Input.Password" class="text-danger"></span>
     </div>
-
 
     <abp-row class="mb-3">
         <abp-column>
@@ -94,9 +104,9 @@
             @L["Continue"]
             <span class="spinner-box"></span>
         </abp-button>
-        <abp-button type="submit" button-type="Secondary" formnovalidate="formnovalidate" name="Action" value="Cancel">
-            @L["Back"]
-        </abp-button>
+        <a abp-button="Secondary" asp-page="/Account/Login">
+            Cancel
+        </a>
     </div>
 </form>
 

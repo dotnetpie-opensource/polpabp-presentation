@@ -20,13 +20,15 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
         [BindProperty]
         public PostInput Input { get; set; }
 
+        public bool IsUsingUserName { get; set; }
+
+        public bool ShowActivationLink { get; set; }
+
         protected MemberRegistrationEnum RegistrationApprovalType = MemberRegistrationEnum.RequireEmailActivation;
-        protected readonly IAppCookieManager CookieManager;
         protected readonly IReCaptchaService RecaptchaService;
 
-        public LocalLoginModel(IAppCookieManager cookieManager, IReCaptchaService recaptchaService) : base()
+        public LocalLoginModel(IReCaptchaService recaptchaService) : base()
         {
-            CookieManager = cookieManager;
 
             Input = new PostInput();
             RecaptchaService = recaptchaService;    
@@ -39,12 +41,13 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 
             if (!string.IsNullOrEmpty(NormalizedUserName))
             {
+                Input.IsUsingUserName = true;
                 Input.UserNameOrEmailAddress = NormalizedUserName;
             }
             else if (!string.IsNullOrEmpty(NormalizedEmailAddress))
             {
                 Input.UserNameOrEmailAddress = NormalizedEmailAddress;
-                Input.IsUsingEmailAddress = true;
+                Input.IsUsingUserName = false;
             }
 
             return Page();
@@ -79,13 +82,13 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 
                     IdentityUser? user = null;
 
-                    if (Input.IsUsingEmailAddress)
+                    if (Input.IsUsingUserName)
                     {
-                        user = await UserManager.FindByEmailAsync(Input.UserNameOrEmailAddress);
+                        user = await UserManager.FindByNameAsync(Input.UserNameOrEmailAddress);
                     }
                     else
                     {
-                        user = await UserManager.FindByNameAsync(Input.UserNameOrEmailAddress);
+                        user = await UserManager.FindByEmailAsync(Input.UserNameOrEmailAddress);
                     }
 
                     if (user == null)
@@ -93,8 +96,6 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                         Alerts.Danger(L["InvalidUserNameOrPassword"]);
                         return RedirectToPage("./Login", new
                         {
-                            UserName = UserName,
-                            EmailAddress = EmailAddress,
                             returnUrl = ReturnUrl,
                             returnUrlHash = ReturnUrlHash
                         });
@@ -105,7 +106,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                     {
                         if (RegistrationApprovalType == MemberRegistrationEnum.RequireEmailActivation)
                         {
-                            Alerts.Warning(L["Login:EmailConfirmationRequired"]);
+                            ShowActivationLink = true;
                             return Page();
                         }
                         else if (RegistrationApprovalType == MemberRegistrationEnum.RequireAdminApprovel)
@@ -185,7 +186,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                     // Handle this error.
                     foreach (var a in ex.ValidationErrors)
                     {
-                        Alerts.Add(Volo.Abp.AspNetCore.Mvc.UI.Alerts.AlertType.Danger, a.ErrorMessage);
+                        Alerts.Danger(a.ErrorMessage);
                     }
                 }
             }
@@ -194,24 +195,8 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                 // Need to reload the page.
                 return RedirectToPage("./Login", new
                 {
-                    UserName = UserName,
-                    EmailAddress = EmailAddress,
                     ReturnUrl = ReturnUrl,
                     ReturnUrlHash = ReturnUrlHash
-                });
-            }
-            else if (action == "ResetTenant")
-            {
-                // Remove tenant cookies
-                CookieManager.SetTenantCookieValue(Response, string.Empty);
-
-                // Need to reload the page.
-                return RedirectToPage("./Login", new
-                {
-                    UserName = UserName,
-                    EmailAddress = EmailAddress,
-                    returnUrl = ReturnUrl,
-                    returnUrlHash = ReturnUrlHash
                 });
             }
 
@@ -234,10 +219,9 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 
         public class PostInput
         {
-            public bool IsUsingEmailAddress { get; set; }
+            public bool IsUsingUserName { get; set; }
 
             [Required]
-            [DynamicStringLength(typeof(IdentityUserConsts), nameof(IdentityUserConsts.MaxEmailLength))]
             public string? UserNameOrEmailAddress { get; set; }
 
             [Required]
