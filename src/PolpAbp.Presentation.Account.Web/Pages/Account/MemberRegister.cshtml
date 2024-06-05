@@ -17,8 +17,8 @@
     ViewBag.Keywords = "join organization";
     ViewBag.ShowResetButton = true;
 
-    var hasCreateMemberMethod = !Model.IsExternalAuthEnforced;
-    var hasSsoMethod = Model.SsoProviders.Count > 0;
+    var hasCreateMemberMethod = Model.IsRegistrationEnabled && !Model.IsExternalAuthEnforced;
+    var hasSsoMethod = Model.IsRegistrationEnabled && (Model.SsoProviders.Count > 0);
 
     var includeNumberLabel = hasCreateMemberMethod && hasSsoMethod;
 }

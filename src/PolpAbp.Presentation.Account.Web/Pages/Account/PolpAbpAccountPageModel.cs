@@ -35,6 +35,8 @@ public abstract class PolpAbpAccountPageModel : AbpPageModel
 
     public PasswordComplexitySetting PwdComplexity { get; private set; }
 
+    // Tenant-specific registration flag
+    public bool IsRegistrationEnabled = false;
     public bool IsExternalAuthEnabled = false;
     protected string[] AllowedProviderName = new string[0] { };
     public bool IsExternalAuthEnforced = false;
@@ -85,6 +87,11 @@ public abstract class PolpAbpAccountPageModel : AbpPageModel
     protected virtual Task LoadSettingsAsync()
     {
         return Task.CompletedTask;
+    }
+
+    protected virtual async Task LoadRegistrationSettingsAsync()
+    {
+        IsRegistrationEnabled = await SettingProvider.GetAsync<bool>(FrameworkSettings.Account.IsTenantRegistrationEnabled);
     }
 
     protected async Task ReadInExternalAuthProviderSettingsAsync()
