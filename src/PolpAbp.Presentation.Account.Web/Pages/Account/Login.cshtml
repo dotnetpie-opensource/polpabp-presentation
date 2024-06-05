@@ -105,7 +105,7 @@
             viewModel.isUsingUserName(false);
             setTimeout(() => {
                 if (email) {
-                    $('#Input_EmailAddress').val(username);
+                    $('#Input_EmailAddress').val(email);
                 } else {
                     const a = $('#Input_EmailAddress').val();
                     if (a == '__dummy@dummy.net') {
@@ -194,16 +194,16 @@
     </script>
 }
 
-<h4 class="mb-2 fw-semibold">Login</h4>
-<div data-bind="visible: hasUserOptions">
-    <a class="mb-4 go-back" style="cursor:pointer;">
-        <i class="fa fa-arrow-left"></i>
+<h4 class="mb-2">Login</h4>
+<div data-bind="visible: hasUserOptions" class="mb-3">
+    <a class="go-back" style="cursor:pointer;">
+        <i class="fa fa-arrow-left me-1"></i>
         Back
     </a>
 </div>
-<div data-bind="visible: hasNoUserOptions">
-    <a class="mb-4" href="@Url.Page("./FindOrganization")">
-        <i class="fas fa-arrow-left"></i>
+<div data-bind="visible: hasNoUserOptions" class="mb-3">
+    <a href="@Url.Page("./FindOrganization")">
+        <i class="fas fa-arrow-left me-1"></i>
         Back
     </a>
 </div>
@@ -211,7 +211,8 @@
 <!-- Pick an account -->
 <div class="pick-one-account" data-bind="visible: optionsVisible">
     <p>
-        Please select one account or use a new acount
+        Welcome back!
+        We've found your most recently used accounts. Click your account to sign in, or click "Use a differnt account" to sign in with a different account.
     </p>
     <ul class="list-unstyled" data-bind="foreach: users">
         <li class="d-flex mb-4 border-bottom" data-bind="if: email">
@@ -260,7 +261,7 @@
             </div>
             <div class="flex-grow-1 ms-3">
                 <a class="h6 new-account pe-5" style="cursor: pointer">
-                    New account
+                    Use a differnt account
                 </a>
             </div>
         </li>
@@ -271,30 +272,33 @@
 <form method="post" data-bind="visible: formVisible">
 
     <p data-bind="visible: isUsingUserName">
-        Please type your username
+        Let's find your account! Enter your username and click 'Continue'.
     </p>
 
     <p data-bind="visible: isUsingEmail">
-        Please type your email address
+        Let's find your account! Enter your email address and click 'Continue'.
     </p>
 
     <div class="mb-3" data-bind="visible: isUsingUserName">
-        <label asp-for="Input.UserName" class="form-label"></label>
+        <label for="Input_UserName" class="form-label">@L["DisplayName:UserName"]<span class="text-danger ms-1">*</span></label>
         <input asp-for="Input.UserName" class="form-control" autocomplete="username" />
         <span asp-validation-for="Input.UserName" class="text-danger"></span>
     </div>
 
     <div class="mb-3" data-bind="visible: isUsingEmail">
-        <label asp-for="Input.EmailAddress" class="form-label"></label>
+        <label for="Input_EmailAddress" class="form-label">@L["DisplayName:EmailAddress"]<span class="text-danger ms-1">*</span></label>
         <input asp-for="Input.EmailAddress" class="form-control" autocomplete="email" type="email" />
         <span asp-validation-for="Input.EmailAddress" class="text-danger"></span>
     </div>
 
     <div class="form-check mb-3">
-        <input asp-for="Input.IsUsingUserName" class="form-check-input" type="checkbox">
+        <input asp-for="Input.IsUsingUserName" class="form-check-input" type="checkbox" aria-describedby="IsUsingUserNameHelp">
         <label class="form-check-label" for="Input_IsUsingUserName">
-            Enable Username Search
+            Enable Username Lookup
         </label>
+        <div id="IsUsingUserNameHelp" class="form-text">                
+            Switch to search by Username (otherwise, search by email).
+        </div>
     </div>
 
     <div class="d-grid gap-2">
