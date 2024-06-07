@@ -1,4 +1,4 @@
-﻿@page
+﻿@page "/account/authorization-success"
 @using Microsoft.AspNetCore.Mvc.Localization
 @using Microsoft.Extensions.Localization
 @using Volo.Abp.Account.Localization
@@ -33,17 +33,15 @@
         function logoutUser() {
             try {
                 $.ajax({
-                    url: "/account/logout",
+                    url: "/account/sign-out",
                     type: 'POST',
                     success: function (response) {
                         // Handle successful logout response here
                         // This could be a message or redirecting to login page
-                        console.log("Successfully logged out!");
                         postCordovaMessage();
                     },
                     error: function (jqXHR, textStatus, errorThrown) {
                         // Handle errors during logout
-                        console.error("Error logging out!", textStatus, errorThrown);
                         postCordovaMessage();
                     }                   
                 });
@@ -56,26 +54,17 @@
 
 }
 
-<h4 class="mb-4 fw-semibold">
-    Authorization Successful
-</h4>
+<h1 class="mb-1 fs-3">
+    Authorization Successful!
+</h1>
 
-<p>
-    You are now logged in and can access the system. Please close this page to continue!
-</p>
+<div class="alert alert-success">
+    Authorization complete! You can now close this window and return to the app to finish signing in.
+</div>
 
 @if (Model.IsCordovaEnabled)
 {
     <div class="d-grid gap-2">
-        <a abp-button="Primary" onclick="logoutUser()">Close</a>
+        <a abp-button="Primary" onclick="logoutUser()">Close Window</a>
     </div>
 }
-
-<div class="d-flex flex-column align-items-start mt-5 mb-3">
-    <h6>@L["Page:HelpfulLinks"]</h6>
-    <ul>
-        <li>
-            <a class="btn btn-link fst-italic" href="@Url.Page("./Logout")">@L["Logout"]</a>
-        </li>
-    </ul>
-</div>

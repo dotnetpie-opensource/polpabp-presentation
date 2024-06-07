@@ -119,11 +119,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
             }
 
             //TODO: Try to automatically login!
-            return RedirectToPage("./ResetPasswordSuccess", new
-            {
-                returnUrl = ReturnUrl,
-                returnUrlHash = ReturnUrlHash
-            });
+            return RedirectToPage("./ResetPasswordSuccess");
         }
 
         protected override void ValidateModel()

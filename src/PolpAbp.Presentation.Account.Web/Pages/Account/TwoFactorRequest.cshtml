@@ -1,4 +1,4 @@
-﻿@page
+﻿@page "/account/get-2fa"
 @using Microsoft.AspNetCore.Mvc.Localization
 @using Microsoft.Extensions.Localization
 @using Volo.Abp.Account.Localization
@@ -14,12 +14,14 @@
     ViewBag.Keywords = "request two factor authentication code,2fa code,security,authentication";
 }
 
-<h4 class="mb-4 fw-semibold">
-    Request Two Factor Authentication Code
-</h4>
+<h1 class="mb-4 fs-3">
+    Get Your Two-Factor Code
+</h1>
 
 <p>
-    Did you get a code? Please click one of the following to get a code.
+    To ensure your account security,
+    a two-factor code is required to proceed. 
+    Please choose your preferred method for receiving the code.
 </p>
 
 <form method="post" data-ajax="true" data-ajax-method="post" data-ajax-complete="completed">
@@ -34,13 +36,3 @@
         }
     </div>
 </form>
-
-<!-- todo: Add a condition -->
-<div class="d-flex flex-column align-items-start mt-5 mb-3">
-    <h6>Helpful links</h6>
-    <ul>
-        <li>
-            <a class="btn btn-link fst-italic" href="@Url.Page("./Login")">Login</a>
-        </li>
-    </ul>
-</div>

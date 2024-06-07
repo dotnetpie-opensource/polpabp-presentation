@@ -1,4 +1,4 @@
-﻿@page
+﻿@page "/account/verify-2fa"
 @using Microsoft.AspNetCore.Mvc.Localization
 @using Microsoft.Extensions.Localization
 @using Volo.Abp.Account.Localization
@@ -14,18 +14,23 @@
     ViewBag.Keywords = "two factor authentication code";
 }
 
-<h4 class="mb-4 fw-semibold">
-    Enter Two Factor Authentication Code
-</h4>
+<h1 class="mb-4 fs-3">
+    Enter Two-Factor Code
+</h1>
 
-<div class="alert alert-info">
-    Please type the code you just received.
-</div>
+<p>
+    We've sent a two-factor code to your chosen method.
+    Please enter the code in the field below to complete the verification process.
+</p>
+<p>
+    Haven't received the code?            
+    <a href="@Url.Page("./TwoFactorRequest")">Request a new code</a>
+</p>
 
 <form method="post">
 
     <div class="mb-3" id="password-wrapper">
-        <label asp-for="Input.Code" class="form-label"></label>
+        <label asp-for="Input.Code" class="form-label"></label><span>*</span>
         <div class="input-group">
             <input asp-for="Input.Code" class="form-control" data-auto-focus="true" type="number" autocomplete="off" />
             <button type="button" class="toggle-password btn btn-outline-secondary">
@@ -40,19 +45,9 @@
     <!--todo Fix this-->
     <abp-input asp-for="Input.IsRecoveryCode" type="hidden" />
     <div class="d-grid gap-2">
-        <abp-button type="submit" button-type="Primary" name="Action" value="Input" class="mt-3">
-            @L["Submit"]
+        <abp-button type="submit" button-type="Primary" name="Action" value="Input">
+                Submit Code
             <span class="spinner-box"></span>
         </abp-button>
     </div>
 </form>
-
-<!-- todo: Add a condition -->
-<div class="d-flex flex-column align-items-start mt-5 mb-3">
-    <h6>Helpful links</h6>
-    <ul>
-        <li>
-            <a class="btn btn-link fst-italic" href="@Url.Page("./TwoFactorRequest")">Request two factor code</a>
-        </li>
-    </ul>
-</div>

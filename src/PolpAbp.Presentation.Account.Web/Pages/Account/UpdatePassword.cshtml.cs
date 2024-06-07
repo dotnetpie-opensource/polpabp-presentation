@@ -61,7 +61,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                         UserId = userInfo.Id
                     });
 
-                    Alerts.Info("Your password has been updated successfully.");
+                    Alerts.Success("Your password has been updated successfully.");
 
                     var mainPage = Configuration["PolpAbp:Account:MainEntry"];
                     // Following the same logic from the local login.
