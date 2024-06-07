@@ -190,6 +190,9 @@
             setInterval(() => {
                 refreshUserOptions(undefined);
             }, 60 * 1000);
+
+            // Remove the spinner 
+            $('#globalSpinner').remove();
         });
     </script>
 }
@@ -314,4 +317,10 @@
             </abp-button>
         </div>
     </form>
+</div>
+
+<div id="globalSpinner" class="modal-spinner position-absolute top-0 w-100 h-100 bg-light bg-opacity-75 text-center">
+    <div class="spinner-border position-relative top-50" role="status">
+        <span class="visually-hidden">Loading ...</span>
+    </div>
 </div>
