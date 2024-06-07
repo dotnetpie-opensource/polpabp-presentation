@@ -62,7 +62,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 
                         if (user.EmailConfirmed && user.IsActive)
                         {
-                            State = ActivationState.Already;
+                            return RedirectToPage("/Account/EmailActivationSuccess");
                         }
                         else
                         {
@@ -92,10 +92,14 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                                     UserId = user.Id,
                                     TenantId = tenant.Id
                                 });
+
+                                return RedirectToPage("/Account/EmailActivationSuccess");
+
                             }
                             else if (confirmRet.Errors.Any(a => a.Code.ToLower().Contains("invalidtoken")))
                             {
                                 State = ActivationState.InvalidToken;
+
                             }
                             else
                             {
@@ -106,7 +110,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                 }
             }
 
-            return Page();
+            return RedirectToPage("/Account/EmailActivationError");
         }
 
         public enum ActivationState

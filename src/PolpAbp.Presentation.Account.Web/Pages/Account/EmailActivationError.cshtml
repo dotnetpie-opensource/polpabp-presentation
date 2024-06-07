@@ -1,0 +1,28 @@
+﻿@page "/account/activate/error"
+@model PolpAbp.Presentation.Account.Web.Pages.Account.EmailActivationErrorModel
+@{
+    ViewBag.ShowAppTitle = true;
+    ViewBag.HideTenancyView = true;
+}
+
+<h1 class="mb-4 fs-3">
+    Uh oh! Looks like there was a problem.
+</h1>
+
+<div class="alert alert-danger">
+    We encountered an issue activating your account. It's possible the activation link in your email has expired.
+</div>
+
+<p>
+    Don't worry! You can easily request a new activation link by clicking the button below.
+</p>
+
+<div class="d-grid gap-2">
+    <a abp-button="Primary" asp-page="/Account/ResendActivationLink">
+        Get New Activation Email
+    </a>
+</div>
+
+<p>
+    If you believe you entered the correct information, but are still having trouble, please Contact us and we'll be happy to help.
+</p>

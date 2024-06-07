@@ -1,0 +1,27 @@
+﻿@page "/account/activate/success"
+@using Volo.Abp.Ui.Branding
+@model PolpAbp.Presentation.Account.Web.Pages.Account.EmailActivationSuccessModel
+@inject IBrandingProvider BrandingProvider
+@{
+    ViewBag.ShowAppTitle = true;
+    ViewBag.HideTenancyView = true;
+}
+
+<h1 class="mb-4 fs-3">
+    Your Account is Activated!
+</h1>
+
+<div class="alert alert-success">
+    Great news!
+    Your account has been successfully activated. You can now log in to @BrandingProvider.AppName and start exploring all the features we have to offer.
+</div>
+
+<p>
+    Click the button below to head straight to the login page.
+</p>
+
+<div class="d-grid gap-2">
+    <a abp-button="Primary" asp-page="/Account/Login">
+        Sign In
+    </a>
+</div>

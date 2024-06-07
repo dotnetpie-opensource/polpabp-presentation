@@ -1,4 +1,4 @@
-﻿@page
+﻿@page "/account/activate"
 @using Microsoft.AspNetCore.Mvc.Localization
 @using Microsoft.Extensions.Localization
 @using Volo.Abp.Account.Localization
@@ -18,58 +18,3 @@
         EmailAddress = Model.EmailAddress ?? string.Empty
     });
 }
-
-<h4 class="mb-4 fw-semibold">
-    @L["EmailActivation"]
-</h4>
-@if (Model.State == EmailActivationModel.ActivationState.Success)
-{
-
-    <h5>Your account is ready.</h5>
-
-    <p>Please review your account information bewlow and use the button below to login.</p>
-
-    <dl class="row">
-        <dt class="col-sm-3">
-            Email
-        </dt>
-        <dd class="col-sm-9">
-            @Model.MaskedEmailAddress
-        </dd>
-
-        <dt class="col-sm-3">
-            Tenant
-        </dt>
-        <dd class="col-sm-9">
-            @Model.TenantName
-        </dd>
-    </dl>
-}
-else if (Model.State == EmailActivationModel.ActivationState.Already)
-{
-
-    <h5>Your account is ready.</h5>
-
-    <p>Please follow the button below to login.</p>
-}
-else if (Model.State == EmailActivationModel.ActivationState.InvalidToken)
-{
-    <div class="alert alert-danger" role="alert">
-        <h4>Oops! Something went wrong.</h4>
-        <p>The link you used is invalid or expired.</p>
-        <p>Please click the button below to request a new link.</p>
-        <a class="btn btn-link" href="@reActivationLink">@L["ResendActivationLink"]</a>
-    </div>
-}
-else
-{
-    <div class="alert alert-danger d-flex align-items-center" role="alert">
-        Something went wrong. Please contact your organization if this error persists.
-    </div>
-}
-
-<a abp-button="Primary" asp-page="./Login"
-   asp-all-route-data="@(new Dictionary<string, string> {{"returnUrl", Model.ReturnUrl ?? string.Empty}, {"returnUrlHash", Model.ReturnUrlHash ?? string.Empty}})">
-    &larr; @L["BackToLogin"]
-</a>
-
