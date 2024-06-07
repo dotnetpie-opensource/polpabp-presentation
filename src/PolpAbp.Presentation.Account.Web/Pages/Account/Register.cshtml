@@ -6,7 +6,9 @@
 @using Volo.Abp.AspNetCore.Mvc.UI.MultiTenancy.Localization
 @using Volo.Abp.Settings
 @using AspNetCore.ReCaptcha
+@using Volo.Abp.Ui.Branding
 @model PolpAbp.Presentation.Account.Web.Pages.Account.RegisterModel
+@inject IBrandingProvider BrandingProvider
 @inject IHtmlLocalizer<AccountResource> L
 @{
     ViewBag.Title = "Organization Registration";
@@ -21,7 +23,7 @@
 </h1>
 
 <p>
-    Unlock the Power of FormLang in 3 Easy Steps!
+    Unlock the Power of @BrandingProvider.AppName in 3 Easy Steps!
 </p>
 
 <div class="progress mb-3">

@@ -6,13 +6,17 @@
 @using Volo.Abp.AspNetCore.Mvc.UI.MultiTenancy.Localization
 @using Volo.Abp.Settings
 @using AspNetCore.ReCaptcha
+@using Volo.Abp.Ui.Branding
 @model PolpAbp.Presentation.Account.Web.Pages.Account.RegisterConfirmModel
+@inject IBrandingProvider BrandingProvider
 @inject IHtmlLocalizer<AccountResource> L
 
 @{
     ViewBag.Title = "Organization Registration - Review Information and Confirm";
     ViewBag.Description = "Review the information you have entered to register your organization and confirm to create your account.";
     ViewBag.Keywords = "organization registration,review information,confirm,create account";
+    ViewBag.HideTenancyView = true;
+    ViewBag.ShowAppTitle = true;
 }
 
 <h1 class="mb-1 fs-3">
@@ -34,7 +38,7 @@
 </h2>
 
 <p>
-    One last step! Review your information and click 'Create Organization' to unlock the full potential of FormLang.
+    One last step! Review your information and click 'Create Organization' to unlock the full potential of @BrandingProvider.AppName.
 </p>
 
 <form method="post" class="py-3" spellcheck="false">

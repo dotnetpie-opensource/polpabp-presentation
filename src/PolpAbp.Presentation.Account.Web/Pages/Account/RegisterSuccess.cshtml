@@ -13,16 +13,18 @@
     ViewBag.Title = "Organization Registration Successful";
     ViewBag.Description = "Congratulations! Your organization registration has been successful.";
     ViewBag.Keywords = "organization registration,successful,notification";
+    ViewBag.HideTenancyView = true;
+    ViewBag.ShowAppTitle = true;
 }
 
-<h4 class="mb-4 fw-semibold">
-    Organization Registration Successful
-</h4>
+<h1 class="mb-4 fs-3">
+    Welcome
+</h1>
 
-<form method="post">
+<div class="alert alert-success">
+    Congratulations! You've successfully created your organization account. We're thrilled to have you on board.
+</div>
 
-    <p>Congratulations! Your organization registration has been successful. Next please check your email box to activate your organization account.</p>
-
-    <a abp-button="Primary" asp-page="./Login">&larr; @L["BackToLogin"]</a>
-
-</form>
+<p>
+    To activate your account and unlock all the features of FormLang, we've sent a confirmation email to you. Please check your inbox (and maybe even your spam folder) and click on the activation link to complete your registration.
+</p>
