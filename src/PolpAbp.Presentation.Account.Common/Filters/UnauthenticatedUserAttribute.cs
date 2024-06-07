@@ -11,7 +11,7 @@ namespace PolpAbp.Presentation.Account
 
         // We may use DI. However, for the performance person, 
         // we let the caller to provide the input.
-        public UnauthenticatedUserAttribute(string redirectUrl = "/Account/MainApp") {
+        public UnauthenticatedUserAttribute(string redirectUrl = "/auth/redirect") {
             _redirectUrl = redirectUrl;
         }
 

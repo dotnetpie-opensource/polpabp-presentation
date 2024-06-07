@@ -13,43 +13,39 @@
     ViewBag.Description = "Register your organization today to access all of our features and benefits.";
     ViewBag.keywords = "organization registration,user management,access control,audit logs,events,subscriptions,organization structure,form design,form publication,form flow,workflow";
     ViewBag.HideTenancyView = true;
+    ViewBag.ShowAppTitle = true;
 }
 
-<h4 class="mb-2 fw-semibold">
-    Create your organization account
-</h4>
-<div class="mb-4 ms-2">
-    @L["AlreadyRegistered"]
-    <a href="@Url.Page("./Login")">@L["Login"]</a>
+<h1 class="mb-4 fs-3">
+    Create an Organization Account
+</h1>
+
+<p>
+    Unlock the Power of FormLang in 3 Easy Steps!
+</p>
+
+<div class="progress mb-3">
+    <div aria-valuemax="100" aria-valuemin="0" aria-valuenow="50" class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" style="width: 33%"></div>
 </div>
 
-<div class="progress">
-    <div aria-valuemax="100" aria-valuemin="0" aria-valuenow="50" class="progress-bar progress-bar-striped progress-bar-animated bg-danger" role="progressbar" style="width: 33%"></div>
-</div>
+<h2 class="mb-4 fs-5">
+    <span class="badge bg-secondary me-1">Step 1</span>
+    Organization Information
+</h2>
 
+<p>
+    Let's get started! Enter your organization name to check availability.
+</p>
 
-<form method="post" class="py-4" spellcheck="false">
-    <h5 class="mb-4">
-        <span class="badge bg-dark me-1">1/3</span>
-        First, please provide your organization information as below
-    </h5>
+<form method="post" class="py-3" spellcheck="false">
 
     <abp-input asp-for="Input.TenantName" auto-focus="true" autocomplete="organization" />
 
     <div class="d-grid gap-2">
-        <abp-button type="submit" button-type="Primary" name="Action" value="Input" class="mt-3">
-            @L["Continue"]
+        <abp-button type="submit" button-type="Primary" name="Action" value="Input">
+            Next: Administrator Info
             <span class="spinner-box"></span>
         </abp-button>
     </div>
 
 </form>
-
-<div class="d-flex flex-column align-items-start mt-5 mb-3">
-    <h6>@L["Page:HelpfulLinks"]</h6>
-    <ul>
-        <li>
-            <a class="btn btn-link fst-italic" href="@Url.Page("./Login")">@L["Login"]</a>
-        </li>
-    </ul>
-</div>

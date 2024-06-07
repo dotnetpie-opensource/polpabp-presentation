@@ -11,7 +11,7 @@ namespace PolpAbp.Presentation.Account
 
         // We may use DI. However, for the performance person, 
         // we let the caller to provide the input.
-        public UserNameOrEmailRequiredAttribute(string redirectUrl = "/Account/Login") {
+        public UserNameOrEmailRequiredAttribute(string redirectUrl = "/account/sign-in") {
             _redirectUrl = redirectUrl;
         }
 

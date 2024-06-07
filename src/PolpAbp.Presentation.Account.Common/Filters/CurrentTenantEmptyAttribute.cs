@@ -10,7 +10,7 @@ namespace PolpAbp.Presentation.Account
     {
         private readonly string _redirectUrl;
 
-        public CurrentTenantEmptyAttribute(string redirectUrl = "/Account/Login")
+        public CurrentTenantEmptyAttribute(string redirectUrl = "/account/sign-in")
         {
             _redirectUrl= redirectUrl;
         }

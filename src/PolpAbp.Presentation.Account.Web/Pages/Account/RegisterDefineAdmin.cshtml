@@ -14,24 +14,33 @@
     ViewBag.Keywords = "Provide Administrator Information, organization registration";
 }
 
-<h4 class="mb-4 fw-semibold">
-    Create your organization account
-</h4>
-
-<div class="progress">
-    <div aria-valuemax="100" aria-valuemin="0" aria-valuenow="50" class="progress-bar progress-bar-striped progress-bar-animated bg-danger" role="progressbar" style="width: 66%"></div>
+<h1 class="mb-1 fs-3">
+    Create an Organization Account
+</h1>
+<div class="mb-4">
+    <a href="@Url.Page("./Register")">
+        <i class="fas fa-chevron-left me-1"></i>Back
+    </a>
 </div>
 
-<form method="post" class="py-4" spellcheck="false">
-    <h5 class="mb-4">
-        <span class="badge bg-dark me-1">2/3</span>
-        Next, please provide the administrator information
-    </h5>
+<div class="progress mb-3">
+    <div aria-valuemax="100" aria-valuemin="0" aria-valuenow="50" class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" style="width: 66%"></div>
+</div>
 
+<h2 class="mb-4 fs-5">
+    <span class="badge bg-secondary me-1">Step 2</span>
+    Administrator Details
+</h2>
+
+<p>
+    Almost there! To complete your organization setup, tell us a bit about the admin user.
+</p>
+
+<form method="post" class="py-3" spellcheck="false">
     <abp-input asp-for="Input.AdminEmailAddress" auto-focus="true" autocomplete="email" />
 
     <div class="mb-3" id="password-wrapper">
-        <label for="Input_Password" class="form-label">@L["DisplayName:Password"]</label>
+        <label for="Input_Password" class="form-label">@L["DisplayName:Password"]</label><span>*</span>
         <div class="input-group">
             <input class="form-control" id="Input_Password" type="password" autocomplete="new-password" asp-for="Input.Password" />
             <button type="button" class="toggle-password btn btn-outline-secondary">
@@ -44,12 +53,9 @@
     <abp-input asp-for="Input.ConfirmPassword" value="@Model.Input.ConfirmPassword" autocomplete="off" auto-focus />
 
     <div class="d-grid gap-2">
-        <abp-button type="submit" button-type="Primary" name="Action" value="Input" class="mt-3">
-            @L["Continue"]
+        <abp-button type="submit" button-type="Primary" name="Action" value="Input">
+            Next: Review & Submit
             <span class="spinner-box"></span>
-        </abp-button>
-        <abp-button type="submit" button-type="Secondary" formnovalidate="formnovalidate" name="Action" value="Cancel" class="mt-3">
-            @L["Back"]
         </abp-button>
     </div>
 
