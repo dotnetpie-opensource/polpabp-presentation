@@ -1,4 +1,4 @@
-﻿@page
+﻿@page "/account/find-organization"
 @using Microsoft.AspNetCore.Mvc.Localization
 @using Microsoft.Extensions.Localization
 @using Volo.Abp.Account.Localization
@@ -10,8 +10,8 @@
 @inject IHtmlLocalizer<AccountResource> L
 @inject IHtmlLocalizer<AbpUiMultiTenancyResource> M
 @{
-    ViewBag.Title = "Sign in to FormLang - Find Your Organization";
-    ViewBag.Description = "Securely access your team's workspace on FormLang. Find & select your organization to log in quickly.";
+    ViewBag.Title = "Find Your Organization";
+    ViewBag.Description = "Securely access your team's workspace. Find & select your organization to log in quickly.";
     ViewBag.ShowAppTitle = true;
     ViewBag.HideTenancyView = true;
 }
