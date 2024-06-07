@@ -1,4 +1,4 @@
-﻿@page
+﻿@page "/account/resend-activation/success"
 @using Microsoft.AspNetCore.Mvc.Localization
 @using Microsoft.Extensions.Localization
 @using Volo.Abp.Account.Localization
@@ -12,16 +12,15 @@
     ViewBag.Title = "Account Activation Link Sent";
     ViewBag.Description = "Your account activation link has been sent.";
     ViewBag.Keywords = "account activation link sent";
+    ViewBag.HideTenancyView = true;
+    ViewBag.ShowAppTitle = true;
 }
 
-<h4 class="mb-4 fw-semibold">
-    @L["ResendActivationLink"]
-</h4>
+<h1 class="mb-4 fs-3">
+    All Set! We've Sent a New Activation Email.
+</h1>
 
-<form method="post">
-
-    <p>@L["ResendActivationLink_Success"]</p>
-
-    <a abp-button="Primary" asp-page="./Login" asp-all-route-data="@(new Dictionary<string, string> {{"returnUrl", Model.ReturnUrl ?? string.Empty}, {"returnUrlHash", Model.ReturnUrlHash ?? string.Empty}})">&larr; @L["BackToLogin"]</a>
-
-</form>
+<div class="alert alert-success">
+    We've successfully sent a new activation link to your email address.
+    Make sure to check your inbox (and maybe even your spam folder) for the email.
+</div>

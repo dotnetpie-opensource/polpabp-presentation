@@ -1,4 +1,4 @@
-﻿@page
+﻿@page "/account/resend-activation"
 @using Microsoft.AspNetCore.Mvc.Localization
 @using Microsoft.Extensions.Localization
 @using Volo.Abp.Account.Localization
@@ -14,15 +14,14 @@
     ViewBag.Keywords = "request account activation link,account activation link,activate account";
 }
 
-<h4 class="mb-4 fw-semibold">
-    @L["ResendActivationLink"]
-</h4>
+<h1 class="mb-4 fs-3">
+    Need a New Activation Email?
+</h1>
 
-<p>@L["ResendActivationLink_Information"]</p>
-
-<div class="alert alert-info d-flex align-items-center" role="alert">
-    Please review your information and submit it
-</div>
+<p>
+    We noticed you might be having trouble activating your account.
+    No worries! Enter the email address you used to register below and we'll send you a fresh activation link.
+</p>
 
 <form method="post">
 
@@ -31,21 +30,8 @@
 
     <div class="d-grid gap-2">
         <abp-button type="submit" button-type="Primary" name="Action" value="Input" class="mt-3">
-            @L["Submit"]
+            Send Activation Email
             <span class="spinner-box"></span>
-        </abp-button>
-
-        <abp-button type="submit" button-type="Secondary" formnovalidate="formnovalidate" name="Action" value="Cancel" class="mt-3">
-            @L["Back"]
         </abp-button>
     </div>
 </form>
-
-<div class="d-flex flex-column align-items-start mt-5 mb-3">
-    <h6>@L["Page:HelpfulLinks"]</h6>
-    <ul>
-        <li>
-            <a class="btn btn-link fst-italic" href="@Url.Page("./Login")">@L["Login"]</a>
-        </li>
-    </ul>
-</div>
