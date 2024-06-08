@@ -108,7 +108,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                         if (!string.IsNullOrEmpty(ReturnUrl))
                         {
                             // Be smart
-                            if (ReturnUrl.ToLower().EndsWith("/account/login"))
+                            if (ReturnUrl.ToLower().EndsWith("/account/sign-in"))
                             {
                                 return RedirectToPage("./Login");
                             }
@@ -140,7 +140,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                     if (!string.IsNullOrEmpty(ReturnUrl))
                     {
                         // Be smart
-                        if (ReturnUrl.ToLower().EndsWith("/account/login"))
+                        if (ReturnUrl.ToLower().EndsWith("/account/sign-in"))
                         {
                             return RedirectToPage("./Login");
                         }
