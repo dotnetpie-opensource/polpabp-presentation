@@ -95,6 +95,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                 {
                     TenantId = CurrentTenant.Id,
                     UserId = UserId,
+                    OperatorId = UserId,
                     NewPassword = Password
                 });
             }

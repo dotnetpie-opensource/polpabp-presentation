@@ -58,7 +58,8 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                     await _localEventBus.PublishAsync(new PasswordChangedEvent
                     {
                         TenantId = userInfo.TenantId,
-                        UserId = userInfo.Id
+                        UserId = userInfo.Id,
+                        OperatorId = userInfo.Id
                     });
 
                     Alerts.Success("Your password has been updated successfully.");
