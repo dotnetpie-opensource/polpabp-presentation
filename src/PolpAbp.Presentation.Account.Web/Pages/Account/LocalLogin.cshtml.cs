@@ -73,20 +73,29 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                     if (IsUsingUserName)
                     {
                         user = await UserManager.FindByNameAsync(NormalizedUserName);
+                        if (user == null)
+                        {
+                            Alerts.Danger("We couldn't find an account associated with that username. Please double-check the username you entered and try again.");
+                            return RedirectToPage("./Login", new
+                            {
+                                returnUrl = ReturnUrl,
+                                returnUrlHash = ReturnUrlHash
+                            });
+                        }
                     }
                     else
                     {
                         user = await UserManager.FindByEmailAsync(NormalizedEmailAddress);
-                    }
 
-                    if (user == null)
-                    {
-                        Alerts.Danger(L["InvalidUserNameOrPassword"]);
-                        return RedirectToPage("./Login", new
+                        if (user == null)
                         {
-                            returnUrl = ReturnUrl,
-                            returnUrlHash = ReturnUrlHash
-                        });
+                            Alerts.Danger("We couldn't find an account associated with that email address. Please double-check the email you entered and try again.");
+                            return RedirectToPage("./Login", new
+                            {
+                                returnUrl = ReturnUrl,
+                                returnUrlHash = ReturnUrlHash
+                            });
+                        }
                     }
 
                     // Check if the user is allowed to login or not 
@@ -180,15 +189,6 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                         Alerts.Danger(a.ErrorMessage);
                     }
                 }
-            }
-            else if (action == "Cancel")
-            {
-                // Need to reload the page.
-                return RedirectToPage("./Login", new
-                {
-                    ReturnUrl = ReturnUrl,
-                    ReturnUrlHash = ReturnUrlHash
-                });
             }
 
             return Page();
