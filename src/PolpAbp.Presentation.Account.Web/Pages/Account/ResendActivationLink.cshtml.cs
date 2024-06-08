@@ -99,14 +99,9 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
         public class InputModel
         {
             [Required]
-            [MinLength(1)]
+            [EmailAddress]
             [DynamicStringLength(typeof(IdentityUserConsts), nameof(IdentityUserConsts.MaxEmailLength))]
-            public string EmailAddress { get; set; }
-
-            public InputModel()
-            {
-                EmailAddress = string.Empty;
-            }
+            public string? EmailAddress { get; set; }
         }
     }
 }
