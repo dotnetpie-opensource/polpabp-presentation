@@ -104,7 +104,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                             return RedirectToPage("./LocalLogin", new
                             {
                                 // todo: Maybe use Id
-                                UserName = user.UserName ,
+                                UserName = user.UserName,
                                 EmailAddress = user.Email,
                                 returnUrl = ReturnUrl,
                                 returnUrlHash = ReturnUrlHash
@@ -144,7 +144,14 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                     }
                     else
                     {
-                        Alerts.Danger(L["InvalidUserNameOrPassword"]);
+                        if (Input.IsUsingUserName)
+                        {
+                            Alerts.Danger("We couldn't find an account associated with that username. Please double-check the username you entered and try again.");
+                        }
+                        else
+                        {
+                            Alerts.Danger("We couldn't find an account associated with that email address. Please double-check the email you entered and try again.");
+                        }
                     }
                 }
                 catch (AbpValidationException ex)

@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using PolpAbp.Framework.Authorization.Users.Events;
 using PolpAbp.Framework.Mvc.Cookies;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 using Volo.Abp.Account;
 using Volo.Abp.Auditing;
 using Volo.Abp.EventBus.Local;
@@ -39,6 +40,8 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 
         public const string ResetPasswordTokenPurpose = "ResetPassword";
 
+        public bool IsInvalidLink { get; set; }
+
         private readonly ILocalEventBus _localEventBus;
         private readonly IAppCookieManager _cookieManager;
 
@@ -58,15 +61,14 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
             var user = await FindByIdBeyondTenantAsync(UserId);
             if (user == null)
             {
-                Alerts.Danger("Error link or user account.");
-                return RedirectToPage("./Login");
+                Alerts.Danger("We couldn't find an account associated with the link. Please double-check your inbox for the password reset link.");
             }
 
             var verified = await UserManager.VerifyUserTokenAsync(user, UserManager.Options.Tokens.PasswordResetTokenProvider, 
                 ResetPasswordTokenPurpose, ResetToken);
             if (!verified)
             {
-                Alerts.Danger("You are using an expired password reset link. You may request a new one with the help links.");
+                IsInvalidLink = true;
             }
 
             _cookieManager.SetTenantCookieValue(Response, user.TenantId!.Value.ToString());
