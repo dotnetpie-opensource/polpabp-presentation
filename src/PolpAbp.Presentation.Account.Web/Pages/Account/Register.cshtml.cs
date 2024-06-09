@@ -100,7 +100,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
         public class PostInput
         {
             [Required]
-            [MinLength(4)]
+            [MinLength(5)]
             [MaxLength(256)]
             public string? TenantName { get; set; }
         }
