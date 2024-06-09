@@ -105,6 +105,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                 admin = await UserManager.FindByEmailAsync(Input.AdminEmailAddress);
                 // The admin has to confirm the email before being active.
                 admin.SetIsActive(false);
+                admin.Surname = "admin";
                 await UserManager.UpdateAsync(admin);
             }
 
