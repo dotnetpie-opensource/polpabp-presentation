@@ -1,4 +1,5 @@
-﻿using PolpAbp.Framework;
+﻿using Microsoft.AspNetCore.Mvc.RazorPages;
+using PolpAbp.Framework;
 using PolpAbp.Framework.Mvc;
 using PolpAbp.Presentation.Contracts;
 using Volo.Abp.Account;
@@ -74,6 +75,13 @@ namespace PolpAbp.Presentation.Account.Web
             {
                 options.AddProfile<PresentationAccountWebAutomapperProfile>(validate: true);
             });
+
+            Configure<RazorPagesOptions>(options =>
+            {
+                options.Conventions.AddPageRoute("/Account/Login", "account/login");
+                options.Conventions.AddPageRoute("/Account/Logout", "account/logout");
+            });
+
 
         }
 
