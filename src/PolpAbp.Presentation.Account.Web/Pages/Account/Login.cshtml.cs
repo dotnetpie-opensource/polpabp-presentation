@@ -130,16 +130,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                                 }
                             }
 
-                            // Fall back to the general case.
-                            return RedirectToPage("./ExternalLogin", new
-                            {
-                                // todo: Maybe use Id
-                                UserName = user.UserName,
-                                EmailAddress = user.Email,
-                                returnUrl = ReturnUrl,
-                                returnUrlHash = ReturnUrlHash
-                            });
-
+                            Alerts.Danger("Something went wrong. If you believe you entered the correct information, but are still having trouble, please Contact us and we'll be happy to help.");
                         }
                     }
                     else
