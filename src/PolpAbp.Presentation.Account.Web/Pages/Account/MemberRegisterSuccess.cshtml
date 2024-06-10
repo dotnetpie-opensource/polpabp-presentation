@@ -33,21 +33,33 @@
         <a abp-button="Primary" asp-page="/Account/MainApp">Go to Main Application</a>
     </div>
 }
-else
+else if (Model.NextAction == PolpAbp.Framework.Exceptions.Identity.UserOnboardingNextActionEnum.WaitAdminApprovel)
 {
     <p>
         Your membership application has been submitted successfully. 
-        However, before you can jump into the application, there's one last step:
+        The organization's administrator will review your request shortly.
+     </p>   
+     <p>
+        You'll receive a notification once your access is granted.
+        In the meantime, feel free to browse our website and learn more about what we do.
     </p>
-    <ul>
-        <li>
-            <b>For admin approval</b>: If membership requires approval from your organization's administrator, you'll receive a notification once your access is granted.
-            In the meantime,  feel free to browse our website.
-        </li>
-        <li>
-            <b>For account activation</b>:
-            If you signed up using an email address, you'll receive a confirmation email with a link to activate your account.
-            Once you activate it, you'll be ready to log in and get started!
-        </li>
-    </ul>
+
+} 
+else if (Model.NextAction == PolpAbp.Framework.Exceptions.Identity.UserOnboardingNextActionEnum.ActivateEmail)
+{
+    <p>
+        Your membership application has been submitted successfully.
+        We've just sent you a confirmation email with a link to activate your account.  
+        Click the link in the email to activate your account and get started.
+    </p>
+}
+else
+{
+    <p>
+        Your membership application has been submitted successfully. Click the button below to sign into your account.
+    </p>
+
+    <div class="d-grid gap-2">
+        <a abp-button="Primary" asp-page="/Account/Login">Sign In</a>
+    </div>
 }

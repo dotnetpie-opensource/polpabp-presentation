@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using PolpAbp.Framework.Exceptions.Identity;
 
 namespace PolpAbp.Presentation.Account.Web.Pages.Account
 {
@@ -12,6 +13,9 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
     {
         public bool IsAuthenticated = false; 
         public string TenantName = string.Empty;
+
+        [BindProperty(SupportsGet = true)]
+        public UserOnboardingNextActionEnum NextAction { get; set; }
 
         public virtual async Task<IActionResult> OnGetAsync()
         {

@@ -117,21 +117,17 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                     else
                     {
                         // Success 
-                        if (createdRet.NextActionStatus == UserOnboardingNextActionEnum.WaitAdminApprovel)
-                        {
-                            Alerts.Warning("The organization's administrator will review your request shortly. In the meantime, feel free to browse our website and learn more about what we do.");
-                        }
-                        else if (createdRet.NextActionStatus == UserOnboardingNextActionEnum.ActivateEmail)
-                        {
-                            Alerts.Warning("We've just sent a confirmation email to you.  Click the link in the email to activate your account and get started.");
-                        }
-                        else
+                        if (createdRet.NextActionStatus != UserOnboardingNextActionEnum.WaitAdminApprovel && 
+                            createdRet.NextActionStatus != UserOnboardingNextActionEnum.ActivateEmail)
                         {
                             var user = await UserManager.FindByIdAsync(createdRet.UserId!.Value.ToString());
                             await SignInManager.SignInAsync(user, true);
                         }
 
-                        return RedirectToPage("./MemberRegisterSuccess");
+                        return RedirectToPage("./MemberRegisterSuccess", new
+                        {
+                            NextAction = (int)createdRet.NextActionStatus
+                        });
                     }
 
                 }
