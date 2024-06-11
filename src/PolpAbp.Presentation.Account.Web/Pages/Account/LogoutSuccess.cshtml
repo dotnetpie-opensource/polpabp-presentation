@@ -20,10 +20,32 @@
         function cleanUpUserData(ev) {
             ev.preventDefault();
             Lockr.flush();
+
+            clearSessionStorage();
+            clearLocalStorage();
+            clearCookies();
+
             const toastElem = document.getElementById('cleanedToast');
             const toast = new bootstrap.Toast(toastElem);
             toast.show();
         }
+
+        function clearCookies() {
+            const cookies = document.cookie.split(';');
+            for (const cookie of cookies) {
+                const [cookieName, ..._] = cookie.split('=');
+                document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+            }
+        }
+
+        function clearLocalStorage() {
+            localStorage && localStorage.clear();
+        }
+
+        function clearSessionStorage() {
+            sessionStorage && sessionStorage.clear();
+        }
+
     </script>
 }
 
