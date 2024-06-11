@@ -28,25 +28,41 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
         {
             // Load settings
             await LoadSettingsAsync();
+
+            // Flatten the ReturnURL
+            var innerQueryParams = GetReturnUrlQueryParameters(ReturnUrl);
+            if (innerQueryParams.ContainsKey("username"))
+            {
+                UserName = innerQueryParams["username"];
+            }
+
+            if (innerQueryParams.ContainsKey("emailaddress"))
+            {
+                EmailAddress = innerQueryParams["emailaddress"];
+            }
+
+            if (innerQueryParams.ContainsKey("isusingusername"))
+            {
+                IsUsingUserName = Boolean.Parse(innerQueryParams["isusingusername"]);
+            }
+
             // TenantId
             TenantId = CurrentTenant.Id;
 
             if (!string.IsNullOrEmpty(NormalizedUserName))
             {
                 Input.UserName = NormalizedUserName;
-                Input.IsUsingUserName = false;
             }
             else if (!string.IsNullOrEmpty(NormalizedEmailAddress))
             {
                 Input.EmailAddress = NormalizedEmailAddress;
-                Input.IsUsingUserName = true;
             }
             else
             {
                 Input.UserName = string.Empty;
                 Input.EmailAddress = string.Empty;
-                Input.IsUsingUserName = false;
             }
+            Input.IsUsingUserName = IsUsingUserName;
 
             return Page();
         }
@@ -173,5 +189,36 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 
         }
 
+
+        public static Dictionary<string, string> GetReturnUrlQueryParameters(string returnUrl)
+        {
+            if (string.IsNullOrEmpty(returnUrl))
+            {
+                return new Dictionary<string, string>();
+            }
+
+            // Split the returnUrl at the '?' character to separate the base URL and query string
+            var parts = returnUrl.Split('?');
+            if (parts.Length < 2)
+            {
+                return new Dictionary<string, string>();
+            }
+
+            // Extract the query string
+            var queryString = parts[1];
+
+            // Parse the query string into key-value pairs
+            var queryDictionary = new Dictionary<string, string>();
+            foreach (var keyValuePair in queryString.Split('&'))
+            {
+                var pair = keyValuePair.Split('=');
+                if (pair.Length == 2)
+                {
+                    queryDictionary.Add(Uri.UnescapeDataString(pair[0].ToLower()), Uri.UnescapeDataString(pair[1]));
+                }
+            }
+
+            return queryDictionary;
+        }
     }
 }
