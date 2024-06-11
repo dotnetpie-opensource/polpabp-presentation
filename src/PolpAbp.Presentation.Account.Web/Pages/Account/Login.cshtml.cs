@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using PolpAbp.Framework.Extensions;
 using PolpAbp.Framework.Mvc.Cookies;
 using System.ComponentModel.DataAnnotations;
+using System.Web;
 using Volo.Abp.Auditing;
 using Volo.Abp.Data;
 using Volo.Abp.Identity;
@@ -46,23 +47,29 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                 IsUsingUserName = Boolean.Parse(innerQueryParams["isusingusername"]);
             }
 
+            // Note that only one of the two values should be set. 
+            // UserName or EmailAddress 
+            // It it the caller which decide what to do. 
+
             // TenantId
             TenantId = CurrentTenant.Id;
 
             if (!string.IsNullOrEmpty(NormalizedUserName))
             {
                 Input.UserName = NormalizedUserName;
+                Input.IsUsingUserName = true;
             }
             else if (!string.IsNullOrEmpty(NormalizedEmailAddress))
             {
                 Input.EmailAddress = NormalizedEmailAddress;
+                Input.IsUsingUserName = false;
             }
             else
             {
                 Input.UserName = string.Empty;
                 Input.EmailAddress = string.Empty;
+                Input.IsUsingUserName = false;
             }
-            Input.IsUsingUserName = IsUsingUserName;
 
             return Page();
         }
@@ -214,11 +221,32 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                 var pair = keyValuePair.Split('=');
                 if (pair.Length == 2)
                 {
-                    queryDictionary.Add(Uri.UnescapeDataString(pair[0].ToLower()), Uri.UnescapeDataString(pair[1]));
+                    var decodedKey = Uri.UnescapeDataString(pair[0]).ToLower();
+                    var decodedValue = DecodeStringFully(pair[1]);
+                    queryDictionary.Add(decodedKey, decodedValue);
                 }
             }
 
             return queryDictionary;
+        }
+
+        public static string DecodeStringFully(string encodedString)
+        {
+            if (string.IsNullOrEmpty(encodedString))
+            {
+                return encodedString;
+            }
+
+            string decodedString = encodedString;
+            string previousDecodedString;
+
+            do
+            {
+                previousDecodedString = decodedString;
+                decodedString = HttpUtility.UrlDecode(decodedString);
+            } while (decodedString != previousDecodedString);
+
+            return decodedString;
         }
     }
 }

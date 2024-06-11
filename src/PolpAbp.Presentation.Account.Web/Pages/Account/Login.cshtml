@@ -20,8 +20,8 @@
 
     var reActivationLink = Url.Page("./ResendActivationLink", new
     {
-        UserName = Model.Input.IsUsingUserName ? string.Empty : Model.Input.UserName,
-        EmailAddress = Model.Input.IsUsingUserName ? Model.Input.EmailAddress : string.Empty
+        UserName = Model.Input.IsUsingUserName ? Model.Input.UserName : string.Empty,
+        EmailAddress = Model.Input.IsUsingUserName ? string.Empty : Model.Input.EmailAddress
     });
 }
 
