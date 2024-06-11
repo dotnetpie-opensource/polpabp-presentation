@@ -124,6 +124,17 @@
 
         $(document).ready(() => {
 
+            // Check if we have the right version
+            let system = Lockr.get('system');
+            if (!system || !system.version || system.version != 1) {
+                Lockr.flush();
+
+                system = {
+                    version: 1
+                };
+                Lockr.set('system', system);
+            }
+
             $(".card").on('click', 'a.delete-me', (evt) => {
                 const $target = $(evt.target).closest('a');
                 const email = $target.data('email');
