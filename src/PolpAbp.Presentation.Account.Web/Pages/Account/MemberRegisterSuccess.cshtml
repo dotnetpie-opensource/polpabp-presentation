@@ -14,16 +14,15 @@
     ViewBag.keywords = "join organization,successful,notification";
 }
 
-<h1 class="mb-4 h3">
+<h1 class="h3">
     Success! You're Now Part of Your Organization
 </h1>
 
-<div class="alert alert-success d-flex align-items-center" role="alert">
+<h2 class="h4" title="Welcome to @Model.TenantName! You've successfully joined your organization.">
     Welcome to @Model.TenantName! You've successfully joined your organization.
-</div>
+</h2>
 
-<h2 class="fs-5">What to do next</h2>
-
+<h2 class="h5">What to do next</h2>
 
 @if (Model.IsAuthenticated)
 {
@@ -66,7 +65,7 @@ else
     </div>
 }
 
-<h2 class="fs-5 mt-3">
+<h2 class="h5 mt-1">
     Need Help?
 </h2>
 
