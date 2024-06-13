@@ -14,7 +14,7 @@
     ViewBag.Keywords = "two factor authentication code";
 }
 
-<h1 class="mb-4 fs-3">
+<h1 class="mb-4 h3">
     Enter Two-Factor Code
 </h1>
 
@@ -22,6 +22,7 @@
     We've sent a two-factor code to your chosen method.
     Please enter the code in the field below to complete the verification process.
 </p>
+
 <p>
     Haven't received the code?            
     <a href="@Url.Page("./TwoFactorRequest")">Request a new code</a>
@@ -29,14 +30,9 @@
 
 <form method="post">
 
-    <div class="mb-3" id="password-wrapper">
+    < class="mb-3">
         <label asp-for="Input.Code" class="form-label"></label><span>*</span>
-        <div class="input-group">
-            <input asp-for="Input.Code" class="form-control" data-auto-focus="true" type="number" autocomplete="off" />
-            <button type="button" class="toggle-password btn btn-outline-secondary">
-                <i class="toggle-icon fa fa-eye"></i>
-            </button>
-        </div>
+        <input asp-for="Input.Code" class="form-control" data-auto-focus="true" type="number" autocomplete="off" />
         <span asp-validation-for="Input.Code" class="text-danger"></span>
     </div>
 
