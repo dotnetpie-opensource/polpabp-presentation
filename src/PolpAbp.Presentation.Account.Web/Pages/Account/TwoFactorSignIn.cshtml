@@ -30,8 +30,8 @@
 
 <form method="post">
 
-    < class="mb-3">
-        <label asp-for="Input.Code" class="form-label"></label><span>*</span>
+    <div class="mb-3">
+        <label asp-for="Input.Code" class="form-label me-1"></label><span>*</span>
         <input asp-for="Input.Code" class="form-control" data-auto-focus="true" type="number" autocomplete="off" />
         <span asp-validation-for="Input.Code" class="text-danger"></span>
     </div>
