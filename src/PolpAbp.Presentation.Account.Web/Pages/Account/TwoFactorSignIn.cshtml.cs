@@ -57,6 +57,10 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                             returnUrlHash = ReturnUrlHash
                         });
                     }
+
+                    // Error messages 
+                    Alerts.Danger("Hmm, the code you entered doesn't seem to match.  Don't worry, just try re-entering the code we sent to your phone (or email) and give it another shot!");
+
                 }
                 catch (AbpValidationException ex)
                 {
