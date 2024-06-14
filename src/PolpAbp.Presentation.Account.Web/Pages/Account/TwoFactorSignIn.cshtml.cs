@@ -59,7 +59,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                     }
 
                     // Error messages 
-                    Alerts.Danger("Hmm, the code you entered doesn't seem to match.  Don't worry, just try re-entering the code we sent to your phone (or email) and give it another shot!");
+                    Alerts.Danger(@"Oops! The code isn't right. No problem, just enter the code we sent to your phone or email and try again. Click ""Resend Code"" below if you need a new one.");
 
                 }
                 catch (AbpValidationException ex)
