@@ -62,7 +62,8 @@
         function refreshUserOptions(initState) {
             let users = Lockr.get('users');
             if (users && users.length) {
-                let a = users.map(x => {
+                let a = users.filter(x => x.tenantId == tenantId)
+                .map(x => {
                     return {
                         email: x.email,
                         userName: x.userName,
