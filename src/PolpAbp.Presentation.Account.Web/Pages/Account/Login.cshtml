@@ -228,7 +228,7 @@
         We've found your most recently used accounts. Click your account to sign in, or click "Use a differnt account" to sign in with a different account.
     </p>
     <ul class="list-unstyled" data-bind="foreach: users">
-        <li class="d-flex mb-4 border-bottom" data-bind="if: email">
+        <li class="d-flex mb-4 border-bottom" data-bind="ifnot: $parent.isUsingUserName">
             <div class="flex-xl-shrink-0">
                 <i class="far fa-user-circle fa-2x"></i>
             </div>
@@ -247,7 +247,7 @@
                 </div>
             </div>
         </li>
-        <li class="d-flex mb-4 border-bottom" data-bind="if: userName">
+        <li class="d-flex mb-4 border-bottom" data-bind="if: $parent.isUsingUserName">
             <div class="flex-xl-shrink-0">
                 <i class="far fa-user-circle fa-2x"></i>
             </div>
