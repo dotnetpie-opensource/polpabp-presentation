@@ -101,7 +101,7 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                     {
                         if (string.IsNullOrEmpty(Input.EmailAddress))
                         {
-                            Alerts.Danger("We need your email to sign you in! Please enter your username and try again.");
+                            Alerts.Danger("We need your email to sign you in! Please enter your email address and try again.");
                             return Page();
                         }
                     }

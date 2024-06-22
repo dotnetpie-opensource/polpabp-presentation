@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations;
 using Volo.Abp;
 using Volo.Abp.Account.Settings;
 using Volo.Abp.Auditing;
+using Volo.Abp.Data;
 using Volo.Abp.Identity;
 using Volo.Abp.Identity.AspNetCore;
 using Volo.Abp.Settings;
@@ -101,7 +102,13 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
                     // Check if the user is allowed to login or not 
                     if (user.IsActive == false)
                     {
-                        if (RegistrationApprovalType == MemberRegistrationEnum.RequireEmailActivation)
+                        var deactivatedBy = user.GetProperty<Guid?>(Framework.Extensions.ExternalProperties.UserIdentity.DeactivatedBy);
+                        if (deactivatedBy.HasValue)
+                        {
+                            Alerts.Warning("We're sorry, but this account appears to be deactivated. You'll need to contact your organization administrator for reactivation.");
+                            return Page();
+                        }
+                        else if (RegistrationApprovalType == MemberRegistrationEnum.RequireEmailActivation)
                         {
                             ShowActivationLink = true;
                             return Page();
