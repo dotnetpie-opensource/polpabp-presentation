@@ -189,13 +189,11 @@
                     }
                 });
 
-            refreshUserOptions(initEmail || initUserName);
+            refreshUserOptions(true);
             if (initEmail) {
                 switchToEmailAddress(initEmail);
             } else if (initUserName) {
                 switchToUserName(initUserName);
-            } else {
-                switchToEmailAddress('');
             }
 
             // Update time
