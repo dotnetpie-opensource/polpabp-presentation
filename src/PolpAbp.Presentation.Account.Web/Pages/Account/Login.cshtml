@@ -194,6 +194,8 @@
                 switchToEmailAddress(initEmail);
             } else if (initUserName) {
                 switchToUserName(initUserName);
+            } else if (viewModel.users().length == 0) {
+                switchToEmailAddress('');
             }
 
             // Update time
