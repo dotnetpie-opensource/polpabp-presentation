@@ -50,73 +50,83 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 
         public virtual async Task<IActionResult> OnPostAsync(string action)
         {
-            // Load settings
-            await LoadSettingsAsync();
-
-            if (action == "SendCodeByEmail")
+            try
             {
-                var userId = await RetrieveTwoFactorUserIdAsync();
-                if (userId.HasValue)
+                // Load settings
+                await LoadSettingsAsync();
+
+                if (action == "SendCodeByEmail")
                 {
-                    var user = await UserManager.FindByIdAsync(userId.ToString());
-                    var token = await UserManager.GenerateTwoFactorTokenAsync(user, TokenOptions.DefaultEmailProvider);
-
-                    await AccountEmailer.SendTwoFactorCodeAsync(user.Id, token);
-
-                    TempData["PolpAbp.Account.TwoFactorCode.Provider"] = TokenOptions.DefaultEmailProvider;
-
-                    Alerts.Success(L["TwoFactorCode_SentSuccess"].Value);
-
-                    return RedirectToPage("./TwoFactorSignIn", new
+                    var userId = await RetrieveTwoFactorUserIdAsync();
+                    if (userId.HasValue)
                     {
-                        returnUrl = ReturnUrl,
-                        returnUrlHash = ReturnUrlHash,
-                        RememberMe = RememberMe
-                    });
+                        var user = await UserManager.FindByIdAsync(userId.ToString());
+                        var token = await UserManager.GenerateTwoFactorTokenAsync(user, TokenOptions.DefaultEmailProvider);
+
+                        await AccountEmailer.SendTwoFactorCodeAsync(user.Id, token);
+
+                        TempData["PolpAbp.Account.TwoFactorCode.Provider"] = TokenOptions.DefaultEmailProvider;
+
+                        Alerts.Success(L["TwoFactorCode_SentSuccess"].Value);
+
+                        return RedirectToPage("./TwoFactorSignIn", new
+                        {
+                            returnUrl = ReturnUrl,
+                            returnUrlHash = ReturnUrlHash,
+                            RememberMe = RememberMe
+                        });
+                    }
                 }
+                else if (action == "SendCodeByPhone")
+                {
+                    var userId = await RetrieveTwoFactorUserIdAsync();
+                    if (userId.HasValue)
+                    {
+                        var user = await UserManager.FindByIdAsync(userId.ToString());
+                        var token = await UserManager.GenerateTwoFactorTokenAsync(user, TokenOptions.DefaultPhoneProvider);
+
+                        var b = L["TwoFactorCode_Sms", token];
+                        var bodyStr = b.ToString();
+                        if (!string.IsNullOrEmpty(SmsSenderName))
+                        {
+                            bodyStr = SmsSenderName + ": " + bodyStr;
+                        }
+                        TempData["PolpAbp.Account.TwoFactorCode.Provider"] = TokenOptions.DefaultPhoneProvider;
+
+                        // Note that the underlying sms sender will be responsible
+                        // for checking if the phone number is good or not.
+                        //
+                        // todo: Check if the organization configuration.
+                        // todo: Settings
+                        // var allowedCountry =
+                        var msg = new SmsMessage(user.PhoneNumber, bodyStr);
+                        await SmsSender.SendAsync(msg);
+
+                        var errorCodeStr = msg.Properties.GetOrDefault("ErrorCode");
+                        int.TryParse(errorCodeStr.ToString(), out int errorCode);
+                        if (errorCode != 0)
+                        {
+                            Alerts.Danger("The system cannot send the text message to the given number. Please choose a different way for getting the code.");
+                            return Page();
+                        }
+
+                        Alerts.Success(L["TwoFactorCode_SentSuccess"].Value);
+
+                        return RedirectToPage("./TwoFactorSignIn", new
+                        {
+                            returnUrl = ReturnUrl,
+                            returnUrlHash = ReturnUrlHash,
+                            RememberMe = RememberMe
+                        });
+                    }
+                }
+
+
             }
-            else if (action == "SendCodeByPhone")
+            catch (Exception ex)
             {
-                var userId = await RetrieveTwoFactorUserIdAsync();
-                if (userId.HasValue)
-                {
-                    var user = await UserManager.FindByIdAsync(userId.ToString());
-                    var token = await UserManager.GenerateTwoFactorTokenAsync(user, TokenOptions.DefaultPhoneProvider);
-
-                    var b = L["TwoFactorCode_Sms", token];
-                    var bodyStr = b.ToString();
-                    if (!string.IsNullOrEmpty(SmsSenderName))
-                    {
-                        bodyStr = SmsSenderName + ": " + bodyStr;
-                    }
-                    TempData["PolpAbp.Account.TwoFactorCode.Provider"] = TokenOptions.DefaultPhoneProvider;
-                    
-                    // Note that the underlying sms sender will be responsible
-                    // for checking if the phone number is good or not.
-                    //
-                    // todo: Check if the organization configuration.
-                    // todo: Settings
-                    // var allowedCountry =
-                    var msg = new SmsMessage(user.PhoneNumber, bodyStr);
-                    await SmsSender.SendAsync(msg);
-
-                    var errorCodeStr = msg.Properties.GetOrDefault("ErrorCode");
-                    int.TryParse(errorCodeStr.ToString(), out int errorCode);
-                    if (errorCode != 0)
-                    {
-                        Alerts.Danger("The system cannot send the text message to the given number. Please choose a different way for getting the code.");
-                        return Page();
-                    }
-
-                    Alerts.Success(L["TwoFactorCode_SentSuccess"].Value);
-
-                    return RedirectToPage("./TwoFactorSignIn", new
-                    {
-                        returnUrl = ReturnUrl,
-                        returnUrlHash = ReturnUrlHash,
-                        RememberMe = RememberMe
-                    });
-                }
+                Alerts.Danger("Something went wrong. Please try later.");
+                Logger.LogException(ex);
             }
 
             return Page();
