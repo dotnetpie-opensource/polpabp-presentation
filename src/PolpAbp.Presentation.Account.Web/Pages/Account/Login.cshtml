@@ -189,7 +189,7 @@
                     }
                 });
 
-            refreshUserOptions(true);
+            refreshUserOptions(!(initEmail || initUserName));
             if (initEmail) {
                 switchToEmailAddress(initEmail);
             } else if (initUserName) {
