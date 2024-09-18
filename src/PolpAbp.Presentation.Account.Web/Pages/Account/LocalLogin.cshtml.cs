@@ -1,5 +1,6 @@
 using AspNetCore.ReCaptcha;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using PolpAbp.Framework.Mvc.Cookies;
 using PolpAbp.Framework.Settings;
 using System.ComponentModel.DataAnnotations;
@@ -213,10 +214,15 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
         {
             await base.LoadSettingsAsync();
             RegistrationApprovalType = (MemberRegistrationEnum)(await SettingProvider.GetAsync<int>(FrameworkSettings.Account.RegistrationApprovalType));
+
+            Input.AccountId = IsUsingUserName ? NormalizedUserName : NormalizedEmailAddress;
         }
 
         public class PostInput
         {
+            [HiddenInput]
+            public string? AccountId { get; set; }
+
             [Required]
             [DynamicStringLength(typeof(IdentityUserConsts), nameof(IdentityUserConsts.MaxPasswordLength))]
             [DataType(DataType.Password)]
