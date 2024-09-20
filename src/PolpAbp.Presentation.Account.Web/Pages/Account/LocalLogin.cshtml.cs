@@ -220,7 +220,6 @@ namespace PolpAbp.Presentation.Account.Web.Pages.Account
 
         public class PostInput
         {
-            [HiddenInput]
             public string? AccountId { get; set; }
 
             [Required]

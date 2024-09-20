@@ -6,6 +6,7 @@
     "Description:RememberClient": "If possible, you will not be asked for the 2FA on this device.",
     "Description:TenantName": "A unique name to idenity your organization.",
     "Description:TenantOrEmailAddress": "Your email address or your organization name",
+    "DisplayName:AccountId": "Account Identifier",
     "DisplayName:AdminEmailAddress": "Administrator email address",
     "DisplayName:FirstName": "First Name",
     "DisplayName:LastName": "Last Name",

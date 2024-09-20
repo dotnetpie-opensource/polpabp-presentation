@@ -56,13 +56,16 @@
 </div>
 
 <p>
-    Great to see you again, <b>@(Model.IsUsingUserName ? Model.NormalizedUserName : Model.NormalizedEmailAddress)</b>.
+    Great to see you again!
     Please enter your password to sign in. <a href="@forgotPwdLink">@L["ForgotPassword"]</a>
 </p>
 
 <form method="post">
 
-    <input asp-for="Input.AccountId" type="hidden" autocomplete="username" />
+    <div class="mb-3">
+        <label for="Input_AccountId" class="form-label">@L["DisplayName:AccountId"]</label>
+        <input asp-for="Input.AccountId" class="form-control" readonly autocomplete="username" />
+    </div>
 
     <div class="mb-3" id="password-wrapper">
         <label for="Input_Password" class="form-label">@L["DisplayName:Password"]<span class="text-danger ms-1">*</span></label>
