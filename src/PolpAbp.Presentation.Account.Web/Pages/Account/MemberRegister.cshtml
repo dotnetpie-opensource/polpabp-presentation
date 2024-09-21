@@ -73,9 +73,6 @@ else
     </p>
 }
 
-<p>
-    Already have an account? <a class="btn btn-link" href="@Url.Page("/Account/Login")">Sign in</a>
-</p>
 
 @if (hasCreateMemberMethod)
 {
@@ -124,3 +121,13 @@ else
         </div>
     </div>
 }
+
+<div class="mt-4">
+    <h2 class="h5">Already have an account?</h2>
+
+    <div class="d-grid gap-2">
+        <a class="btn btn-outline-primary" href="@Url.Page("/Account/Login")">
+            Sign In Instead
+        </a>
+    </div>
+</div>

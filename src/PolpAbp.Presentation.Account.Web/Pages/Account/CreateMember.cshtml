@@ -36,7 +36,7 @@
     <abp-input asp-for="Input.FirstName" autocomplete="given-name" auto-focus="true" />
     <abp-input asp-for="Input.LastName" autocomplete="family-name" />
     <abp-input asp-for="Input.EmailAddress" autocomplete="email" />
-    <div class="mb-3" id="password-wrapper">
+    <div class="mb-3 password-wrapper">
         <label for="Input_Password" class="form-label">@L["DisplayName:Password"]</label>
         <span> * </span>
         <div class="input-group">
@@ -47,7 +47,17 @@
         </div>
         <span asp-validation-for="Input.Password" class="text-danger"></span>
     </div>
-    <abp-input asp-for="Input.ConfirmPassword" autocomplete="off" />
+    <div class="mb-3 password-wrapper">
+        <label for="Input_ConfirmPassword" class="form-label">@L["DisplayName:ConfirmPassword"]</label>
+        <span> * </span>
+        <div class="input-group">
+            <input class="form-control" id="Input_ConfirmPassword" type="password" autocomplete="new-password" asp-for="Input.ConfirmPassword" />
+            <button type="button" class="toggle-password btn btn-outline-secondary">
+                <i class="toggle-icon far fa-eye"></i>
+            </button>
+        </div>
+        <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+    </div>
 
     @await Component.InvokeAsync("PolicyConsent")
 
@@ -63,8 +73,5 @@
             @L["Submit"]
             <span class="spinner-box"></span>
         </abp-button>
-        <a abp-button="Secondary" asp-page="/Account/MemberRegister">
-            Cancel
-        </a>
     </div>
 </form>

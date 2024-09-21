@@ -12,6 +12,7 @@
     "DisplayName:LastName": "Last Name",
     "DisplayName:RememberClient": "Remember this device",
     "DisplayName:TenantName": "Organization name",
+    "DisplayName:ConfirmPassword": "Confirm password",
     "DisplayName:TenantOrEmailAddress": "Your email address or your organization name",
     "LoggedOutText": "You have been signed out!",
     "Login:AccountAlreadyActive": "Your account has been activated. You can now log in to your account.",

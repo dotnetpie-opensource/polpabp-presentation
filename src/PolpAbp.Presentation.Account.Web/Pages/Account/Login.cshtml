@@ -292,11 +292,6 @@
         Let's find your account! Enter your email address and click 'Continue'.
     </p>
 
-    <p>
-        Don't have an account?
-        No worries, <a href="@Url.Page("/Account/MemberRegister", new { AutoRedirect = true })">Sign up</a> to join your organization.
-    </p>
-
     <form method="post">
 
         <div class="mb-3" data-bind="visible: isUsingUserName">
@@ -329,6 +324,19 @@
             </abp-button>
         </div>
     </form>
+</div>    
+
+<div class="mt-4">
+    <h2 class="h5">New to your organization? Don't have an account?</h2>
+    <p>
+        Sign up now to unlock all the powerful features of FormLang and collaborate seamlessly with your team.
+    </p>
+
+    <div class="d-grid gap-2">
+        <a class="btn btn-outline-primary" href="@Url.Page("/Account/MemberRegister", new { AutoRedirect = true })">
+            Join Now
+        </a>
+    </div>
 </div>
 
 <div id="globalSpinner" class="modal-spinner position-absolute top-0 w-100 h-100 bg-light bg-opacity-75 text-center">

@@ -57,7 +57,7 @@
 
 <p>
     Great to see you again!
-    Please enter your password to sign in. <a href="@forgotPwdLink">@L["ForgotPassword"]</a>
+    Please enter your password to sign in.
 </p>
 
 <form method="post">
@@ -67,7 +67,7 @@
         <input asp-for="Input.AccountId" class="form-control" readonly autocomplete="username" />
     </div>
 
-    <div class="mb-3" id="password-wrapper">
+    <div class="mb-3 password-wrapper">
         <label for="Input_Password" class="form-label">@L["DisplayName:Password"]<span class="text-danger ms-1">*</span></label>
         <div class="input-group">
             <input asp-for="Input.Password" class="form-control" data-auto-focus="true" autocomplete="current-password" />
@@ -94,8 +94,9 @@
             @L["Continue"]
             <span class="spinner-box"></span>
         </abp-button>
-        <a abp-button="Secondary" asp-page="/Account/Login">
-            Cancel
+        <a abp-button="Secondary" href="forgotPwdLink">
+            @L["ForgotPassword"]
         </a>
     </div>
 </form>
+
